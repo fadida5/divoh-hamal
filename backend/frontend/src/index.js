@@ -28,18 +28,7 @@ import SignUp from "views/authentication/SignUpForm";
 import SignUpOtherUsers from "views/authentication/SignUpOtherUsers";
 import ManageUsers from "views/authentication/manageusers/ManageUsers";
 import EditUser from "views/authentication/EditUserForm";
-//general routes
-import DashboardPage from "views/generalpages/dashboardpage/DashboardPage";
-import SubUnitsPage from "views/generalpages/subunitspage/SubUnitsPage";
-import ZminotPage from "views/generalpages/zminotpage/ZminotPage";
-import UnitTreePage from "views/generalpages/unittreepage/UnitTreePage";
-import AboutPage from "views/generalpages/aboutpage/AboutPage";
-import StatisticsPage from "views/generalpages/statisticspage/StatisticsPage";
-import AssessmentPage from "views/generalpages/assessmentpage/AssessmentPage";
-import SubUnitsRecentFeeds from "views/generalpages/subunitsrecentfeedspage/SubUnitsRecentFeeds";
-//excel routes
-import Exceluploadusers from "views/excelpages/ExcelUploadUsers"
-import Exceluploadjobs from "views/excelpages/ExcelUploadJobs"
+import Dash from "views/divoah/Dash";
 
 ReactDOM.render(
   <>
@@ -61,21 +50,10 @@ ReactDOM.render(
             {/*///////////////////////////////////////////Admin Routes/////////////////////////////////////////////////*/}
 
             {/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
-            <LoggedinRoute path="/dashboard/:unittype/:unitid/:cartype/:carid" exact component={DashboardPage} />
-            <LoggedinRoute path="/subunitspage/:unittype/:unitid/:cartype/:carid" exact component={SubUnitsPage} />
-            <LoggedinRoute path="/zminotpage/:unittype/:unitid/:cartype/:carid/:ismushbat" exact component={ZminotPage} />
-            <LoggedinRoute path="/unittreepage/:unittype/:unitid" exact component={UnitTreePage} />
-            <LoggedinRoute path="/about" exact component={AboutPage} />
-            <LoggedinRoute path="/statisticspage/:unittype/:unitid/:cartype/:carid" exact component={StatisticsPage} />
-            <LoggedinRoute path="/assessmentpage" exact component={AssessmentPage} />
-            <LoggedinRoute path="/subunitsrecentfeedspage/:unittype/:unitid/:cartype/:carid" exact component={SubUnitsRecentFeeds} />
+            <UnloggedinRoute path="/dash" exact component={Dash} />
             {/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
 
-            {/*////////////////////////////////////////Excel Reading//////////////////////////////////////////////////*/}
-            <Route path="/exceluploadusers" exact component={Exceluploadusers} />
-            <Route path="/exceluploadjobs" exact component={Exceluploadjobs} />
-            {/*////////////////////////////////////////Excel Reading//////////////////////////////////////////////////*/}
-            <Redirect from="/" to="/signin" />
+            <Redirect from="/" to="/adminsignin" />
           </Switch>
         </Router>
       </BackgroundColorWrapper>

@@ -35,38 +35,6 @@ const authRoutes = require('./routes/authentication/auth');
 const userRoutes = require('./routes/authentication/user');
 app.use('/api', authRoutes)
 app.use('/api', userRoutes)
-//units routes
-const gdodRoutes = require("./routes/units/gdod");
-const hativaRoutes = require("./routes/units/hativa");
-const ogdaRoutes = require("./routes/units/ogda");
-const pikodRoutes = require("./routes/units/pikod");
-app.use('/api',gdodRoutes)
-app.use('/api',hativaRoutes)
-app.use('/api',ogdaRoutes)
-app.use('/api',pikodRoutes)
-//cartypes routes
-const magadalRoutes = require("./routes/cartypes/magadal");
-const magadRoutes = require("./routes/cartypes/magad");
-const mkabazRoutes = require("./routes/cartypes/mkabaz");
-const makatRoutes = require("./routes/cartypes/makat");
-app.use('/api',magadalRoutes)
-app.use('/api',magadRoutes)
-app.use('/api',mkabazRoutes)
-app.use('/api',makatRoutes)
-//general routes
-const cardataRoutes = require("./routes/general/cardata");
-app.use('/api',cardataRoutes)
-const archivecardataRoutes = require("./routes/general/archivecardata");
-app.use('/api',archivecardataRoutes)
-//
-const fileuploaderRoutes = require("./routes/fileuploader/fileuploader");
-app.use('/api',fileuploaderRoutes)
-//
-const assessmentRoutes = require("./routes/assessment/assessment");
-app.use('/api',assessmentRoutes)
-//
-const ramamRoutes = require("./routes/ramam/ramam");
-app.use('/api',ramamRoutes)
 
 if(process.env.NODE_ENV === 'production'){
     //set static folder

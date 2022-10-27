@@ -1,13 +1,13 @@
 import React from 'react'
 import { Route, Redirect } from 'react-router-dom'
 
-import UnloggedinLayout from "layouts/UnloggedinLayout";
+import LoggedinLayout from "layouts/LoggedinLayout";
 
 const UnloggedinRoute = ({ component: Component, ...rest }) => (
     <Route
         {...rest}
         render={props =>
-            <UnloggedinLayout component={Component}/>
+            <LoggedinLayout component={Component}/>
         }
     />
 )

@@ -105,9 +105,6 @@ function AdminSignInForm() {
 
               <CardBody className="px-lg-5 py-lg-5">
                 <div className="text-center text-muted mb-4">
-                  <img src={logobazak2}></img>
-                </div>
-                <div className="text-center text-muted mb-4">
                   <small>התחברות</small>
                 </div>
                 <Form role="form" >
@@ -125,11 +122,6 @@ function AdminSignInForm() {
                       <Col>
                         <div className="text-center">
                           <button onClick={clickSubmit} className="btn-new-blue">התחבר</button>
-                        </div>
-                      </Col>
-                      <Col>
-                        <div className="text-center">
-                          <button onClick={() => { history.push(`/signup`) }} className="btn-new-blue">הרשם</button>
                         </div>
                       </Col>
                     </Row>
