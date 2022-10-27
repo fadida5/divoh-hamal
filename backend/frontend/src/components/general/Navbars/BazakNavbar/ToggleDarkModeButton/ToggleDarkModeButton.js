@@ -44,8 +44,8 @@ function ToggleDarkModeButton(props) {
                 hover: 'rgb(95,96,98)',
               }
             }}
-            inactiveLabel={/*<img src={darkmodeimg} style={{ width: '15px', height: '15px' }}></img>*/ <p>כשירות</p>}
-            activeLabel={/*<img src={lightmodeimg} style={{ width: '15px', height: '15px' }}></img>*/ <p>זמינות</p>}
+            inactiveLabel={/*<img src={darkmodeimg} style={{ width: '15px', height: '15px' }}></img>*/ <p>בהיר</p>}
+            activeLabel={/*<img src={lightmodeimg} style={{ width: '15px', height: '15px' }}></img>*/ <p>כהה</p>}
             value={temptheme}
             onToggle={() => {
               changeTheme((theme) => {

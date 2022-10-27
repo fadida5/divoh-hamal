@@ -18,13 +18,13 @@ import {
 import axios from 'axios';
 import BazakComp from './BazakComp';
 // import Team100Comp from './Team100Comp';
-
+// אודות המערכת
 function AboutPage({ match, theme }) {
 
   return (
     <>
-      <BazakComp theme={theme}/>
-      {/* <Team100Comp theme={theme}/> */}
+      {/* <BazakComp theme={theme}/>
+      <Team100Comp theme={theme}/> */}
     </>
   );
 }

@@ -84,7 +84,8 @@ function Sidebar() {
 
                   user.role === "4" ? <SidebarPikod theme={color} /> : null
           }
-          <div style={{ textAlign: 'center', position: 'absolute', bottom: 0, width: '100%', marginBottom: '15px' }}>
+          {/* fotter של הסייד בר */}
+          {/* <div style={{ textAlign: 'center', position: 'absolute', bottom: 0, width: '100%', marginBottom: '15px' }}>
             {color == 'white' ? <img src={Logo100} style={{ height: "100px" }}></img>
               : <img src={Logo100_white} style={{ height: "100px" }}></img>}
             {user.role === "0" ?
@@ -112,7 +113,7 @@ function Sidebar() {
                 חזרה לשולחן הטנ"א שלי
               </button>
             </a>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

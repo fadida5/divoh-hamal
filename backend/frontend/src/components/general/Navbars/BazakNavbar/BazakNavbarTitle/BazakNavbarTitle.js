@@ -22,7 +22,7 @@ function BazakNavbarTitle(props) {
             setText(responsedata.name);
         }
         else {
-            setText('כלל צה"ל');
+            setText('מערכת דיווח אירועים בזמן אמת');
         }
     }
 
@@ -34,8 +34,8 @@ function BazakNavbarTitle(props) {
     return (
         text ?
             props.theme == "white-content" ?
-                <h2 style={{ fontWeight: 'bold', color: 'rgb(54,78,104)' }}>זמינות האמל"ח - {text}</h2>
-                : <h2 style={{ fontWeight: 'bold', color: 'hsla(0,0%,100%,.8)' }}>כשירות האמל"ח - {text}</h2>
+                <h2 style={{ fontWeight: 'bold', color: 'rgb(54,78,104)' }}>{text}</h2>
+                : <h2 style={{ fontWeight: 'bold', color: 'hsla(0,0%,100%,.8)' }}>{text}</h2>
             : null
     );
 }

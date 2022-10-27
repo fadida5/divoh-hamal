@@ -77,10 +77,11 @@ function SidebarHativa(props) {
   };
 
   return (
-    <>
-      <div className="logo">
+    <>   
+     {/* לוגו המערכת */}
+      {/* <div className="logo">
         <img src={logobazak2}></img>
-      </div>
+      </div> */}
       <Nav style={{ textAlign: "right" }}>
         <li>
           <NavLink to={`/dashboard/hativa/${user.hativaid}/magadal/0`} style={{ margin: '0px' }} activeClassName="sidebar_active_link">
