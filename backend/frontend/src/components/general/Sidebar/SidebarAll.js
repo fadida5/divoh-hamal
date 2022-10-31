@@ -66,7 +66,7 @@ import {
 
 import { isAuthenticated } from "auth/index";
 
-function SidebarAdmin(props) {
+function SidebarAll(props) {
 
   const clickSubmit = (event) => {
     event.preventDefault();
@@ -83,7 +83,7 @@ function SidebarAdmin(props) {
       </div> */}
       <Nav style={{ textAlign: "right" }}>
         <li>
-          <NavLink to="/dashamal" style={{ margin: '0px' }} activeClassName="sidebar_active_link">
+          <NavLink to="/report" style={{ margin: '0px' }} activeClassName="sidebar_active_link">
             <Row style={{ direction: "rtl" }}>
               <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
                 {props.theme == 'white' ? <img src={table} style={{ height: "20px" }}></img>
@@ -91,7 +91,37 @@ function SidebarAdmin(props) {
               </Col>
               <Col xs={12} md={9} style={{ paddingRight: "0px" }}>
                 <h4 style={{ margin: "0px", paddingTop: '6px', paddingBottom: '6px' }}>
-                  דף הבית
+                  דיווח אירוע חריג
+                </h4>
+              </Col>
+            </Row>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={`/reportrekem`} style={{ margin: '0px' }} activeClassName="sidebar_active_link">
+            <Row style={{ direction: "rtl" }}>
+              <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
+                {props.theme == 'white' ? <img src={table} style={{ height: "20px" }}></img>
+                  : <img src={table_white} style={{ height: "20px" }}></img>}
+              </Col>
+              <Col xs={12} md={9} style={{ paddingRight: "0px" }}>
+                <h4 style={{ margin: "0px", paddingTop: '6px', paddingBottom: '6px' }}>
+                  דיווח אירוע רק"ם
+                </h4>
+              </Col>
+            </Row>
+          </NavLink>
+        </li>
+        <li>
+          <NavLink to={`/signinhamal`} style={{ margin: '0px' }} activeClassName="sidebar_active_link">
+            <Row style={{ direction: "rtl" }}>
+              <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
+                {props.theme == 'white' ? <img src={people} style={{ height: "20px" }}></img>
+                  : <img src={people_white} style={{ height: "20px" }}></img>}
+              </Col>
+              <Col xs={12} md={9} style={{ paddingRight: "0px" }}>
+                <h4 style={{ margin: "0px", paddingTop: '6px', paddingBottom: '6px' }}>
+                  התחברות חמ"ל
                 </h4>
               </Col>
             </Row>
@@ -102,4 +132,4 @@ function SidebarAdmin(props) {
   );
 }
 
-export default SidebarAdmin;
+export default SidebarAll;

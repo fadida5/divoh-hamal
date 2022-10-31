@@ -45,6 +45,7 @@ import Logo100 from "assets/img/team100.png";
 import Logo100_white from "assets/img/team100_white.png";
 
 import SidebarAdmin from "components/general/Sidebar/SidebarAdmin";
+import SidebarAll from "components/general/Sidebar/SidebarAll";
 import SidebarGdod from "components/general/Sidebar/SidebarGdod";
 import SidebarHativa from "components/general/Sidebar/SidebarHativa";
 import SidebarOgda from "components/general/Sidebar/SidebarOgda";
@@ -89,11 +90,12 @@ function Sidebar() {
         }}
       >
         <div className="sidebar-wrapper" style={{ overflow: "hidden" }}>
-          {/* {user === undefined ? (
+          {user === undefined ? 
             <SidebarAdmin theme={color} />
-          ) : (
-            <SidebarGdod theme={color} />
-          )} */}
+           : (
+            <SidebarAll theme={color} />
+          )}
+          
           {/* fotter של הסייד */}
           <div style={{ textAlign: 'center', position: 'absolute', bottom: 0, width: '100%', marginBottom: '15px' }}>
             {color == 'white' ? <img src={Logo100} style={{ height: "100px" }}></img>

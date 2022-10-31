@@ -29,6 +29,11 @@ import SignUpOtherUsers from "views/authentication/SignUpOtherUsers";
 import ManageUsers from "views/authentication/manageusers/ManageUsers";
 import EditUser from "views/authentication/EditUserForm";
 import Dash from "views/divoah/Dash";
+import Report from "views/divoah/Report";
+import ReportRekem from "views/divoah/ReportRekem";
+import SignInHamal from "views/divoah/SignInHamal";
+import DashHamal from "views/divoah/Hamal/DashHamal";
+
 
 ReactDOM.render(
   <>
@@ -51,9 +56,14 @@ ReactDOM.render(
 
             {/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
             <UnloggedinRoute path="/dash" exact component={Dash} />
+            <UnloggedinRoute path="/report" exact component={Report} />
+            <UnloggedinRoute path="/reportrekem" exact component={ReportRekem} />
+            <UnloggedinRoute path="/signinhamal" exact component={SignInHamal} />
             {/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
+            <LoggedinRoute path="/dashamal" exact component={DashHamal} />
 
-            <Redirect from="/" to="/adminsignin" />
+
+            <Redirect from="/" to="/dash" />
           </Switch>
         </Router>
       </BackgroundColorWrapper>
