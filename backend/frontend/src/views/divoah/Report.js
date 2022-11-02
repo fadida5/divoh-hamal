@@ -29,38 +29,31 @@ export default function Report() {
         personalnumber: "",
         cellphone: "",
         yhida: "",
-        typevent: "",
-        resevent:"",
-        cli:"",
-        carYN:"",
-        neshekYN:"",
-        matafYN:"",
-        selneshek:"",
-        whap:"",
-        tior:"",
+        typevent: "0",
+        resevent:"0",
+        cli:"0",
+        YN:"YES",
+        selneshek:"0",
+        whap:"0",
+        amlahtype:"0",
+        rekemtype:"0",
+        mazavrekem:"0",
+        dwork:"0",
+        mataftype:"0",
+        apitype:"0",
+        mholaztype:"0",
+        mhalztype:"0",
+        pirot:"",
+        datevent:"",
+        mikom:"",
         nifga:"",
-        amlahtype:"",
-        rekemtype:"",
-        mazavrekem:"",
-        dwork:"",
-        mataftype:"",
-        apitype:"",
-        mholaztype:"",
-        mhalztype:"",
-        pirotnezek:"",
-        pirotshigra:"",
-        pirotother:"",
-        datevent: "",
-        mikom: "",
-        tahkirFile: "",
-        tahkirimg: "",
-        iddivoah: "",
-        password: "",
-        role: "",
+        tahkirFile:"",
+        tahkirimg:"",
+
         error: false,
         successmsg: false,
         loading: false,
-        redirectToReferrer: false,
+        redirectToReferrer: false,    
       });
 
       function handleChange(evt) {
@@ -124,7 +117,7 @@ export default function Report() {
             flag = false;
             ErrorReason += " סוג הכלי ריק \n";
           }
-          if(!document.getElementById('carYES').checked && !document.getElementById('carNO').checked) {
+          if(!document.getElementById('YES').checked && !document.getElementById('NO').checked) {
             flag = false;
             ErrorReason += " ,אם נגרם נזק לכלי ריק \n";
           }
@@ -146,7 +139,7 @@ export default function Report() {
             flag = false;
             ErrorReason += " סוג הכלי ריק \n";
           }
-          if(!document.getElementById('carYES').checked && !document.getElementById('carNO').checked) {
+          if(!document.getElementById('YES').checked && !document.getElementById('NO').checked) {
             flag = false;
             ErrorReason += " ,אם נגרם נזק ריק \n";
           }
@@ -168,7 +161,7 @@ export default function Report() {
             flag = false;
             ErrorReason += " סוג הכלי ריק \n";
           }
-          if(!document.getElementById('carYES').checked && !document.getElementById('carNO').checked) {
+          if(!document.getElementById('YES').checked && !document.getElementById('NO').checked) {
             flag = false;
             ErrorReason += " ,אם נגרם נזק ריק \n";
           }
@@ -190,7 +183,7 @@ export default function Report() {
             flag = false;
             ErrorReason += " סוג הכלי ריק \n";
           }    
-          if(!document.getElementById('carYES').checked && !document.getElementById('carNO').checked) {
+          if(!document.getElementById('YES').checked && !document.getElementById('NO').checked) {
             flag = false;
             ErrorReason += " ,אם נגרם נזק ריק \n";
           }            
@@ -204,7 +197,7 @@ export default function Report() {
             flag = false;
             ErrorReason += "סוג הנשק ריק \n";
           }
-          if(!document.getElementById('neshekYES').checked && !document.getElementById('neshekNO').checked) {
+          if(!document.getElementById('YES').checked && !document.getElementById('NO').checked) {
             flag = false;
             ErrorReason += " ,אם נגרם נזק ריק \n";
           }
@@ -218,10 +211,6 @@ export default function Report() {
           }
         }
         if (data.typevent === "6") {
-          if (data.tior == "") {
-          flag = false;
-          ErrorReason += "  פירוט ריק \n";
-        }
           if (
             document.getElementById("when").options[
               document.getElementById("when").selectedIndex
@@ -272,7 +261,7 @@ export default function Report() {
             flag = false;
             ErrorReason += " האם בוצע במהלך עבודה ריק  \n";
           }
-          if(!document.getElementById('matafYES').checked && !document.getElementById('matafNO').checked) {
+          if(!document.getElementById('YES').checked && !document.getElementById('NO').checked) {
             flag = false;
             ErrorReason += " ,אם בפירוק / הרכבה ריק \n";
           }  
@@ -305,28 +294,15 @@ export default function Report() {
             ErrorReason += "סוג הכלי המחלץ ריק \n";
           }
         }
-        if (data.typevent === "10") {
-          if (data.pirotnezek == "") {
+          if (data.pirot == "") {
             flag = false;
             ErrorReason += "  פירוט האירוע ריק \n";
           }
-        }
-        if (data.typevent === "11") {
-          if (data.pirotshigra == "") {
-            flag = false;
-            ErrorReason += "  פירוט האירוע ריק \n";
-          }
-        }
-        if (data.typevent === "12") {
-          if (data.pirotother == "") {
-            flag = false;
-            ErrorReason += "  פירוט האירוע ריק \n";
-          }
-        }
         if (data.mikom == "") {
           flag = false;
           ErrorReason += " ,מיקום ריק \n";
-      }
+        }
+      
         if (!data.datevent) {
           flag = false;
           ErrorReason += " ,תאריך ריק \n";
@@ -338,13 +314,85 @@ export default function Report() {
   
 
         if (flag == true) {
-          // FixUser(event);
-          // shem(event);
+          SendFormData(event);
         } else {
           toast.error(ErrorReason);
         }
-      }
+      };
+      const SendFormData = (event) => {
+        event.preventDefault();
+        setData({ ...data, loading: true, successmsg: false, error: false, NavigateToReferrer: false });
+        const requestData = {
+          name: data.name,
+          lastname: data.lastname,
+          personalnumber:data.personalnumber,
+          cellphone: data.cellphone,
+          yhida: data.yhida,
+          typevent: data.typevent,
+          resevent: data.resevent,
+          cli: data.cli,
+          YN: data.YN,
+          selneshek: data.selneshek,
+          whap: data.whap,
+          amlahtype: data.amlahtype,
+          rekemtype: data.rekemtype,
+          mazavrekem: data.mazavrekem,
+          dwork: data.dwork,
+          mataftype: data.mataftype,
+          apitype: data.apitype,
+          mholaztype: data.mholaztype,
+          mhalztype: data.mhalztype,
+          pirot: data.pirot,
+          datevent: data.datevent,
+          mikom: data.mikom,
+          nifga: data.nifga,
+        };
+        console.log("In the SendFormData Func")
+        console.log(requestData)
 
+        console.groupCollapsed("Axios");
+        
+        axios
+        .post(`http://localhost:8000/report/add`, requestData)
+        .then((res) => {
+          console.groupCollapsed("Axios then");
+          console.log(res);
+          setData({ ...data, loading: false, error: false, successmsg: true });
+          toast.success(` הדיווח נשלח בהצלחה`);
+          history.push(`/dash`);
+          console.log(res.data);
+          console.groupEnd();
+        })
+        .catch((error) => {
+          console.groupCollapsed("Axios catch error");
+          console.log(error);
+          setData({
+            ...data,
+            errortype: error.response.data.error,
+            loading: false,
+            error: true,
+          });
+          console.groupEnd();
+        });
+        console.groupEnd();
+  };
+
+  const showSuccess = () => (
+    <div
+      className="alert alert-info "
+      style={{ textAlign: "right", display: data.successmsg ? "" : "none" }}
+    >
+      <h2>הדיווח נשלח בהצלחה</h2>
+    </div>
+  );
+  const showError = () => (
+    <div
+      className="alert alert-danger"
+      style={{ textAlign: "right", display: data.error ? "" : "none" }}
+    >
+      <h2>שגיאה בשליחת הדיווח</h2>
+    </div>
+  );
 
       const Report = () => (
         <>
@@ -480,6 +528,7 @@ export default function Report() {
                           id="sel"
                         >
                           <option value={"0"}>בחר</option>
+                          <option value={"1"}>סתם</option>
                         </Input>
                       </FormGroup>
 
@@ -491,10 +540,10 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                           <Input
                             type="radio"
-                            name="carYN"
-                            value={data.yes}
+                            name="YN"
+                            value={data.YN}
                             onChange={handleChange}
-                            id="carYES"
+                            id="YES"
                           />
                           כן  
                         </div>
@@ -504,9 +553,9 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         <Input
                           type="radio"
-                          id="carNO"
-                          name="carYN"
-                          value={data.no}
+                          id="NO"
+                          name="YN"
+                          value={data.YN}
                           onChange={handleChange}
                         />
                         לא
@@ -563,10 +612,10 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                           <Input
                             type="radio"
-                            name="carYN"
-                            value={data.yes}
+                            name="YN"
+                            value={data.YN}
                             onChange={handleChange}
-                            id="carYES"
+                            id="YES"
                           />
                           כן  
                         </div>
@@ -576,9 +625,9 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         <Input
                           type="radio"
-                          id="carNO"
-                          name="carYN"
-                          value={data.no}
+                          id="NO"
+                          name="YN"
+                          value={data.YN}
                           onChange={handleChange}
                         />
                         לא
@@ -623,6 +672,7 @@ export default function Report() {
                           id="sel"
                         >
                           <option value={"0"}>בחר</option>
+
                         </Input>
                       </FormGroup>
 
@@ -635,10 +685,10 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                           <Input
                             type="radio"
-                            name="carYN"
-                            value={data.yes}
+                            name="YN"
+                            value={data.YN}
                             onChange={handleChange}
-                            id="carYES"
+                            id="YES"
                           />
                           כן  
                         </div>
@@ -648,9 +698,9 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         <Input
                           type="radio"
-                          id="carNO"
-                          name="carYN"
-                          value={data.no}
+                          id="NO"
+                          name="YN"
+                          value={data.YN}
                           onChange={handleChange}
                         />
                         לא
@@ -707,10 +757,10 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                           <Input
                             type="radio"
-                            name="carYN"
-                            value={data.yes}
+                            name="YN"
+                            value={data.YN}
                             onChange={handleChange}
-                            id="carYES"
+                            id="YES"
                           />
                           כן  
                         </div>
@@ -720,9 +770,9 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         <Input
                           type="radio"
-                          id="carNO"
-                          name="carYN"
-                          value={data.no}
+                          id="NO"
+                          name="YN"
+                          value={data.YN}
                           onChange={handleChange}
                         />
                         לא
@@ -748,6 +798,7 @@ export default function Report() {
                           id="neshek"
                         >
                           <option value={"0"}>בחר</option>
+
                         </Input>
                       </FormGroup>
 
@@ -760,10 +811,10 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                           <Input
                             type="radio"
-                            name="neshekYN"
-                            value={data.yes}
+                            name="YN"
+                            value={data.YN}
                             onChange={handleChange}
-                            id="neshekYES"
+                            id="YES"
                           />
                           כן  
                         </div>
@@ -773,9 +824,9 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         <Input
                           type="radio"
-                          id="neshekNO"
-                          name="neshekYN"
-                          value={data.no}
+                          id="NO"
+                          name="YN"
+                          value={data.YN}
                           onChange={handleChange}
                         />
                         לא
@@ -813,16 +864,6 @@ export default function Report() {
                     <>
                     <p style={{textAlign: "right", color:"red", fontSize: "10px"}}> *תאונת עבודה - כל אירוע בו קיים ימי מחלה (מיום מחלה אחד ומעלה)</p>
 
-                  <FormGroup dir="rtl">
-                    <Input
-                      placeholder="תיאור האירוע"
-                      name="tior"
-                      type="textarea"
-                      value={data.tior}
-                      onChange={handleChange}
-                    />
-                  </FormGroup> 
-
                       <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         מתי נפגע
                       </div>
@@ -855,6 +896,7 @@ export default function Report() {
                           id="amlah"
                         >
                           <option value={"0"}>בחר</option>
+
                         </Input>
                       </FormGroup>
 
@@ -877,6 +919,7 @@ export default function Report() {
                       id="mataf"
                     >
                       <option value={"0"}>בחר</option>
+
                     </Input>
                   </FormGroup>
 
@@ -940,10 +983,10 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                           <Input
                             type="radio"
-                            name="matafYN"
-                            value={data.yes}
+                            name="YN"
+                            value={data.YN}
                             onChange={handleChange}
-                            id="matafYES"
+                            id="YES"
                           />
                           כן  
                         </div>
@@ -953,9 +996,9 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         <Input
                           type="radio"
-                          id="matafNO"
-                          name="matafYN"
-                          value={data.no}
+                          id="NO"
+                          name="YN"
+                          value={data.YN}
                           onChange={handleChange}
                         />
                         לא
@@ -1024,55 +1067,15 @@ export default function Report() {
                     </>
                   )}
 
-                  {/* נזק לתשתיות אחזקה/הח"י */}
-
-                  {data.typevent === "10" && (
-                    <>
                   <FormGroup dir="rtl">
                     <Input
                       placeholder="פירוט האירוע"
-                      name="pirotnezek"
+                      name="pirot"
                       type="textarea"
-                      value={data.pirotnezek}
+                      value={data.pirot}
                       onChange={handleChange}
                     />
                   </FormGroup> 
-                    </>
-                  )}
- 
-                 {/* נזק לתשתיות אחזקה/הח"י */}
-
-                 {data.typevent === "11" && (
-                    <>
-                  <FormGroup dir="rtl">
-                    <Input
-                      placeholder="פירוט האירוע"
-                      name="pirotshigra"
-                      type="textarea"
-                      value={data.pirotshigra}
-                      onChange={handleChange}
-                    />
-                  </FormGroup> 
-                    </>
-                  )}
-
-
-                  {/* אחר */}
-
-                  {data.typevent === "12" && (
-                    <>
-                  <FormGroup dir="rtl">
-                    <Input
-                      placeholder="פירוט האירוע"
-                      name="pirotother"
-                      type="textarea"
-                      value={data.pirotother}
-                      onChange={handleChange}
-                    />
-                  </FormGroup> 
-                    </>
-                  )} 
-
 
                   <div style={{ textAlign: "right", paddingTop: "10px" }}>
                     תאריך אירוע
@@ -1219,7 +1222,9 @@ export default function Report() {
 
     return (
         <>
-           {Report()}
+        {showError()}
+        {showSuccess()}
+        {Report()}
         </>
       );
 }  

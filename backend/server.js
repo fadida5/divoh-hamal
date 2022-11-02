@@ -20,29 +20,36 @@ app.use(morgan('dev'));
 app.use(cookieParser());
 
 // Configure Mongo
-const db = "mongodb://localhost:27017/Bazak";
+const db = "mongodb://localhost:27017/DivoahDB";
 
 // Connect to Mongo with Mongoose
 mongoose.connect(
     db,
-    { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true }
+    { useNewUrlParser: true,
+         useUnifiedTopology: true,
+        //  useCreateIndex: true 
+        }
 )
     .then(() => console.log("Mongo connected"))
     .catch(err => console.log(err));
 
 //user routes 
-const authRoutes = require('./routes/authentication/auth');
-const userRoutes = require('./routes/authentication/user');
-app.use('/api', authRoutes)
-app.use('/api', userRoutes)
+// const authRoutes = require('./routes/authentication/auth');
+// const userRoutes = require('./routes/authentication/user');
+// app.use('/api', authRoutes)
+// app.use('/api', userRoutes)
 
-if(process.env.NODE_ENV === 'production'){
-    //set static folder
-    app.use(express.static('frontend/build'));
-    app.get('*', (req,res)=>{
-      res.sendFile(path.resolve(__dirname,'frontend', 'build', 'index.html'));
-    });  
-  }
+// if(process.env.NODE_ENV === 'production'){
+//     //set static folder
+//     app.use(express.static('frontend/build'));
+//     app.get('*', (req,res)=>{
+//       res.sendFile(path.resolve(__dirname,'frontend', 'build', 'index.html'));
+//     });  
+//   }
+
+//
+const ReportRouter = require("./routes/divoahReport");
+app.use("/report", ReportRouter);
 
   //listen
 const port = process.env.PORT || 8000;
