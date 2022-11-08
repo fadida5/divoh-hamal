@@ -12,7 +12,7 @@ const ReportSchema = new mongoose.Schema({
     typevent:String,
     resevent:String,
     cli:String,
-    YN:String,
+    yn:Boolean,
     selneshek:String,
     whap:String,
     amlahtype:String,

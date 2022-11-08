@@ -14,6 +14,18 @@ exports.getuserbyid = (req, res) => {
     })
 }
 
+exports.getuserbypersonalnumber = (req, res) => {
+    User.findOne(req.body.personalnumber).exec((err, user) => {
+      if (err || !user) {
+        return res.status(400).json({
+          error: "משתמש לא נמצא",
+        });
+      } else {
+        res.send(user);
+      }
+    });
+  };
+
 exports.find = (req, res) => {
     User.find().sort({ updatedAt: 'descending' })
         .then(orders => res.json(orders))

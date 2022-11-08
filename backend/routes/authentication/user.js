@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router()
 
-const { find,getuserbyid,update,remove,findvalidated,findnotvalidated,usersbyrole} = require("../../controllers/authentication/user");
+const { find,getuserbyid,getuserbypersonalnumber,update,remove,findvalidated,findnotvalidated,usersbyrole} = require("../../controllers/authentication/user");
 
 router.post('/getuserbyid',getuserbyid)
+
+router.post("/getuserbypersonalnumber", getuserbypersonalnumber);
 
 router.get('/users', find)
 

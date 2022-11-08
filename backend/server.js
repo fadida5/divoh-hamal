@@ -33,11 +33,11 @@ mongoose.connect(
     .then(() => console.log("Mongo connected"))
     .catch(err => console.log(err));
 
-//user routes 
-// const authRoutes = require('./routes/authentication/auth');
-// const userRoutes = require('./routes/authentication/user');
-// app.use('/api', authRoutes)
-// app.use('/api', userRoutes)
+// user routes 
+const authRoutes = require('./routes/authentication/auth');
+const userRoutes = require('./routes/authentication/user');
+app.use('/api', authRoutes)
+app.use('/api', userRoutes)
 
 // if(process.env.NODE_ENV === 'production'){
 //     //set static folder

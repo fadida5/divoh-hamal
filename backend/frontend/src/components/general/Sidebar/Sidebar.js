@@ -90,11 +90,12 @@ function Sidebar() {
         }}
       >
         <div className="sidebar-wrapper" style={{ overflow: "hidden" }}>
-          {user === undefined ? 
+          {isAuthenticated() ? 
             <SidebarAdmin theme={color} />
-           : (
-            <SidebarAll theme={color} />
-          )}
+            : (
+              <SidebarAll theme={color} />
+              )
+          }
           
           {/* fotter של הסייד */}
           <div style={{ textAlign: 'center', position: 'absolute', bottom: 0, width: '100%', marginBottom: '15px' }}>

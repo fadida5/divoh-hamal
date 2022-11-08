@@ -32,7 +32,7 @@ export const signin = (user) => {
 }
 export const signout = () => {
     if(typeof window !== 'undefined') {
-        localStorage.removeItem('jwt')
+        localStorage.removeItem('emergencyuser')
         return fetch(`/api/signout`, {
             method: "GET",
         })
@@ -45,7 +45,7 @@ export const signout = () => {
 
 export const authenticate = (data) => {
     if(typeof window !== 'undefined') {
-        localStorage.setItem('jwt', JSON.stringify(data))
+        localStorage.setItem('emergencyuser', JSON.stringify(data))
     }
 }
 
@@ -53,8 +53,8 @@ export const isAuthenticated = () => {
     if(typeof window == 'undefined') {
         return false;
     }
-    if(localStorage.getItem('jwt')) {
-        return JSON.parse(localStorage.getItem('jwt'));
+    if(localStorage.getItem('emergencyuser')) {
+        return JSON.parse(localStorage.getItem('emergencyuser'));
     } else {
         return false;
     }

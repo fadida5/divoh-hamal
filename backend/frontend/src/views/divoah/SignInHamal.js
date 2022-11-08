@@ -26,15 +26,14 @@ import logobazak2 from "assets/img/logobazak2.png";
 
 function SignInHamal() {
   const [values, setValues] = useState({
-    personalnumber: '',
-    password: '',
+    personalnumber: "",
     errortype: '',
     error: false,
     successmsg: false,
     loading: false,
     redirectToReferrer: false,
   })
-  const { personalnumber, password, error, loading, redirectToReferrer } = values
+  const { personalnumber, error, loading, redirectToReferrer } = values
   const { user } = isAuthenticated()
   const handleChange = name => event => {
     setValues({ ...values, [name]: event.target.value })
@@ -42,7 +41,7 @@ function SignInHamal() {
   const clickSubmit = (event) => {
     //event.preventDefault()
     setValues({ ...values, loading: true, successmsg: false, error: false })
-    axios.post(`http://localhost:8000/api/signin`, { personalnumber, password })
+    axios.post(`http://localhost:8000/api/signin`, { personalnumber})
       .then(res => {
         authenticate(res.data)
         setValues({ ...values, loading: false, error: false, redirectToReferrer: true })
@@ -55,22 +54,10 @@ function SignInHamal() {
   const redirectUser = () => {
     if (redirectToReferrer) {
       console.log(user);
-      if (user && user.validated == true) {
-        if (user.role === "0") {
+      if (user.validated == true) {
           history.push(`/dashamal`);
-        }
-        if (user.role === "1") {
-          history.push(`/dashboard/gdod/${user.gdodid}/magadal/0`);
-        }
-        if (user.role === "2") {
-          history.push(`/dashboard/hativa/${user.hativaid}/magadal/0`);
-        }
-        if (user.role === "3") {
-          history.push(`/dashboard/ogda/${user.ogdaid}/magadal/0`);
-        }
-        if (user.role === "4") {
-          history.push(`/dashboard/pikod/${user.pikodid}/magadal/0`);
-        }
+          toast.success("משתמש מאושר מערכת");
+
       }
       else {
         toast.success("משתמש לא מאושר מערכת");
@@ -86,10 +73,9 @@ function SignInHamal() {
   )
   const showError = () => (
     <div className="alert alert-danger" style={{ textAlign: 'right', display: values.error ? '' : 'none' }}>
-      <h2>שגיאה בשליחת הטופס</h2>
+      <h2>משתמש לא מאושר למערכת</h2>
       <h2>{values.errortype}</h2>
     </div>
-
   )
 
   useEffect(() => {
@@ -111,9 +97,6 @@ function SignInHamal() {
                   <FormGroup className="mb-3">
                     <Input onChange={handleChange('personalnumber')} placeholder="מספר אישי" type="string" value={personalnumber} />
                   </FormGroup>
-                  {/* <FormGroup>
-                    <Input onChange={handleChange('password')} placeholder="סיסמא" type="password" value={password} />
-                  </FormGroup>*/}
                   {loading ? (
                     <>
                     </>

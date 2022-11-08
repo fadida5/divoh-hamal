@@ -33,7 +33,8 @@ import Report from "views/divoah/Report";
 import ReportRekem from "views/divoah/ReportRekem";
 import SignInHamal from "views/divoah/SignInHamal";
 import DashHamal from "views/divoah/Hamal/DashHamal";
-
+import Odot from "views/divoah/Hamal/Odot";
+import SignUpHamal from "views/divoah/SignUpHamal";
 
 ReactDOM.render(
   <>
@@ -43,9 +44,9 @@ ReactDOM.render(
         <Router history={history}>
           <Switch>
             {/*///////////////////////////////////////////UnLoggedIn Routes/////////////////////////////////////////////////*/}
-            <UnloggedinRoute path="/signin" exact component={SignIn} />
+            {/* <UnloggedinRoute path="/signin" exact component={SignIn} />
             <UnloggedinRoute path="/adminsignin" exact component={AdminSignIn} />
-            <UnloggedinRoute path="/signup" exact component={SignUp} />
+            <UnloggedinRoute path="/signup" exact component={SignUp} /> */}
             <LoggedinRoute path="/signupotherusers" exact component={SignUpOtherUsers} />
             {/*///////////////////////////////////////////UnLoggedIn Routes/////////////////////////////////////////////////*/}
 
@@ -59,9 +60,10 @@ ReactDOM.render(
             <UnloggedinRoute path="/report" exact component={Report} />
             <UnloggedinRoute path="/reportrekem" exact component={ReportRekem} />
             <UnloggedinRoute path="/signinhamal" exact component={SignInHamal} />
+            <UnloggedinRoute path="/signup" exact component={SignUpHamal} />
             {/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
             <LoggedinRoute path="/dashamal" exact component={DashHamal} />
-
+            <LoggedinRoute path="/odot" exact component={Odot} />
 
             <Redirect from="/" to="/dash" />
           </Switch>

@@ -32,7 +32,7 @@ export default function Report() {
       typevent: "רק'ם",
       resevent:"0",
       cli:"0",
-      YN:"YES",
+      yn:"",
       selneshek:"0",
       whap:"0",
       amlahtype:"0",
@@ -47,8 +47,6 @@ export default function Report() {
       datevent:"",
       mikom:"",
       nifga:"",
-      tahkirFile:"",
-      tahkirimg:"",
 
       error: false,
       successmsg: false,
@@ -145,7 +143,7 @@ export default function Report() {
           typevent: data.typevent,
           resevent: data.resevent,
           cli: data.cli,
-          YN: data.YN,
+          yn: data.yn,
           selneshek: data.selneshek,
           whap: data.whap,
           amlahtype: data.amlahtype,
@@ -214,7 +212,7 @@ export default function Report() {
           <div>
                 <Container className="mt--8 pb-5">
                 <Row className="justify-content-center">
-          <Col lg="5" md="7">
+          <Col lg="6" md="7">
             <Card className="shadow border-0">
               <CardBody className="px-lg-5 py-lg-5">
                 <div className="text-center text-muted mb-4">
@@ -325,8 +323,8 @@ export default function Report() {
                         <div style={{ textAlign: "right", paddingTop: "10px" }}>
                           <Input
                             type="radio"
-                            name="YN"
-                            value={data.YN}
+                            name="yn"
+                            value={true}
                             onChange={handleChange}
                             id="YES"
                           />
@@ -339,8 +337,8 @@ export default function Report() {
                         <Input
                           type="radio"
                           id="NO"
-                          name="YN"
-                          value={data.YN}
+                          name="yn"
+                          value={false}
                           onChange={handleChange}
                         />
                         לא
@@ -455,32 +453,6 @@ export default function Report() {
                  </div>
                   </>
                   )}
-
-
-                  <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                    צירוף מסמך של התחקיר
-                  </div>
-                  <input
-                    placeholder="צירוף מסמך של התחקיר"
-                    name="tahkirFile"
-                    type="file"
-                    id="upfile"
-                    value={data.tahkirFile}
-                    onChange={handleChange}
-                    accept=".pdf, .doc, .docx, .txt, .xls"
-                  />
-
-                  <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                    צירוף תמונות האירוע
-                  </div>
-                  <input
-                    placeholder="צירוף תמונות האירוע"
-                    name="tahkirimg"
-                    type="file"
-                    value={data.tahkirimg}
-                    onChange={handleChange}
-                    accept=".jpeg, .png"
-                  />
 
                   <div className="text-center">
                     <button 
