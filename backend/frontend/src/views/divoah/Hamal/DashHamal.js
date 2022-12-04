@@ -74,7 +74,7 @@ const AdminSignInForm = () => {
                     {reportDB.map((report, index) => (
                       <tr>
                         <td>
-                          <p>{report.yhida}</p>
+                          <p>{report.pirot}</p>
                         </td>
                         <td>{eventTypeArray[report.typevent]}</td>
                         <td>{report.pirot}</td>

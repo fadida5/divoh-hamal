@@ -28,21 +28,24 @@ export default function Report() {
         lastname: "",
         personalnumber: "",
         cellphone: "",
-        yhida: "",
+        pikod: "0",
+        ogda: "0",
+        hativa: "0",
+        gdod: "0",
         typevent: "0",
         resevent:"0",
         cli:"0",
         yn:"",
         selneshek:"0",
         whap:"0",
-        amlahtype:"0",
+        amlahtype:"",
         rekemtype:"0",
         mazavrekem:"0",
         dwork:"0",
         mataftype:"0",
         apitype:"0",
         mholaztype:"0",
-        mhalztype:"0",
+        // mhalztype:"0",
         pirot:"",
         datevent:"",
         mikom:"",
@@ -85,10 +88,40 @@ export default function Report() {
           flag = false;
           ErrorReason += " טלפון ריק \n";
         }
-        if (data.yhida == "") {
+        
+        if (
+          document.getElementById("pikod").options[
+            document.getElementById("pikod").selectedIndex
+          ].value == "0"
+        ) {
           flag = false;
-          ErrorReason += " יחידה ריקה \n";
+          ErrorReason += " פיקוד ריק \n";
         }
+        if (
+          document.getElementById("ogda").options[
+            document.getElementById("ogda").selectedIndex
+          ].value == "0"
+        ) {
+          flag = false;
+          ErrorReason += " אוגדה ריק \n";
+        }
+        if (
+          document.getElementById("hativa").options[
+            document.getElementById("hativa").selectedIndex
+          ].value == "0"
+        ) {
+          flag = false;
+          ErrorReason += " חטיבה ריק \n";
+        }
+        if (
+          document.getElementById("gdod").options[
+            document.getElementById("gdod").selectedIndex
+          ].value == "0"
+        ) {
+          flag = false;
+          ErrorReason += " גדוד ריק \n";
+        }
+
         if (
           document.getElementById("seltype").options[
             document.getElementById("seltype").selectedIndex
@@ -217,11 +250,7 @@ export default function Report() {
             flag = false;
             ErrorReason += "מתי הנפגע ריק \n";
           }
-          if (
-            document.getElementById("amlah").options[
-              document.getElementById("amlah").selectedIndex
-            ].value == "0"
-          ) {
+          if (data.amlah =="") {
             flag = false;
             ErrorReason += " סוג האמלח ריק \n";
           }
@@ -283,14 +312,14 @@ export default function Report() {
             flag = false;
             ErrorReason += "סוג הכלי המחולץ ריק \n";
           }
-          if (
-            document.getElementById("mhalz").options[
-              document.getElementById("mhalz").selectedIndex
-            ].value == "0"
-          ) {
-            flag = false;
-            ErrorReason += "סוג הכלי המחלץ ריק \n";
-          }
+          // if (
+          //   document.getElementById("mhalz").options[
+          //     document.getElementById("mhalz").selectedIndex
+          //   ].value == "0"
+          // ) {
+          //   flag = false;
+          //   ErrorReason += "סוג הכלי המחלץ ריק \n";
+          // }
         }
           if (data.pirot == "") {
             flag = false;
@@ -325,7 +354,10 @@ export default function Report() {
           lastname: data.lastname,
           personalnumber:data.personalnumber,
           cellphone: data.cellphone,
-          yhida: data.yhida,
+          pikod:data.pikod,
+          ogda:data.ogda,
+          hativa:data.hativa,
+          gdod:data.gdod,
           typevent: data.typevent,
           resevent: data.resevent,
           cli: data.cli,
@@ -339,7 +371,7 @@ export default function Report() {
           mataftype: data.mataftype,
           apitype: data.apitype,
           mholaztype: data.mholaztype,
-          mhalztype: data.mhalztype,
+          // mhalztype: data.mhalztype,
           pirot: data.pirot,
           datevent: data.datevent,
           mikom: data.mikom,
@@ -449,15 +481,62 @@ export default function Report() {
                     />
                   </FormGroup>
 
-                  <FormGroup dir="rtl">
-                    <Input
-                      placeholder="יחידה"
-                      name="yhida"
-                      type="string"
-                      value={data.yhida}
-                      onChange={handleChange}
-                    />
-                  </FormGroup>
+                      <FormGroup>
+                        <Input
+                          type="select"
+                          name="pikod"
+                          value={data.pikod}
+                          onChange={handleChange}
+                          id="pikod"
+                        >
+                          <option value={"0"}>פיקוד</option>
+                          <option value={"1"}>סתם</option>
+
+                        </Input>
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Input
+                          type="select"
+                          name="ogda"
+                          value={data.ogda}
+                          onChange={handleChange}
+                          id="ogda"
+                        >
+                          <option value={"0"}>אוגדה</option>
+                          <option value={"1"}>סתם</option>
+
+                        </Input>
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Input
+                          type="select"
+                          name="hativa"
+                          value={data.hativa}
+                          onChange={handleChange}
+                          id="hativa"
+                        >
+                          <option value={"0"}>חטיבה</option>
+                          <option value={"1"}>סתם</option>
+
+                        </Input>
+                      </FormGroup>
+
+                      <FormGroup>
+                        <Input
+                          type="select"
+                          name="gdod"
+                          value={data.gdod}
+                          onChange={handleChange}
+                          id="gdod"
+                        >
+                          <option value={"0"}>גדוד</option>
+                          <option value={"1"}>סתם</option>
+
+                        </Input>
+                      </FormGroup>
+
 
                   <div className="text-center text-muted mb-4">
                     <small>פרטי אירוע</small>
@@ -887,14 +966,12 @@ export default function Report() {
                       </div>
                       <FormGroup>
                         <Input
-                          type="select"
-                          name="amlahtype"
+                        type="text"
+                        name="amlahtype"
                           value={data.amlahtype}
                           onChange={handleChange}
                           id="amlah"
                         >
-                          <option value={"0"}>בחר</option>
-
                         </Input>
                       </FormGroup>
 
@@ -1047,7 +1124,7 @@ export default function Report() {
                       <option value={"0"}>בחר</option>
                     </Input>
                   </FormGroup>
-                  <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                  {/* <div style={{ textAlign: "right", paddingTop: "10px" }}>
                     סוג הכלי המחלץ
                   </div>
                  <FormGroup>
@@ -1061,7 +1138,7 @@ export default function Report() {
                       <option value={"0"}>בחר</option>
                     </Input>
                   </FormGroup>
-
+ */}
                     </>
                   )}
 
@@ -1110,31 +1187,6 @@ export default function Report() {
 
                    {data.nifga > "0" && (
                     <>
-                  <FormGroup dir="rtl">
-                    <Input
-                      placeholder="שם הנפגע"
-                      name="namenifga"
-                      type="string"
-                      value={data.namenifga}
-                      onChange={handleChange}
-                    />
-                  </FormGroup> 
-
-                  <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                    דרגת הנפגע
-                  </div>
-                 <FormGroup>
-                    <Input
-                      type="select"
-                      name="dargaNifga"
-                      value={data.dargaNifga}
-                      onChange={handleChange}
-                      id="darga"
-                    >
-                      <option value={"0"}>בחר</option>
-                    </Input>
-                  </FormGroup>
-
                       <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         מצב הנפגע
                       </div>

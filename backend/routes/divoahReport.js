@@ -17,7 +17,10 @@ router.route("/add").post((req, res) => {
   const lastname = req.body.lastname;
   const personalnumber = req.body.personalnumber;
   const cellphone = req.body.cellphone;
-  const yhida = req.body.yhida;
+  const pikod = req.body.pikod;
+  const ogda = req.body.ogda;
+  const hativa = req.body.hativa;
+  const gdod = req.body.gdod;
   const typevent = req.body.typevent;
   const resevent = req.body.resevent;
   const cli = req.body.cli;
@@ -31,7 +34,7 @@ router.route("/add").post((req, res) => {
   const mataftype = req.body.mataftype;
   const apitype = req.body.apitype;
   const mholaztype = req.body.mholaztype;
-  const mhalztype = req.body.mhalztype;
+  // const mhalztype = req.body.mhalztype;
   const pirot = req.body.pirot;
   const datevent = Date.parse(req.body.datevent);
   const mikom = req.body.mikom;
@@ -42,7 +45,10 @@ router.route("/add").post((req, res) => {
     lastname,
     personalnumber,
     cellphone,
-    yhida,
+    pikod,
+    ogda,
+    hativa,
+    gdod,
     typevent,
     resevent,
     cli,
@@ -56,7 +62,7 @@ router.route("/add").post((req, res) => {
     mataftype,
     apitype,
     mholaztype,
-    mhalztype,
+    // mhalztype,
     pirot,
     datevent,
     mikom,
@@ -107,7 +113,10 @@ router.route("/update/:id").post((req, res) => {
       request.lastname = req.body.lastname;
       request.personalnumber = req.body.personalnumber;
       request.cellphone = req.body.cellphone;
-      request.yhida = req.body.yhida;
+      request.pikod = req.body.pikod;
+      request.ogda = req.body.ogda;
+      request.hativa = req.body.hativa;
+      request.gdod = req.body.gdod;
       request.typevent = req.body.typevent;
       request.resevent = req.body.resevent;
       request.cli = req.body.cli;
@@ -121,7 +130,7 @@ router.route("/update/:id").post((req, res) => {
       request.mataftype = req.body.mataftype;
       request.apitype = req.body.apitype;
       request.mholaztype = req.body.mholaztype;
-      request.mhalztype = req.body.mhalztype;
+      // request.mhalztype = req.body.mhalztype;
       request.pirot = req.body.pirot;
       request.datevent = Date.parse(req.body.datevent);
       request.mikom = req.body.mikom;
