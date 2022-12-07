@@ -11,30 +11,7 @@ const SortingTable = ({ match }) => {
 
   const [data, setData] = useState([])
   //units
-  const [gdods, setGdods] = useState([]);
-  const [hativas, setHativas] = useState([]);
-  const [ogdas, setOgdas] = useState([]);
-  const [pikods, setPikods] = useState([]);
 
-  const loadPikods = async () => {
-    let response = await axios.get("http://localhost:8000/api/pikod",)
-    setPikods(response.data);
-  }
-
-  const loadOgdas = async () => {
-    let response = await axios.get("http://localhost:8000/api/ogda",)
-    setOgdas(response.data);
-  }
-
-  const loadHativas = async () => {
-    let response = await axios.get("http://localhost:8000/api/hativa",)
-    setHativas(response.data);
-  }
-
-  const loadGdods = async () => {
-    let response = await axios.get("http://localhost:8000/api/gdod",)
-    setGdods(response.data);
-  }
 
   const UserDelete = UserId => {
     axios.post(`http://localhost:8000/api/user/remove/${UserId}`)
@@ -58,10 +35,6 @@ const SortingTable = ({ match }) => {
 
   useEffect(() => {
     (async () => {
-      await loadPikods();
-      await loadOgdas();
-      await loadHativas();
-      await loadGdods();
       const result = await axios.get("http://localhost:8000/api/usersvalidated");
       setData(result.data);
     })();
@@ -94,17 +67,6 @@ const SortingTable = ({ match }) => {
 
   return (
     <>
-      <div style={{ float: 'right', paddingBottom: '5px' }}>
-        <ReactHTMLTableToExcel
-          id="test-table-xls-button"
-          className="btn-green"
-          table="table-to-xls-users"
-          filename="קובץ - משתמשי מערכת"
-          sheet="קובץ - משתמשי מערכת"
-          buttonText="הורד כקובץ אקסל"
-          style={{ float: 'right' }}
-        />
-      </div>
       <GlobalFilter filter={globalFilter} setFilter={setGlobalFilter} />
       <div className="table-responsive" style={{ overflow: 'auto' }}>
         <table id="table-to-xls-users" {...getTableProps()}>
@@ -146,27 +108,9 @@ const SortingTable = ({ match }) => {
                           }
                           if (cell.column.id == "role") {
                             if (cell.value == '0')
-                              return <td>מנהל מערכת</td>
+                              return <td>משתמש רגיל</td>
                             if (cell.value == '1')
-                              return <td>משתמש גדוד</td>
-                            if (cell.value == '2')
-                              return <td>משתמש חטיבה</td>
-                            if (cell.value == '3')
-                              return <td>משתמש אוגדה</td>
-                            if (cell.value == '4')
-                              return <td>משתמש פיקוד</td>
-                          }
-                          if (cell.column.id == "unit") {
-                            if (row.original.role == '0')
-                              return <td></td>
-                            if (row.original.role == '1')
-                              return row.original.gdodid ? <td {...cell.getCellProps()}>{gdods.map((gdod, index) => (gdod._id == row.original.gdodid ? gdod.name : null))}</td> : <td {...cell.getCellProps()}></td>
-                            if (row.original.role == '2')
-                              return row.original.hativaid ? <td {...cell.getCellProps()}>{hativas.map((hativa, index) => (hativa._id == row.original.hativaid ? hativa.name : null))}</td> : <td {...cell.getCellProps()}></td>
-                            if (row.original.role == '3')
-                              return row.original.ogdaid ? <td {...cell.getCellProps()}>{ogdas.map((ogda, index) => (ogda._id == row.original.ogdaid ? ogda.name : null))}</td> : <td {...cell.getCellProps()}></td>
-                            if (row.original.role == '4')
-                              return row.original.pikodid ? <td {...cell.getCellProps()}>{pikods.map((pikod, index) => (pikod._id == row.original.pikodid ? pikod.name : null))}</td> : <td {...cell.getCellProps()}></td>
+                              return <td>משתמש חמ"ל</td>
                           }
                         }
 

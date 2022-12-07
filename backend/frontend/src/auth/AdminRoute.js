@@ -8,7 +8,7 @@ const AdminRoute = ({component: Component, ...rest}) => (
     <Route
     {...rest}
     render ={ props =>
-        isAuthenticated() && (isAuthenticated().user.validated===true) && isAuthenticated().user.role === "0" ? (
+        isAuthenticated() && (isAuthenticated().user.validated===true) && isAuthenticated().user.role === "1" ? (
             <LoggedinLayout component={Component}/>
         ) : (
             <Redirect to = {{

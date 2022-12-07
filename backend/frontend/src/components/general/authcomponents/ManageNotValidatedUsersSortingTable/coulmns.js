@@ -27,12 +27,6 @@ export const COLUMNS = [
         Filter:ColumnFilter
     },
     {
-        Header: 'יחידה',
-        Footer:'יחידה',
-        accessor:'unit',
-        Filter:ColumnFilter
-    },
-    {
         Header: 'נוצר בתאריך',
         Footer:'נוצר בתאריך',
         accessor:'createdAt',

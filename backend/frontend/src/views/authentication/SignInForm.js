@@ -31,7 +31,7 @@ function Signin() {
     error: false,
     successmsg: false,
     loading: false,
-    redirectToReferrer: false,
+    redirectToReferrer: true,
   })
   const { personalnumber, loading, redirectToReferrer } = values
 
@@ -71,20 +71,20 @@ function Signin() {
       console.log(user);
       if (user && user.validated == true) {
         if (user.role === "0") {
-          history.push(`/dashboard/admin/0/magadal/0`);
+          history.push(`/dash`);
         }
         if (user.role === "1") {
-          history.push(`/dashboard/gdod/${user.gdodid}/magadal/0`);
+          history.push(`/dashamal`);
         }
-        if (user.role === "2") {
-          history.push(`/dashboard/hativa/${user.hativaid}/magadal/0`);
-        }
-        if (user.role === "3") {
-          history.push(`/dashboard/ogda/${user.ogdaid}/magadal/0`);
-        }
-        if (user.role === "4") {
-          history.push(`/dashboard/pikod/${user.pikodid}/magadal/0`);
-        }
+        // if (user.role === "2") {
+        //   history.push(`/dashboard/hativa/${user.hativaid}/magadal/0`);
+        // }
+        // if (user.role === "3") {
+        //   history.push(`/dashboard/ogda/${user.ogdaid}/magadal/0`);
+        // }
+        // if (user.role === "4") {
+        //   history.push(`/dashboard/pikod/${user.pikodid}/magadal/0`);
+        // }
       }
       else {
         toast.success("משתמש לא מאושר מערכת");

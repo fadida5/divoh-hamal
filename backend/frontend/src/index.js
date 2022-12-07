@@ -44,9 +44,9 @@ ReactDOM.render(
         <Router history={history}>
           <Switch>
             {/*///////////////////////////////////////////UnLoggedIn Routes/////////////////////////////////////////////////*/}
-            {/* <UnloggedinRoute path="/signin" exact component={SignIn} />
+            <UnloggedinRoute path="/signin" exact component={SignIn} />
             <UnloggedinRoute path="/adminsignin" exact component={AdminSignIn} />
-            <UnloggedinRoute path="/signup" exact component={SignUp} /> */}
+            <UnloggedinRoute path="/signup" exact component={SignUp} />
             <LoggedinRoute path="/signupotherusers" exact component={SignUpOtherUsers} />
             {/*///////////////////////////////////////////UnLoggedIn Routes/////////////////////////////////////////////////*/}
 
@@ -56,16 +56,16 @@ ReactDOM.render(
             {/*///////////////////////////////////////////Admin Routes/////////////////////////////////////////////////*/}
 
             {/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
-            <UnloggedinRoute path="/dash" exact component={Dash} />
-            <UnloggedinRoute path="/report" exact component={Report} />
-            <UnloggedinRoute path="/reportrekem" exact component={ReportRekem} />
-            <UnloggedinRoute path="/signinhamal" exact component={SignInHamal} />
-            <UnloggedinRoute path="/signup" exact component={SignUpHamal} />
+            <LoggedinRoute path="/dash" exact component={Dash} />
+            <LoggedinRoute path="/report" exact component={Report} />
+            <LoggedinRoute path="/reportrekem" exact component={ReportRekem} />
+            {/* <LoggedinRoute path="/signinhamal" exact component={SignInHamal} />
+            <LoggedinRoute path="/signup" exact component={SignUpHamal} /> */}
             {/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
             <LoggedinRoute path="/dashamal" exact component={DashHamal} />
             <LoggedinRoute path="/odot" exact component={Odot} />
 
-            <Redirect from="/" to="/dash" />
+            <Redirect from="/" to="/signin" />
           </Switch>
         </Router>
       </BackgroundColorWrapper>

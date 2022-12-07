@@ -15,7 +15,7 @@ const ManageUsers = (props) => {
     <>
       <div className="">
           <ManageUsersTable theme={props.theme}/>
-          <ManageNotValidatedUsersTable theme={props.theme}/>
+          {/* <ManageNotValidatedUsersTable theme={props.theme}/> */}
       </div>
     </>
   );

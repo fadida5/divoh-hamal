@@ -46,25 +46,14 @@ import Logo100_white from "assets/img/team100_white.png";
 
 import SidebarAdmin from "components/general/Sidebar/SidebarAdmin";
 import SidebarAll from "components/general/Sidebar/SidebarAll";
-import SidebarGdod from "components/general/Sidebar/SidebarGdod";
-import SidebarHativa from "components/general/Sidebar/SidebarHativa";
-import SidebarOgda from "components/general/Sidebar/SidebarOgda";
-import SidebarPikod from "components/general/Sidebar/SidebarPikod";
 
 import { signout } from "auth/index";
 
 function Sidebar() {
-  // const clickSubmit = (event) => {
-  //   event.preventDefault();
-  //   if(user.role === "0"){
-  //       signout().then((response) => {
-  //           history.push(`/adminsignin`);
-  //       });
-  //   }
-  //   else{
-  //     history.push(`/signupotherusers`);
-  //   }
-  // };
+  const clickSubmit = (event) => {
+    event.preventDefault();
+      history.push(`/signupotherusers`);
+  };
 
   const [color, setcolor] = useState("transparent");
   const { user } = isAuthenticated();
@@ -90,34 +79,32 @@ function Sidebar() {
         }}
       >
         <div className="sidebar-wrapper" style={{ overflow: "hidden" }}>
-          {isAuthenticated() ? 
+          {/* {isAuthenticated() ? 
             <SidebarAdmin theme={color} />
             : (
               <SidebarAll theme={color} />
               )
+          } */}
+
+          {user.role === "0" ? <SidebarAll theme={color} /> :
+
+            user.role === "1" ? <SidebarAdmin theme={color}/> :null
           }
-          
+        
           {/* fotter של הסייד */}
           <div style={{ textAlign: 'center', position: 'absolute', bottom: 0, width: '100%', marginBottom: '15px' }}>
             {color == 'white' ? <img src={Logo100} style={{ height: "100px" }}></img>
               : <img src={Logo100_white} style={{ height: "100px" }}></img>}
-            {/* {user.role === "0" ?
-              <button
-                onClick={clickSubmit}
-                className="btn-new-blue"
-                style={{ width: '80%', marginTop: '15px' }}
-              >
-                התנתק
-              </button>
-              :
+            {user.role === "1" ?
               <button
                 onClick={clickSubmit}
                 className="btn-new-blue"
                 style={{ width: '80%', marginTop: '15px' }}
               >
                  רשום משתמש נוסף
-              </button>
-              } */}
+              </button>:
+              null
+              }
             <a href="http://216.1.1.11:8008/presentation">
               <button
                 className="btn-new-delete"
@@ -128,7 +115,7 @@ function Sidebar() {
             </a>
           </div>
         </div>
-      </div>
+        </div>
     </>
   );
 }

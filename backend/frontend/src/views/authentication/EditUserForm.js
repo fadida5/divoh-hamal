@@ -34,10 +34,6 @@ const EditUserForm = ({ match }) => {
     lastname: "",
     personalnumber: "",
     role: "",
-    gdodid: "",
-    hativaid: "",
-    ogdaid: "",
-    pikodid: "",
     //
     errortype: "",
     error: false,
@@ -45,57 +41,7 @@ const EditUserForm = ({ match }) => {
     loading: false,
     redirectToReferrer: false,
     //
-    site_permission: '',
   });
-
-  const [gdods, setGdods] = useState([]);
-  const [hativas, setHativas] = useState([]);
-  const [ogdas, setOgdas] = useState([]);
-  const [pikods, setPikods] = useState([]);
-
-  const loadGdods = () => {
-    axios
-      .get("http://localhost:8000/api/gdod")
-      .then((response) => {
-        setGdods(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const loadHativas = () => {
-    axios
-      .get("http://localhost:8000/api/hativa")
-      .then((response) => {
-        setHativas(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const loadOgdas = () => {
-    axios
-      .get("http://localhost:8000/api/ogda")
-      .then((response) => {
-        setOgdas(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const loadPikods = () => {
-    axios
-      .get("http://localhost:8000/api/pikod")
-      .then((response) => {
-        setPikods(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
 
   function handleChange(evt) {
     const value = evt.target.value;
@@ -130,37 +76,6 @@ const EditUserForm = ({ match }) => {
       flag = false;
       ErrorReason += "מס אישי ריק \n";
     }
-    if (data.role == "") {
-      flag = false;
-      ErrorReason += "הרשאה ריקה \n";
-    } else {
-      if (data.role === "0") {
-      }
-      if (data.role === "1") {
-        if (data.gdodid === "") {
-          flag = false;
-          ErrorReason += "גדוד ריק \n";
-        }
-      }
-      if (data.role === "2") {
-        if (data.hativaid === "") {
-          flag = false;
-          ErrorReason += "חטיבה ריקה \n";
-        }
-      }
-      if (data.role === "3") {
-        if (data.ogdaid === "") {
-          flag = false;
-          ErrorReason += "אוגדה ריקה \n";
-        }
-      }
-      if (data.role === "4") {
-        if (data.pikodid === "") {
-          flag = false;
-          ErrorReason += "פיקוד ריק \n";
-        }
-      }
-    }
     if (flag == true) {
       FixUser(event);
     } else {
@@ -170,32 +85,6 @@ const EditUserForm = ({ match }) => {
 
   const FixUser = (event) => {
     event.preventDefault();
-    if (data.role === "0") {
-      delete data.gdodid;
-      delete data.hativaid;
-      delete data.ogdaid;
-      delete data.pikodid;
-    }
-    if (data.role === "1") {
-      delete data.hativaid;
-      delete data.ogdaid;
-      delete data.pikodid;
-    }
-    if (data.role === "2") {
-      delete data.gdodid;
-      delete data.ogdaid;
-      delete data.pikodid;
-    }
-    if (data.role === "3") {
-      delete data.gdodid;
-      delete data.hativaid;
-      delete data.pikodid;
-    }
-    if (data.role === "4") {
-      delete data.gdodid;
-      delete data.hativaid;
-      delete data.ogdaid;
-    }
     UpdateUser(event);
   };
 
@@ -207,12 +96,6 @@ const EditUserForm = ({ match }) => {
       role: data.role,
       validated: data.validated,
       personalnumber: data.personalnumber,
-      gdodid: data.gdodid,
-      hativaid: data.hativaid,
-      ogdaid: data.ogdaid,
-      pikodid: data.pikodid,
-
-      site_permission: data.site_permission,
     };
 
     axios.put(`http://localhost:8000/api/user/update/${userid}`, user)
@@ -239,10 +122,6 @@ const EditUserForm = ({ match }) => {
 
   useEffect(() => {
     init();
-    loadGdods();
-    loadHativas();
-    loadOgdas();
-    loadPikods();
   }, []);
 
   return (
@@ -304,48 +183,6 @@ const EditUserForm = ({ match }) => {
                       <option value="4">הרשאת פיקוד</option>
                     </Input>
                   </FormGroup>
-
-                  {data.role === "0" ? (
-                    <div>מנהל מערכת</div>
-                  ) : data.role === "1" ? (
-                    <>
-                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                        גדוד
-                      </div>
-                      <FormGroup dir="rtl" style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <Select data={gdods} handleChange2={handleChange2} name={'gdodid'} val={data.gdodid ? data.gdodid : undefined} />
-                      </FormGroup>
-                    </>
-                  ) : data.role === "2" ? (
-                    <>
-                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                        חטיבה
-                      </div>
-                      <FormGroup dir="rtl" style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <Select data={hativas} handleChange2={handleChange2} name={'hativaid'} val={data.hativaid ? data.hativaid : undefined} />
-                      </FormGroup>
-                    </>
-                  ) : data.role === "3" ? (
-                    <>
-                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                        אוגדה
-                      </div>
-                      <FormGroup dir="rtl" style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <Select data={ogdas} handleChange2={handleChange2} name={'ogdaid'} val={data.ogdaid ? data.ogdaid : undefined} />
-                      </FormGroup>
-                    </>
-                  ) : data.role === "4" ? (
-                    <>
-                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                        פיקוד
-                      </div>
-                      <FormGroup dir="rtl" style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <Select data={pikods} handleChange2={handleChange2} name={'pikodid'} val={data.pikodid ? data.pikodid : undefined} />
-                      </FormGroup>
-                    </>
-                  ) : data.role === "" ? (
-                    <div>נא להכניס הרשאה</div>
-                  ) : null}
 
                   {data.role != "" ? (
                     <>
