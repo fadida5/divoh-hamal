@@ -48,14 +48,6 @@ const EditUserForm = ({ match }) => {
     setData({ ...data, [evt.target.name]: value });
   }
 
-  function handleChange2(selectedOption, name) {
-    if (!(selectedOption.value == "בחר"))
-      setData({ ...data, [name]: selectedOption.value });
-    else {
-      setData({ ...data, [name]: "" });
-    }
-  }
-
   const clickSubmit = (event) => {
     CheckSignUpForm(event);
   };
@@ -176,38 +168,8 @@ const EditUserForm = ({ match }) => {
                       onChange={handleChange}
                     >
                       <option value="">הרשאה</option>
-                      <option value="0">מנהל מערכת</option>
-                      <option value="1">הרשאת גדוד</option>
-                      <option value="2">הרשאת חטיבה</option>
-                      <option value="3">הרשאת אוגדה</option>
-                      <option value="4">הרשאת פיקוד</option>
-                    </Input>
-                  </FormGroup>
-
-                  {data.role != "" ? (
-                    <>
-                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                        הרשאת עריכה
-                      </div>
-                      <FormGroup dir="rtl">
-                        <Input
-                          type="select"
-                          name="site_permission"
-                          value={data.site_permission}
-                          onChange={handleChange}
-                        >
-                          <option value={'צפייה ועריכה'}>צפייה ועריכה</option>
-                          <option value={'צפייה'}>צפייה</option>
-                        </Input>
-                      </FormGroup>
-                    </>
-                  ) : null}
-
-                  <div style={{ textAlign: 'right', paddingTop: '10px' }}>מאושר/לא מאושר מערכת</div>
-                  <FormGroup>
-                    <Input type="select" name="validated" value={data.validated} onChange={handleChange}>
-                      <option value={true}>מאושר</option>
-                      <option value={false}>לא מאושר</option>
+                      <option value="0">משתמש רגיל</option>
+                      <option value="1">משתמש חמ"ל</option>
                     </Input>
                   </FormGroup>
 

@@ -95,7 +95,7 @@ function Sidebar() {
           <div style={{ textAlign: 'center', position: 'absolute', bottom: 0, width: '100%', marginBottom: '15px' }}>
             {color == 'white' ? <img src={Logo100} style={{ height: "100px" }}></img>
               : <img src={Logo100_white} style={{ height: "100px" }}></img>}
-            {user.role === "1" ?
+            {/* {user.role === "1" ?
               <button
                 onClick={clickSubmit}
                 className="btn-new-blue"
@@ -104,7 +104,7 @@ function Sidebar() {
                  רשום משתמש נוסף
               </button>:
               null
-              }
+              } */}
             <a href="http://216.1.1.11:8008/presentation">
               <button
                 className="btn-new-delete"

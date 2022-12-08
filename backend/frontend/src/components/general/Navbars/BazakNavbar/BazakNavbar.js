@@ -34,7 +34,7 @@ import ToggleDarkModeButton from './ToggleDarkModeButton/ToggleDarkModeButton';
 function BazakNavbar(props) {
   const [colorhr, setcolorhr] = useState("lightGray");
   const [color, setcolor] = useState("white");
-  // const { user } = isAuthenticated()
+  const { user } = isAuthenticated()
 
   return (
     <>
@@ -57,7 +57,9 @@ function BazakNavbar(props) {
                   <BazakNavbarTitle theme={theme} />
                 </Col>
                 <Col xs={12} md={4} style={{ display: 'flex', justifyContent: 'flex-end' }}>
-                 
+                {theme == "white-content" ?
+                    <h3 style={{ fontWeight: 'bold', paddingLeft: '30px', color: 'rgb(54,78,104)' }}> שלום, {user.name + ' ' + user.lastname}</h3>
+                    : <h3 style={{ fontWeight: 'bold', paddingLeft: '30px', color: 'hsla(0,0%,100%,.8)' }}> שלום, {user.name + ' ' + user.lastname}</h3>}
                 </Col>
               </Row>
             </Navbar>

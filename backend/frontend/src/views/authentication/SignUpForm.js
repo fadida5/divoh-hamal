@@ -20,6 +20,8 @@ import history from 'history.js'
 import { toast } from "react-toastify";
 import Select from 'components/general/Select/AnimatedSelect'
 
+import logodib from "assets/img/logodib.jpeg";
+
 export default function SignUpForm() {
   const [data, setData] = useState({
     name: "",
@@ -178,6 +180,9 @@ export default function SignUpForm() {
           <Col lg="5" md="7">
             <Card className="shadow border-0">
               <CardBody className="px-lg-5 py-lg-5">
+                <div className="text-center text-muted mb-4">
+                  <img src={logodib}></img>
+                </div>
                 <div className="text-center text-muted mb-4">
                   <small>הרשמה</small>
                 </div>

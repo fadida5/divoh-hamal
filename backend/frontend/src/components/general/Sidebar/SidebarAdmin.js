@@ -20,6 +20,8 @@ import { ThemeContext, themes } from "contexts/ThemeContext";
 
 import logobazak2 from "assets/img/logobazak2.png";
 
+import logodiv from "assets/img/logodib.jpeg";
+
 import home from "assets/img/home3.png";
 import home_white from "assets/img/home3_white.png";
 
@@ -78,9 +80,9 @@ function SidebarAdmin(props) {
   return (
     <>
     {/* לוגו המערכת */}
-      {/* <div className="logo">
-        <img src={logobazak2}></img>
-      </div> */}
+      <div className="logo">
+        <img src={logodiv}></img>
+      </div>
       <Nav style={{ textAlign: "right" }}>
         <li>
           <NavLink to="/dashamal" style={{ margin: '0px' }} activeClassName="sidebar_active_link">
