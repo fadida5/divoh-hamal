@@ -187,4 +187,4 @@ const EditUserForm = ({ match }) => {
     </div>
   );
 }
-export default withRouter(EditUserForm);;
+export default withRouter(EditUserForm);

@@ -114,7 +114,7 @@ function SidebarAll(props) {
             </Row>
           </NavLink>
         </li>
-        <li>
+        {/* <li>
           <NavLink to={`/signinhamal`} style={{ margin: '0px' }} activeClassName="sidebar_active_link">
             <Row style={{ direction: "rtl" }}>
               <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
@@ -128,7 +128,7 @@ function SidebarAll(props) {
               </Col>
             </Row>
           </NavLink>
-        </li>
+        </li> */}
         {/* <li>
           <NavLink to="/signup" style={{ margin: '0px' }} activeClassName="sidebar_active_link">
             <Row style={{ direction: "rtl" }}>

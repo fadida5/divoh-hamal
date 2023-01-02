@@ -19,19 +19,24 @@ import {
 import axios from 'axios';
 import history from 'history.js'
 import { toast } from "react-toastify";
+import { isAuthenticated } from 'auth';
+import MultiSelect from 'components/general/Select/AnimatedMultiSelect'
+import Select from 'components/general/Select/AnimatedSelect'
 
 
-export default function Report() {
+  const Report = ({ props }) => {
+
+  const { user } = isAuthenticated()
 
     const [data, setData] = useState({
       name: "",
       lastname: "",
       personalnumber: "",
       cellphone: "",
-      pikod: "0",
-      ogda: "0",
-      hativa: "0",
-      gdod: "0",
+      // pikod: "0",
+      // ogda: "0",
+      // hativa: "0",
+      // gdod: "0",
       typevent: "רק'ם",
       resevent:"0",
       cli:"0",
@@ -57,11 +62,99 @@ export default function Report() {
       redirectToReferrer: false,    
     });
 
+    const [gdods, setGdods] = useState([]);
+    const [hativas, setHativas] = useState([]);
+    const [ogdas, setOgdas] = useState([]);
+    const [pikods, setPikods] = useState([]);
+
+    const loadPikods = async () => {
+      await axios.get("http://localhost:8000/api/pikod",)
+          .then(response => {
+              setPikods(response.data);
+          })
+          .catch((error) => {
+              console.log(error);
+          })
+  }
+
+  const loadOgdas = async (pikodids) => {
+      let temppikodids = pikodids;
+      if (temppikodids != undefined && !temppikodids.isArray) {
+          temppikodids = [pikodids]
+      }
+      let temppikodsogdas = [];
+      if (temppikodids != undefined && temppikodids.length > 0) {
+          for (let i = 0; i < temppikodids.length; i++) {
+              await axios.post("http://localhost:8000/api/ogda/ogdasbypikodid", { pikod: temppikodids[i] })
+                  .then(response => {
+                      for (let j = 0; j < response.data.length; j++)
+                          temppikodsogdas.push(response.data[j])
+                  })
+                  .catch((error) => {
+                      console.log(error);
+                  })
+          }
+      }
+      setOgdas(temppikodsogdas);
+  }
+
+  const loadHativas = async (ogdaids) => {
+      let tempogdaids = ogdaids;
+      if (tempogdaids != undefined && !tempogdaids.isArray) {
+          tempogdaids = [ogdaids]
+      }
+      let tempogdashativas = [];
+      if (tempogdaids != undefined && tempogdaids.length > 0) {
+          for (let i = 0; i < tempogdaids.length; i++) {
+              await axios.post("http://localhost:8000/api/hativa/hativasbyogdaid", { ogda: tempogdaids[i] })
+                  .then(response => {
+                      for (let j = 0; j < response.data.length; j++)
+                          tempogdashativas.push(response.data[j])
+                  })
+                  .catch((error) => {
+                      console.log(error);
+                  })
+          }
+      }
+      setHativas(tempogdashativas);
+  }
+
+  const loadGdods = async (hativaids) => {
+      let temphativaids = hativaids;
+      if (temphativaids != undefined && !temphativaids.isArray) {
+          temphativaids = [hativaids]
+      }
+      let temphativasgdods = [];
+      if (temphativaids != undefined && temphativaids.length > 0) {
+          for (let i = 0; i < temphativaids.length; i++) {
+              await axios.post("http://localhost:8000/api/gdod/gdodsbyhativaid", { hativa: temphativaids[i] })
+                  .then(response => {
+                      for (let j = 0; j < response.data.length; j++)
+                          temphativasgdods.push(response.data[j])
+                  })
+                  .catch((error) => {
+                      console.log(error);
+                  })
+          }
+      }
+      setGdods(temphativasgdods);
+  }
+
       function handleChange(evt) {
         const value = evt.target.value;
         setData({ ...data, [evt.target.name]: value });
       }
 
+      function handleChange2(selectedOption, name) {
+        if (!(selectedOption.value == "בחר"))
+          setData({ ...data, [name]: selectedOption.value });
+        else {
+          let tempdata = { ...data };
+          delete tempdata[name];
+          setData(tempdata);
+        }
+      }
+    
       const clickSubmit = (event) => {
         CheckSignUpForm(event);
       };    
@@ -240,13 +333,43 @@ export default function Report() {
     </div>
   );
 
+  const initWithUserData = () => {
+    setData({
+      ...data,
+      name: user.name,
+      lastname: user.lastname,
+      personalnumber:user.personalnumber,
+    });
+    loadPikods();
+  }
 
-      const ReportRekem = () => (
-        <>
-          <div>
+  useEffect(() => {
+    initWithUserData();
+  }, []);
+
+  useEffect(() => {
+    setOgdas([]);
+    loadOgdas(data.pikod);
+  }, [data.pikod]);
+
+  useEffect(() => {
+    setHativas([]);
+    loadHativas(data.ogda);
+  }, [data.ogda]);
+
+  useEffect(() => {
+    setGdods([]);
+    loadGdods(data.hativa);
+  }, [data.hativa]);
+
+
+
+
+return (
+            <div>
                 <Container className="mt--8 pb-5">
                 <Row className="justify-content-center">
-          <Col lg="6" md="7">
+          <Col lg="20" md="7">
             <Card className="shadow border-0">
               <CardBody className="px-lg-5 py-lg-5">
                 <div className="text-center text-muted mb-4">
@@ -298,63 +421,75 @@ export default function Report() {
                     />
                   </FormGroup>
 
-                  <FormGroup>
-                        <Input
-                          type="select"
-                          name="pikod"
-                          value={data.pikod}
-                          onChange={handleChange}
-                          id="pikod"
-                        >
-                          <option value={"0"}>פיקוד</option>
-                          <option value={"1"}>סתם</option>
-
-                        </Input>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Input
-                          type="select"
-                          name="ogda"
-                          value={data.ogda}
-                          onChange={handleChange}
-                          id="ogda"
-                        >
-                          <option value={"0"}>אוגדה</option>
-                          <option value={"1"}>סתם</option>
-
-                        </Input>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Input
-                          type="select"
-                          name="hativa"
-                          value={data.hativa}
-                          onChange={handleChange}
-                          id="hativa"
-                        >
-                          <option value={"0"}>חטיבה</option>
-                          <option value={"1"}>סתם</option>
-
-                        </Input>
-                      </FormGroup>
-
-                      <FormGroup>
-                        <Input
-                          type="select"
-                          name="gdod"
-                          value={data.gdod}
-                          onChange={handleChange}
-                          id="gdod"
-                        >
-                          <option value={"0"}>גדוד</option>
-                          <option value={"1"}>סתם</option>
-
-                        </Input>
-                      </FormGroup>
-                      
                   <div className="text-center text-muted mb-4">
+                  <small>פרטי יחידה מדווחת</small>
+                </div>
+
+                  <Row style={{ paddingTop: '2px' }}>
+                    {(!(data.ogda)) ?
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>פיקוד</h6>
+                        <Select data={pikods}
+                         handleChange2={handleChange2}
+                          name={'pikod'} val={data.pikod ? data.pikod : undefined} />
+                      </Col> :
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>פיקוד</h6>
+                        <Select data={pikods} 
+                        handleChange2={handleChange2} 
+                        name={'pikod'} val={data.pikod ? data.pikod : undefined} isDisabled={true} />
+                      </Col>}
+
+                  <>
+                    {((data.pikod) && !(data.hativa)) ?
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>אוגדה</h6>
+                        <Select data={ogdas} 
+                        handleChange2={handleChange2} 
+                        name={'ogda'} val={data.ogda ? data.ogda : undefined} />
+                      </Col> :
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>אוגדה</h6>
+                        <Select data={ogdas}
+                         handleChange2={handleChange2}
+                          name={'ogda'} val={data.ogda ? data.ogda : undefined} isDisabled={true} />
+                      </Col>}
+                  </>
+
+                  <>
+                    {((data.ogda) && !(data.gdod)) ?
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>חטיבה</h6>
+                        <Select data={hativas}
+                         handleChange2={handleChange2} 
+                         name={'hativa'} val={data.hativa ? data.hativa : undefined} />
+                      </Col> :
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>חטיבה</h6>
+                        <Select data={hativas}
+                         handleChange2={handleChange2}
+                          name={'hativa'} val={data.hativa ? data.hativa : undefined} isDisabled={true} />
+                      </Col>}
+                  </>
+
+                  <>
+                    {((data.hativa)) ?
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>גדוד</h6>
+                        <Select data={gdods}
+                         handleChange2={handleChange2}
+                          name={'gdod'} val={data.gdod ? data.gdod : undefined} />
+                      </Col> :
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>גדוד</h6>
+                        <Select data={gdods}
+                         handleChange2={handleChange2} 
+                         name={'gdod'} val={data.gdod ? data.gdod : undefined} isDisabled={true} />
+                      </Col>}
+                  </>
+              </Row>
+                      
+                  <div className="text-center text-muted mb-4" style={{ paddingTop: '20px' }}>
                     <small>פרטי אירוע</small>
                   </div>
 
@@ -469,7 +604,7 @@ export default function Report() {
                     />
                   </FormGroup>
 
-                   {data.nifga > "0" && (
+                   {/* {data.nifga > "0" && (
                     <>
                       <div style={{ textAlign: "right", paddingTop: "10px" }}>
                         מצב הנפגע
@@ -507,7 +642,7 @@ export default function Report() {
                  </button>
                  </div>
                   </>
-                  )}
+                  )} */}
 
                   <div className="text-center">
                     <button 
@@ -523,17 +658,8 @@ export default function Report() {
         </Row>
                 </Container>
          </div>
-        </>
-      );
-
-
-    return (
-        <>
-           {showError()}
-           {showSuccess()}
-           {ReportRekem()}
-        </>
       );
 }  
+export default withRouter(Report);
 
 

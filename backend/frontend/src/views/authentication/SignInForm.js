@@ -88,10 +88,10 @@ function Signin() {
         //   history.push(`/dashboard/pikod/${user.pikodid}/magadal/0`);
         // }
       }
-      else {
-        toast.success("משתמש לא מאושר מערכת");
-        setValues({ ...values, redirectToReferrer: false })
-      }
+      // else {
+      //   toast.success("משתמש לא מאושר מערכת");
+      //   setValues({ ...values, redirectToReferrer: false })
+      // }
     }
   }
 

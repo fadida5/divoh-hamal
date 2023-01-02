@@ -39,6 +39,24 @@ const userRoutes = require('./routes/authentication/user');
 app.use('/api', authRoutes)
 app.use('/api', userRoutes)
 
+const gdodRoutes = require("./routes/units/gdod");
+const hativaRoutes = require("./routes/units/hativa");
+const ogdaRoutes = require("./routes/units/ogda");
+const pikodRoutes = require("./routes/units/pikod");
+app.use('/api', gdodRoutes)
+app.use('/api', hativaRoutes)
+app.use('/api', ogdaRoutes)
+app.use('/api', pikodRoutes)
+
+const magadalRoutes = require("./routes/cartypes/magadal");
+const magadRoutes = require("./routes/cartypes/magad");
+const mkabazRoutes = require("./routes/cartypes/mkabaz");
+const makatRoutes = require("./routes/cartypes/makat");
+app.use('/api', magadalRoutes)
+app.use('/api', magadRoutes)
+app.use('/api', mkabazRoutes)
+app.use('/api', makatRoutes)
+
 // if(process.env.NODE_ENV === 'production'){
 //     //set static folder
 //     app.use(express.static('frontend/build'));
