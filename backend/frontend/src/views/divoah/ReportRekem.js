@@ -33,10 +33,6 @@ import Select from 'components/general/Select/AnimatedSelect'
       lastname: "",
       personalnumber: "",
       cellphone: "",
-      // pikod: "0",
-      // ogda: "0",
-      // hativa: "0",
-      // gdod: "0",
       typevent: "רק'ם",
       resevent:"0",
       cli:"0",
@@ -179,38 +175,38 @@ import Select from 'components/general/Select/AnimatedSelect'
           flag = false;
           ErrorReason += " ,טלפון ריק \n";
         }
-        if (
-          document.getElementById("pikod").options[
-            document.getElementById("pikod").selectedIndex
-          ].value == "0"
-        ) {
-          flag = false;
-          ErrorReason += " פיקוד ריק \n";
-        }
-        if (
-          document.getElementById("ogda").options[
-            document.getElementById("ogda").selectedIndex
-          ].value == "0"
-        ) {
-          flag = false;
-          ErrorReason += " אוגדה ריק \n";
-        }
-        if (
-          document.getElementById("hativa").options[
-            document.getElementById("hativa").selectedIndex
-          ].value == "0"
-        ) {
-          flag = false;
-          ErrorReason += " חטיבה ריק \n";
-        }
-        if (
-          document.getElementById("gdod").options[
-            document.getElementById("gdod").selectedIndex
-          ].value == "0"
-        ) {
-          flag = false;
-          ErrorReason += " גדוד ריק \n";
-        }
+        // if (
+        //   document.getElementById("pikod").options[
+        //     document.getElementById("pikod").selectedIndex
+        //   ].value == "בחר"
+        // ) {
+        //   flag = false;
+        //   ErrorReason += " פיקוד ריק \n";
+        // }
+        // if (
+        //   document.getElementById("ogda").options[
+        //     document.getElementById("ogda").selectedIndex
+        //   ].value == "0"
+        // ) {
+        //   flag = false;
+        //   ErrorReason += " אוגדה ריק \n";
+        // }
+        // if (
+        //   document.getElementById("hativa").options[
+        //     document.getElementById("hativa").selectedIndex
+        //   ].value == "0"
+        // ) {
+        //   flag = false;
+        //   ErrorReason += " חטיבה ריק \n";
+        // }
+        // if (
+        //   document.getElementById("gdod").options[
+        //     document.getElementById("gdod").selectedIndex
+        //   ].value == "0"
+        // ) {
+        //   flag = false;
+        //   ErrorReason += " גדוד ריק \n";
+        // }
         if (
           document.getElementById("res").options[
             document.getElementById("res").selectedIndex
@@ -264,12 +260,11 @@ import Select from 'components/general/Select/AnimatedSelect'
           personalnumber:data.personalnumber,
           cellphone: data.cellphone,
           pikod:data.pikod,
-          ogda:data.ogda,
-          hativa:data.hativa,
-          gdod:data.gdod,
+          // ogda:data.ogda,
+          // hativa:data.hativa,
+          // gdod:data.gdod,
           typevent: data.typevent,
           resevent: data.resevent,
-          cli: data.cli,
           yn: data.yn,
           selneshek: data.selneshek,
           whap: data.whap,
@@ -280,7 +275,7 @@ import Select from 'components/general/Select/AnimatedSelect'
           mataftype: data.mataftype,
           apitype: data.apitype,
           mholaztype: data.mholaztype,
-          mhalztype: data.mhalztype,
+          // mhalztype: data.mhalztype,
           pirot: data.pirot,
           datevent: data.datevent,
           mikom: data.mikom,
@@ -305,6 +300,7 @@ import Select from 'components/general/Select/AnimatedSelect'
         .catch((error) => {
           console.groupCollapsed("Axios catch error");
           console.log(error);
+          toast.error('שגיאה בשליחת הדיווח');
           setData({
             ...data,
             errortype: error.response.data.error,
@@ -316,22 +312,6 @@ import Select from 'components/general/Select/AnimatedSelect'
         console.groupEnd();
   };
 
-  const showSuccess = () => (
-    <div
-      className="alert alert-info "
-      style={{ textAlign: "right", display: data.successmsg ? "" : "none" }}
-    >
-      <h2>הדיווח נשלח בהצלחה</h2>
-    </div>
-  );
-  const showError = () => (
-    <div
-      className="alert alert-danger"
-      style={{ textAlign: "right", display: data.error ? "" : "none" }}
-    >
-      <h2>שגיאה בשליחת הדיווח</h2>
-    </div>
-  );
 
   const initWithUserData = () => {
     setData({
@@ -361,8 +341,6 @@ import Select from 'components/general/Select/AnimatedSelect'
     setGdods([]);
     loadGdods(data.hativa);
   }, [data.hativa]);
-
-
 
 
 return (

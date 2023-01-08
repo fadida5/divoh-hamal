@@ -114,23 +114,8 @@ function SidebarAll(props) {
             </Row>
           </NavLink>
         </li>
-        {/* <li>
-          <NavLink to={`/signinhamal`} style={{ margin: '0px' }} activeClassName="sidebar_active_link">
-            <Row style={{ direction: "rtl" }}>
-              <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
-                {props.theme == 'white' ? <img src={people} style={{ height: "20px" }}></img>
-                  : <img src={people_white} style={{ height: "20px" }}></img>}
-              </Col>
-              <Col xs={12} md={9} style={{ paddingRight: "0px" }}>
-                <h4 style={{ margin: "0px", paddingTop: '6px', paddingBottom: '6px' }}>
-                  התחברות חמ"ל
-                </h4>
-              </Col>
-            </Row>
-          </NavLink>
-        </li> */}
-        {/* <li>
-          <NavLink to="/signup" style={{ margin: '0px' }} activeClassName="sidebar_active_link">
+        <li>
+          <NavLink to={`/historeport`} style={{ margin: '0px' }} activeClassName="sidebar_active_link">
             <Row style={{ direction: "rtl" }}>
               <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
                 {props.theme == 'white' ? <img src={table} style={{ height: "20px" }}></img>
@@ -138,12 +123,13 @@ function SidebarAll(props) {
               </Col>
               <Col xs={12} md={9} style={{ paddingRight: "0px" }}>
                 <h4 style={{ margin: "0px", paddingTop: '6px', paddingBottom: '6px' }}>
-                  הרשמות חמ"ל
+                  היסטוריית דיווחים
                 </h4>
               </Col>
             </Row>
           </NavLink>
-        </li> */}
+        </li>
+
       </Nav>
     </>
   );

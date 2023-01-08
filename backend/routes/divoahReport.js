@@ -12,7 +12,6 @@ router.route("/add").post((req, res) => {
   console.groupCollapsed("add post");
   console.log(res);
   
-  
   const name = req.body.name;
   const lastname = req.body.lastname;
   const personalnumber = req.body.personalnumber;
@@ -21,9 +20,11 @@ router.route("/add").post((req, res) => {
   const ogda = req.body.ogda;
   const hativa = req.body.hativa;
   const gdod = req.body.gdod;
+  const magadal = req.body.magadal;
+  const magad = req.body.magad;
+  const mkabaz = req.body.mkabaz;
   const typevent = req.body.typevent;
   const resevent = req.body.resevent;
-  const cli = req.body.cli;
   const yn = req.body.yn;
   const selneshek = req.body.selneshek;
   const whap = req.body.whap;
@@ -49,9 +50,11 @@ router.route("/add").post((req, res) => {
     ogda,
     hativa,
     gdod,
+    magadal,
+    magad,
+    mkabaz,
     typevent,
     resevent,
-    cli,
     yn,
     selneshek,
     whap,
@@ -87,12 +90,22 @@ router.route("/add").post((req, res) => {
 });
 
 //GET ALL SPECIFICK USER 
-router.route("/:personalnumber").get((req, res) => {
-  Report.findById({ personalnumber: req.params.personalnumber })
-    .exec()
+
+router.route("/requestByPersonalnumber/:personalnumber").get((req, res) => {
+  const personalnumber = req.params.personalnumber;
+  Report.find({ personalnumber: personalnumber })
+    // .exec()
     .then((request) => res.json(request))
     .catch((err) => res.status(400).json("Error: " + err));
 });
+
+
+// router.route("/:personalnumber").get((req, res) => {
+//   Report.findById({ personalnumber: req.params.personalnumber })
+//     .exec()
+//     .then((request) => res.json(request))
+//     .catch((err) => res.status(400).json("Error: " + err));
+// });
 
 router.route("/:id").get((req, res) => {
   Report.findById(req.params.id)
@@ -117,9 +130,11 @@ router.route("/update/:id").post((req, res) => {
       request.ogda = req.body.ogda;
       request.hativa = req.body.hativa;
       request.gdod = req.body.gdod;
+      request.magadal = req.body.magadal;
+      request.magad = req.body.magad;
+      request.mkabaz = req.body.mkabaz;
       request.typevent = req.body.typevent;
       request.resevent = req.body.resevent;
-      request.cli = req.body.cli;
       request.yn = req.body.yn;
       request.selneshek = req.body.selneshek;
       request.whap = req.body.whap;

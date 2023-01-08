@@ -28,12 +28,20 @@ import SignUp from "views/authentication/SignUpForm";
 import SignUpOtherUsers from "views/authentication/SignUpOtherUsers";
 import ManageUsers from "views/authentication/manageusers/ManageUsers";
 import EditUser from "views/authentication/EditUserForm";
+
+import EditReport from "views/authentication/EditReports/EditReport";
+import EditReportRekem from "views/authentication/EditReports/EditReportRekem";
+
+import WachReport from "views/authentication/WachReports/WachReport";
+import WachReportRekem from "views/authentication/WachReports/WachReportRekem";
+
 import Dash from "views/divoah/Dash";
 import Report from "views/divoah/Report";
 import ReportRekem from "views/divoah/ReportRekem";
 import SignInHamal from "views/divoah/SignInHamal";
 import DashHamal from "views/divoah/Hamal/DashHamal";
 import Odot from "views/divoah/Hamal/Odot";
+import HistoReport from "views/divoah/Hamal/HistoReport";
 import SignUpHamal from "views/divoah/SignUpHamal";
 
 ReactDOM.render(
@@ -59,6 +67,11 @@ ReactDOM.render(
             <LoggedinRoute path="/dash" exact component={Dash} />
             <LoggedinRoute path="/report" exact component={Report} />
             <LoggedinRoute path="/reportrekem" exact component={ReportRekem} />
+            <LoggedinRoute path="/historeport" exact component={HistoReport} />
+            <LoggedinRoute path="/editreport/:formId" exact component={EditReport} />
+            <LoggedinRoute path="/editreportrekem/:formId" exact component={EditReportRekem} />
+            <LoggedinRoute path="/wachreport/:formId" exact component={WachReport} />
+            <LoggedinRoute path="/wachreportrekem/:formId" exact component={WachReportRekem} />
             {/* <LoggedinRoute path="/signinhamal" exact component={SignInHamal} />
             <LoggedinRoute path="/signup" exact component={SignUpHamal} /> */}
             {/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
