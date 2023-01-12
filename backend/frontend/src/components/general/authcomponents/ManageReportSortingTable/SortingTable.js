@@ -12,6 +12,7 @@ import { GlobalFilter } from "./GlobalFilter";
 import axios from "axios";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { isAuthenticated } from "auth";
+import history from "history.js";
 
 const SortingTable = ({ match }) => {
 	const columns = useMemo(() => COLUMNS, []);
@@ -55,6 +56,9 @@ const SortingTable = ({ match }) => {
 
 	useEffect(() => {
 		console.log(user.personalnumber);
+		if (user.role == "1") {
+			history.push(`/summarizingreport`);
+		}
 		axios
 			.get(
 				`http://localhost:8000/report/requestByPersonalnumber/${user.personalnumber}`

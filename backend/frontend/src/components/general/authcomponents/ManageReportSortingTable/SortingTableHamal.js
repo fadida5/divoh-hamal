@@ -43,8 +43,8 @@ const SortingTableHamal = ({ match }) => {
 					);
 				})
 			);
-			console.log(diff);
-			// todo: maybe top reload the page if error
+			// console.log(diff);
+			// todo: maybe to reload the page if error
 		} catch (error) {
 			console.log(error);
 		}
@@ -232,18 +232,21 @@ const SortingTableHamal = ({ match }) => {
 											if (cell.column.id == "difftime") {
 												return <td>{diff[index]}</td>;
 											}
+											// * ------------- added status --------------------------------
 											if (cell.column.id == "status") {
-												if (cell.value == "0"){
+												if (cell.value == "0") {
 													return <td>בטיפול</td>;
 												}
 												if (cell.value == "1") {
-													return <td>טופל</td>;
+													return <td>סגור</td>;
+												} else {
+													return <td>בטיפול</td>;
 												}
 											}
 										}
 									})}
-									{/* {console.log(row.original._id)} */}
-
+									{/* //? {console.log(row.original._id)} */}
+									{/* {console.log(row)} */}
 									<td role="cell">
 										{" "}
 										<div
@@ -260,7 +263,7 @@ const SortingTableHamal = ({ match }) => {
 										</div>{" "}
 									</td>
 
-									{/*row.original._id=user._id*/}
+									{/* // ? row.original._id=user._id*/}
 									<td role="cell">
 										{" "}
 										<div
@@ -271,7 +274,7 @@ const SortingTableHamal = ({ match }) => {
 											}}
 										>
 											{" "}
-											{/* <button
+											{/* // ? <button
                         className="btn-new-delete"
                         onClick={() => UserDelete(row.original._id)}
                       >
