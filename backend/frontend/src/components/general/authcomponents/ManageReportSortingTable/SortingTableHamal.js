@@ -185,7 +185,8 @@ const SortingTableHamal = ({ match }) => {
 											cell.column.id != "typevent" &&
 											cell.column.id != "pirot" &&
 											cell.column.id != "datevent" &&
-											cell.column.id != "difftime"
+											cell.column.id != "difftime" &&
+											cell.column.id != "status"
 										) {
 											return (
 												<td {...cell.getCellProps()}>{cell.render("Cell")}</td>
@@ -230,6 +231,14 @@ const SortingTableHamal = ({ match }) => {
 
 											if (cell.column.id == "difftime") {
 												return <td>{diff[index]}</td>;
+											}
+											if (cell.column.id == "status") {
+												if (cell.value == "0"){
+													return <td>בטיפול</td>;
+												}
+												if (cell.value == "1") {
+													return <td>טופל</td>;
+												}
 											}
 										}
 									})}

@@ -37,6 +37,7 @@ const EditReport = ({ match }) => {
     typevent: "",
     resevent:"",
     yn:"",
+    status:"",
     selneshek:"",
     whap:"",
     amlahtype:"",
@@ -256,6 +257,10 @@ const loadGdods = async (hativaids) => {
           flag = false;
           ErrorReason += " ,אם נגרם נזק ריק \n";
         }
+        if(!document.getElementById('delt').checked && !document.getElementById('notDelt').checked) {
+          flag = false;
+          ErrorReason += " ,אם נגרם נזק ריק \n";
+        }
         if (
           document.getElementById("what").options[
             document.getElementById("what").selectedIndex
@@ -316,6 +321,10 @@ const loadGdods = async (hativaids) => {
           flag = false;
           ErrorReason += " ,אם בפירוק / הרכבה ריק \n";
         }  
+        if(!document.getElementById('delt').checked && !document.getElementById('notDelt').checked) {
+          flag = false;
+          ErrorReason += " ,אם נגרם נזק ריק \n";
+        }
       }
       if (data.typevent === "8") {
         if (
@@ -392,6 +401,7 @@ const loadGdods = async (hativaids) => {
         // magad:data.magad,
         // mkabaz:data.mkabaz,
         yn: data.yn,
+        status: data.dt,
         selneshek: data.selneshek,
         whap: data.whap,
         amlahtype: data.amlahtype,
@@ -708,6 +718,38 @@ const loadGdods = async (hativaids) => {
             </div>
           </FormGroup>
           </div>
+
+          
+          <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        סטטוס
+                      </div>
+                      <div style={{ textAlign: "right"}}>
+                      <FormGroup check inline >
+                        <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                          <Input
+                            type="radio"
+                            name="dt"
+                            value="1"
+                            onChange={handleChange}
+                            id="delt"
+                          />
+                          טופל  
+                        </div>
+                        </FormGroup>
+
+                      <FormGroup check inline >
+                        <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        <Input
+                          type="radio"
+                          id="notDelt"
+                          name="dt"
+                          value="0"
+                          onChange={handleChange}
+                        />
+                        בטיפול
+                        </div>
+                      </FormGroup>
+                      </div>
         </>
       )} 
 
@@ -762,6 +804,38 @@ const loadGdods = async (hativaids) => {
             </div>
           </FormGroup>
           </div>
+
+          
+          <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        סטטוס
+                      </div>
+                      <div style={{ textAlign: "right"}}>
+                      <FormGroup check inline >
+                        <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                          <Input
+                            type="radio"
+                            name="dt"
+                            value="1"
+                            onChange={handleChange}
+                            id="delt"
+                          />
+                          טופל  
+                        </div>
+                        </FormGroup>
+
+                      <FormGroup check inline >
+                        <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        <Input
+                          type="radio"
+                          id="notDelt"
+                          name="dt"
+                          value="0"
+                          onChange={handleChange}
+                        />
+                        בטיפול
+                        </div>
+                      </FormGroup>
+                      </div>
 
        <div style={{ textAlign: "right", paddingTop: "10px" }}>
         מה התרחש באירוע

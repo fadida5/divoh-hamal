@@ -43,6 +43,7 @@ import Select from 'components/general/Select/AnimatedSelect'
         mataftype:"0",
         apitype:"0",
         mholaztype:"0",
+        status:"0",
         // mhalztype:"0",
         pirot:"",
         datevent:"",
@@ -274,6 +275,10 @@ import Select from 'components/general/Select/AnimatedSelect'
             flag = false;
             ErrorReason += " ,אם נגרם נזק לכלי ריק \n";
           }
+          if(!document.getElementById('delt').checked && !document.getElementById('notDelt').checked) {
+            flag = false;
+            ErrorReason += " ,אם נגרם נזק לכלי ריק \n";
+          }
         }
         if (data.typevent === "5") {
           if (
@@ -288,6 +293,11 @@ import Select from 'components/general/Select/AnimatedSelect'
             flag = false;
             ErrorReason += " ,אם נגרם נזק ריק \n";
           }
+          if(!document.getElementById('delt').checked && !document.getElementById('notDelt').checked) {
+            flag = false;
+            ErrorReason += " ,אם נגרם נזק ריק \n";
+          }
+          
           if (
             document.getElementById("what").options[
               document.getElementById("what").selectedIndex
@@ -420,6 +430,7 @@ import Select from 'components/general/Select/AnimatedSelect'
           // magad:data.magad,
           // mkabaz:data.mkabaz,
           yn: data.yn,
+          status: data.dt,
           selneshek: data.selneshek,
           whap: data.whap,
           amlahtype: data.amlahtype,
@@ -436,7 +447,7 @@ import Select from 'components/general/Select/AnimatedSelect'
           nifga: data.nifga,
         };
         console.log("In the SendFormData Func")
-        console.log(requestData)
+        console.log(requestData.status)
 
         console.groupCollapsed("Axios");
         
@@ -505,6 +516,9 @@ import Select from 'components/general/Select/AnimatedSelect'
     setMkabazs([]);
     getMkabazs(data.magad);
   }, [data.magad]);
+  
+
+  console.log(data.dt);
 
 
   return (
@@ -753,7 +767,40 @@ import Select from 'components/general/Select/AnimatedSelect'
                         </div>
                       </FormGroup>
                       </div>
+
+                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        סטטוס
+                      </div>
+                      <div style={{ textAlign: "right"}}>
+                      <FormGroup check inline >
+                        <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                          <Input
+                            type="radio"
+                            name="dt"
+                            value="1"
+                            onChange={handleChange}
+                            id="delt"
+                          />
+                          טופל  
+                        </div>
+                        </FormGroup>
+
+                      <FormGroup check inline >
+                        <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        <Input
+                          type="radio"
+                          id="notDelt"
+                          name="dt"
+                          value="0"
+                          onChange={handleChange}
+                        />
+                        בטיפול
+                        </div>
+                      </FormGroup>
+                      </div>
+                      
                     </>
+                    
                   )} 
 
                   {/* אירוע נשק */}
@@ -806,6 +853,37 @@ import Select from 'components/general/Select/AnimatedSelect'
                         לא
                         </div>
                       </FormGroup>
+
+                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        סטטוס
+                      </div>
+                      <div style={{ textAlign: "right"}}>
+                      <FormGroup check inline >
+                        <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                          <Input
+                            type="radio"
+                            name="dt"
+                            value="1"
+                            onChange={handleChange}
+                            id="delt"
+                          />
+                          טופל  
+                        </div>
+                        </FormGroup>
+
+                      <FormGroup check inline >
+                        <div style={{ textAlign: "right", paddingTop: "10px" }}>
+                        <Input
+                          type="radio"
+                          id="notDelt"
+                          name="dt"
+                          value="0"
+                          onChange={handleChange}
+                        />
+                        בטיפול
+                        </div>
+                      </FormGroup>
+                      </div>
                       </div>
 
                    <div style={{ textAlign: "right", paddingTop: "10px" }}>

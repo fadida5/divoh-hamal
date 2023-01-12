@@ -24,6 +24,14 @@ export const COLUMNSSUM = [
 		Footer: " ימים מהדיווח",
 		accessor: "difftime",
 		Filter: ColumnFilter,
+		
+	},
+	{
+		Header: "  סטטוס",
+		Footer: " סטטוס ",
+		accessor: "status",
+		Filter: ColumnFilter,
+		
 	},
 	// {
 	//     Header: 'הרשאה',
