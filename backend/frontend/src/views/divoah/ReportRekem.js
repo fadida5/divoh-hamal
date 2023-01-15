@@ -31,6 +31,7 @@ const Report = ({ props }) => {
 		lastname: "",
 		personalnumber: "",
 		cellphone: "",
+		pikod: "",
 		typevent: "רק'ם",
 		resevent: "0",
 		cli: "0",

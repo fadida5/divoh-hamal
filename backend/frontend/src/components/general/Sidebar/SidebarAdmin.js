@@ -67,6 +67,7 @@ import {
 } from "reactstrap";
 
 import { isAuthenticated } from "auth/index";
+const { user } = isAuthenticated();
 
 function SidebarAdmin(props) {
 	const clickSubmit = (event) => {
@@ -75,7 +76,7 @@ function SidebarAdmin(props) {
 			history.push(`/signin`);
 		});
 	};
-
+	// todo: to find out how to relod the sidebar on login
 	return (
 		<>
 			{/* לוגו המערכת */}
@@ -267,52 +268,55 @@ function SidebarAdmin(props) {
 						</Row>
 					</NavLink>
 				</li>
-				{/* <li>
-					<NavLink
-						to="/manageusers"
-						style={{ margin: "0px" }}
-						activeClassName="sidebar_active_link"
-					>
-						<Row style={{ direction: "rtl" }}>
-							<Col
-								xs={12}
-								md={3}
-								style={{
-									paddingLeft: "0px",
-									textAlign: "center",
-									alignSelf: "center",
-								}}
-							>
-								{props.theme == "white" ? (
-									<img
-										src={table}
-										style={{ height: "20px" }}
-									></img>
-								) : (
-									<img
-										src={table_white}
-										style={{ height: "20px" }}
-									></img>
-								)}
-							</Col>
-							<Col
-								xs={12}
-								md={9}
-								style={{ paddingRight: "0px" }}
-							>
-								<h4
+				{user.role === "2" ? (
+					<li>
+						<NavLink
+							to="/manageusers"
+							style={{ margin: "0px" }}
+							activeClassName="sidebar_active_link"
+						>
+							<Row style={{ direction: "rtl" }}>
+								<Col
+									xs={12}
+									md={3}
 									style={{
-										margin: "0px",
-										paddingTop: "6px",
-										paddingBottom: "6px",
+										paddingLeft: "0px",
+										textAlign: "center",
+										alignSelf: "center",
 									}}
 								>
-									ניהול הרשאות
-								</h4>
-							</Col>
-						</Row>
-					</NavLink>
-				</li> */}
+									{props.theme == "white" ? (
+										<img
+											src={table}
+											style={{ height: "20px" }}
+										></img>
+									) : (
+										<img
+											src={table_white}
+											style={{ height: "20px" }}
+										></img>
+									)}
+								</Col>
+								<Col
+									xs={12}
+									md={9}
+									style={{ paddingRight: "0px" }}
+								>
+									<h4
+										style={{
+											margin: "0px",
+											paddingTop: "6px",
+											paddingBottom: "6px",
+										}}
+									>
+										ניהול הרשאות
+									</h4>
+								</Col>
+							</Row>
+						</NavLink>
+					</li>
+				) : null}
+
 				<li>
 					<NavLink
 						to="/odot"

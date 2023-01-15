@@ -27,7 +27,11 @@ function AdminSignInForm() {
 
 	useEffect(() => {
 		console.log(user.personalnumber);
+		console.log(user.role);
 		if (user.role == "1") {
+			history.push(`/dashamal`);
+		}
+		if (user.role == "2") {
 			history.push(`/dashamal`);
 		}
 		console.log(user.personalnumber);

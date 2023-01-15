@@ -30,6 +30,7 @@ const Report = ({ match }) => {
 		lastname: "",
 		personalnumber: "",
 		cellphone: "",
+		pikod: "",
 		typevent: "0",
 		resevent: "0",
 		yn: "",
