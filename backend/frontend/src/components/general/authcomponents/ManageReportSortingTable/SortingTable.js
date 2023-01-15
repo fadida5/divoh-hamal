@@ -55,10 +55,6 @@ const SortingTable = ({ match }) => {
 	// }, []);
 
 	useEffect(() => {
-		console.log(user.personalnumber);
-		if (user.role == "1") {
-			history.push(`/summarizingreport`);
-		}
 		axios
 			.get(
 				`http://localhost:8000/report/requestByPersonalnumber/${user.personalnumber}`

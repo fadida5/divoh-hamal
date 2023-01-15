@@ -281,13 +281,6 @@ const EditReport = ({ match }) => {
 				ErrorReason += " ,אם נגרם נזק ריק \n";
 			}
 			if (
-				!document.getElementById("delt").checked &&
-				!document.getElementById("notDelt").checked
-			) {
-				flag = false;
-				ErrorReason += " ,אם נגרם נזק ריק \n";
-			}
-			if (
 				document.getElementById("what").options[
 					document.getElementById("what").selectedIndex
 				].value == "0"
@@ -349,13 +342,6 @@ const EditReport = ({ match }) => {
 			) {
 				flag = false;
 				ErrorReason += " ,אם בפירוק / הרכבה ריק \n";
-			}
-			if (
-				!document.getElementById("delt").checked &&
-				!document.getElementById("notDelt").checked
-			) {
-				flag = false;
-				ErrorReason += " ,אם נגרם נזק ריק \n";
 			}
 		}
 		if (data.typevent === "8") {
@@ -433,7 +419,7 @@ const EditReport = ({ match }) => {
 			// magad:data.magad,
 			// mkabaz:data.mkabaz,
 			yn: data.yn,
-			status: data.dt,
+			status: data.dt != undefined || null ? data.dt : data.status,
 			selneshek: data.selneshek,
 			whap: data.whap,
 			amlahtype: data.amlahtype,
@@ -454,7 +440,7 @@ const EditReport = ({ match }) => {
 			.put(`http://localhost:8000/report/update/${reportid}`, report)
 			.then((response) => {
 				toast.success(`הדיווח עודכן בהצלחה`);
-				history.push(`/historeport`);
+				history.push(`/SummarizingReport`);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -1343,7 +1329,7 @@ const EditReport = ({ match }) => {
 											placeholder="תאריך אירוע"
 											name="datevent"
 											type="datetime-local"
-											value={data.datevent}
+											value={data.datevent.slice(0, 21)}
 											onChange={handleChange}
 										/>
 									</FormGroup>

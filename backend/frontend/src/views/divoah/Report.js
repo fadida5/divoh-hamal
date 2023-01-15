@@ -299,7 +299,7 @@ const Report = ({ match }) => {
 				!document.getElementById("notDelt").checked
 			) {
 				flag = false;
-				ErrorReason += " ,אם נגרם נזק לכלי ריק \n";
+				ErrorReason += " ,    סטטוס ריק\n";
 			}
 		}
 		if (data.typevent === "5") {
@@ -323,7 +323,7 @@ const Report = ({ match }) => {
 				!document.getElementById("notDelt").checked
 			) {
 				flag = false;
-				ErrorReason += " ,אם נגרם נזק ריק \n";
+				ErrorReason += " סטטוס ריק   \n";
 			}
 
 			if (
@@ -466,7 +466,8 @@ const Report = ({ match }) => {
 			// magad:data.magad,
 			// mkabaz:data.mkabaz,
 			yn: data.yn,
-			status: data.dt,
+			status:
+				data.dt /* //?if there is no need for the status button ==> data.dt != undefined || null ? data.dt : "0",*/,
 			selneshek: data.selneshek,
 			whap: data.whap,
 			amlahtype: data.amlahtype,
@@ -552,8 +553,6 @@ const Report = ({ match }) => {
 		setMkabazs([]);
 		getMkabazs(data.magad);
 	}, [data.magad]);
-
-	console.log(data.dt);
 
 	return (
 		<div>

@@ -97,11 +97,7 @@ ReactDOM.render(
 							exact
 							component={EditUser}
 						/>
-						<AdminRoute
-							path="/summarizingreport"
-							exact
-							component={SummarizingReport}
-						/>
+
 						{/*///////////////////////////////////////////Admin Routes/////////////////////////////////////////////////*/}
 
 						{/*///////////////////////////////////////////LoggedIn Routes/////////////////////////////////////////////////*/}
@@ -124,6 +120,11 @@ ReactDOM.render(
 							path="/historeport"
 							exact
 							component={HistoReport}
+						/>
+						<LoggedinRoute
+							path="/summarizingreport"
+							exact
+							component={SummarizingReport}
 						/>
 						<LoggedinRoute
 							path="/editreport/:formId"

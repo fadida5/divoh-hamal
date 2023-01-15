@@ -12,6 +12,7 @@ import { GlobalFilter } from "./GlobalFilter";
 import axios from "axios";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { isAuthenticated } from "auth";
+import history from "history.js";
 
 const SortingTableHamal = ({ match }) => {
 	const columns = useMemo(() => COLUMNSSUM, []);
@@ -24,6 +25,10 @@ const SortingTableHamal = ({ match }) => {
 	// * ------ geting only on loading the difference btween the dates --------------------------------
 
 	useEffect(() => {
+		console.log(user.personalnumber);
+		if (user.role == "0") {
+			history.push(`/historeport`);
+		}
 		console.log(data.length);
 		// * ------ making the dates subtractable --------------------------------
 		const creatArray = data.map((item, index) => {
@@ -245,46 +250,89 @@ const SortingTableHamal = ({ match }) => {
 											}
 										}
 									})}
-									{/* //? {console.log(row.original._id)} */}
-									{/* {console.log(row)} */}
-									<td role="cell">
-										{" "}
-										<div
-											style={{
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-											}}
-										>
+									{/*//* -------- update report --------------- */}
+									{row.original.typevent != "רק'ם" ? (
+										<td role="cell">
 											{" "}
-											<Link to={`/editreport/${row.original._id}`}>
-												<button className="btn-new">עדכן</button>
-											</Link>{" "}
-										</div>{" "}
-									</td>
-
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												{" "}
+												{/* {console.log(row.original.typevent)} */}
+												<Link to={`/editreport/${row.original._id}`}>
+													<button className="btn-new">עדכן</button>
+												</Link>{" "}
+											</div>{" "}
+										</td>
+									) : (
+										<td role="cell">
+											{" "}
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												{" "}
+												{/* {console.log(row.original.typevent)} */}
+												<Link to={`/editreportrekem/${row.original._id}`}>
+													<button className="btn-new">עדכן</button>
+												</Link>{" "}
+											</div>{" "}
+										</td>
+									)}
 									{/* // ? row.original._id=user._id*/}
-									<td role="cell">
-										{" "}
-										<div
-											style={{
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-											}}
-										>
+									{/*//* -------- view report --------------- */}
+									{row.original.typevent != "רק'ם" ? (
+										<td role="cell">
 											{" "}
-											{/* // ? <button
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												{" "}
+												{/* // ? <button
                         className="btn-new-delete"
                         onClick={() => UserDelete(row.original._id)}
                       >
                         צפייה
                       </button> */}
-											<Link to={`/wachreport/${row.original._id}`}>
-												<button className="btn-new-delete">צפייה</button>
-											</Link>{" "}
-										</div>
-									</td>
+												<Link to={`/wachreport/${row.original._id}`}>
+													<button className="btn-new-delete">צפייה</button>
+												</Link>{" "}
+											</div>
+										</td>
+									) : (
+										<td role="cell">
+											{" "}
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												{" "}
+												{/* // ? <button
+                        className="btn-new-delete"
+                        onClick={() => UserDelete(row.original._id)}
+                      >
+                        צפייה
+                      </button> */}
+												<Link to={`/wachreportrekem/${row.original._id}`}>
+													<button className="btn-new-delete">צפייה</button>
+												</Link>{" "}
+											</div>
+										</td>
+									)}
 								</tr>
 							);
 						})}
