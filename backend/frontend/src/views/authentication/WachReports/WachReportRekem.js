@@ -1,485 +1,598 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import { withRouter, Redirect, Link } from "react-router-dom";
 
 // reactstrap components
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  Container,
-  FormGroup,
-  Form,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  Row,
-  Alert,
-  Spinner,
-  Label,
-  Col
+	Button,
+	Card,
+	CardHeader,
+	CardBody,
+	CardTitle,
+	Container,
+	FormGroup,
+	Form,
+	Input,
+	InputGroupAddon,
+	InputGroupText,
+	InputGroup,
+	Row,
+	Alert,
+	Spinner,
+	Label,
+	Col,
 } from "reactstrap";
-import { produce } from 'immer'
-import { generate } from 'shortid'
-import axios from 'axios';
-import history from 'history.js'
+import { produce } from "immer";
+import { generate } from "shortid";
+import axios from "axios";
+import history from "history.js";
 import { toast } from "react-toastify";
-import Select from 'components/general/Select/AnimatedSelect'
+import Select from "components/general/Select/AnimatedSelect";
 
 const EditReport = ({ match }) => {
-  const [data, setData] = useState({
-    name: "",
-    lastname: "",
-    personalnumber: "",
-    cellphone: "",
-    typevent: "",
-    resevent:"",
-    yn:"",
-    selneshek:"",
-    whap:"",
-    amlahtype:"",
-    rekemtype:"",
-    mazavrekem:"",
-    dwork:"",
-    mataftype:"",
-    apitype:"",
-    mholaztype:"",
-    pirot:"",
-    datevent:"",
-    mikom:"",
-    nifga:"",
+	const [data, setData] = useState({
+		name: "",
+		lastname: "",
+		personalnumber: "",
+		cellphone: "",
+		typevent: "",
+		resevent: "",
+		yn: "",
+		selneshek: "",
+		whap: "",
+		amlahtype: "",
+		rekemtype: "",
+		mazavrekem: "",
+		dwork: "",
+		mataftype: "",
+		apitype: "",
+		mholaztype: "",
+		pirot: "",
+		datevent: "",
+		mikom: "",
+		nifga: "",
 
-    error: false,
-    successmsg: false,
-    loading: false,
-    redirectToReferrer: false,    
-//
-  });
+		error: false,
+		successmsg: false,
+		loading: false,
+		redirectToReferrer: false,
+		//
+	});
 
-  const [gdods, setGdods] = useState([]);
-  const [hativas, setHativas] = useState([]);
-  const [ogdas, setOgdas] = useState([]);
-  const [pikods, setPikods] = useState([]);
+	const [gdods, setGdods] = useState([]);
+	const [hativas, setHativas] = useState([]);
+	const [ogdas, setOgdas] = useState([]);
+	const [pikods, setPikods] = useState([]);
 
-  const [mkabazs, setMkabazs] = useState([]);
-  const [magads, setMagads] = useState([]);
-  const [magadals, setMagadals] = useState([]);
+	const [mkabazs, setMkabazs] = useState([]);
+	const [magads, setMagads] = useState([]);
+	const [magadals, setMagadals] = useState([]);
 
-  const getMagadals = async () => {
-    await axios.get(`http://localhost:8000/api/magadal`)
-      .then(response => {
-        setMagadals(response.data)
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-  }
+	const getMagadals = async () => {
+		await axios
+			.get(`http://localhost:8000/api/magadal`)
+			.then((response) => {
+				setMagadals(response.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
 
-  const getMagads = async (magadalid) => {
-    let tempmagadalsmagads = [];
-    if (magadalid != undefined) {
-      await axios.get(`http://localhost:8000/api/magad/magadsbymagadal/${magadalid}`)
-        .then(response => {
-          for (let j = 0; j < response.data.length; j++)
-            tempmagadalsmagads.push(response.data[j])
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-      setMagads(tempmagadalsmagads);
-    }
-  }
+	const getMagads = async (magadalid) => {
+		let tempmagadalsmagads = [];
+		if (magadalid != undefined) {
+			await axios
+				.get(`http://localhost:8000/api/magad/magadsbymagadal/${magadalid}`)
+				.then((response) => {
+					for (let j = 0; j < response.data.length; j++)
+						tempmagadalsmagads.push(response.data[j]);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+			setMagads(tempmagadalsmagads);
+		}
+	};
 
-  const getMkabazs = async (magadid) => {
-    let tempmagadmkabazs = [];
-    if (magadid != undefined) {
-      await axios.get(`http://localhost:8000/api/mkabaz/mkabazsbymagad/${magadid}`)
-        .then(response => {
-          for (let j = 0; j < response.data.length; j++)
-            tempmagadmkabazs.push(response.data[j])
-        })
-        .catch((error) => {
-          console.log(error);
-        })
-      setMkabazs(tempmagadmkabazs);
-    }
-  }    
+	const getMkabazs = async (magadid) => {
+		let tempmagadmkabazs = [];
+		if (magadid != undefined) {
+			await axios
+				.get(`http://localhost:8000/api/mkabaz/mkabazsbymagad/${magadid}`)
+				.then((response) => {
+					for (let j = 0; j < response.data.length; j++)
+						tempmagadmkabazs.push(response.data[j]);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+			setMkabazs(tempmagadmkabazs);
+		}
+	};
 
-  const loadPikods = async () => {
-    await axios.get("http://localhost:8000/api/pikod",)
-        .then(response => {
-            setPikods(response.data);
-        })
-        .catch((error) => {
-            console.log(error);
-        })
-}
+	const loadPikods = async () => {
+		await axios
+			.get("http://localhost:8000/api/pikod")
+			.then((response) => {
+				setPikods(response.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
 
-const loadOgdas = async (pikodids) => {
-    let temppikodids = pikodids;
-    if (temppikodids != undefined && !temppikodids.isArray) {
-        temppikodids = [pikodids]
-    }
-    let temppikodsogdas = [];
-    if (temppikodids != undefined && temppikodids.length > 0) {
-        for (let i = 0; i < temppikodids.length; i++) {
-            await axios.post("http://localhost:8000/api/ogda/ogdasbypikodid", { pikod: temppikodids[i] })
-                .then(response => {
-                    for (let j = 0; j < response.data.length; j++)
-                        temppikodsogdas.push(response.data[j])
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-        }
-    }
-    setOgdas(temppikodsogdas);
-}
+	const loadOgdas = async (pikodids) => {
+		let temppikodids = pikodids;
+		if (temppikodids != undefined && !temppikodids.isArray) {
+			temppikodids = [pikodids];
+		}
+		let temppikodsogdas = [];
+		if (temppikodids != undefined && temppikodids.length > 0) {
+			for (let i = 0; i < temppikodids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/ogda/ogdasbypikodid", {
+						pikod: temppikodids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							temppikodsogdas.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		setOgdas(temppikodsogdas);
+	};
 
-const loadHativas = async (ogdaids) => {
-    let tempogdaids = ogdaids;
-    if (tempogdaids != undefined && !tempogdaids.isArray) {
-        tempogdaids = [ogdaids]
-    }
-    let tempogdashativas = [];
-    if (tempogdaids != undefined && tempogdaids.length > 0) {
-        for (let i = 0; i < tempogdaids.length; i++) {
-            await axios.post("http://localhost:8000/api/hativa/hativasbyogdaid", { ogda: tempogdaids[i] })
-                .then(response => {
-                    for (let j = 0; j < response.data.length; j++)
-                        tempogdashativas.push(response.data[j])
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-        }
-    }
-    setHativas(tempogdashativas);
-}
+	const loadHativas = async (ogdaids) => {
+		let tempogdaids = ogdaids;
+		if (tempogdaids != undefined && !tempogdaids.isArray) {
+			tempogdaids = [ogdaids];
+		}
+		let tempogdashativas = [];
+		if (tempogdaids != undefined && tempogdaids.length > 0) {
+			for (let i = 0; i < tempogdaids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/hativa/hativasbyogdaid", {
+						ogda: tempogdaids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							tempogdashativas.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		setHativas(tempogdashativas);
+	};
 
-const loadGdods = async (hativaids) => {
-    let temphativaids = hativaids;
-    if (temphativaids != undefined && !temphativaids.isArray) {
-        temphativaids = [hativaids]
-    }
-    let temphativasgdods = [];
-    if (temphativaids != undefined && temphativaids.length > 0) {
-        for (let i = 0; i < temphativaids.length; i++) {
-            await axios.post("http://localhost:8000/api/gdod/gdodsbyhativaid", { hativa: temphativaids[i] })
-                .then(response => {
-                    for (let j = 0; j < response.data.length; j++)
-                        temphativasgdods.push(response.data[j])
-                })
-                .catch((error) => {
-                    console.log(error);
-                })
-        }
-    }
-    setGdods(temphativasgdods);
-}  
+	const loadGdods = async (hativaids) => {
+		let temphativaids = hativaids;
+		if (temphativaids != undefined && !temphativaids.isArray) {
+			temphativaids = [hativaids];
+		}
+		let temphativasgdods = [];
+		if (temphativaids != undefined && temphativaids.length > 0) {
+			for (let i = 0; i < temphativaids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/gdod/gdodsbyhativaid", {
+						hativa: temphativaids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							temphativasgdods.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		setGdods(temphativasgdods);
+	};
 
+	function handleChange(evt) {
+		const value = evt.target.value;
+		setData({ ...data, [evt.target.name]: value });
+	}
 
-  function handleChange(evt) {
-    const value = evt.target.value;
-    setData({ ...data, [evt.target.name]: value });
-  }
+	function handleChange2(selectedOption, name) {
+		if (!(selectedOption.value == "בחר"))
+			setData({ ...data, [name]: selectedOption.value });
+		else {
+			let tempdata = { ...data };
+			delete tempdata[name];
+			setData(tempdata);
+		}
+	}
 
-  function handleChange2(selectedOption, name) {
-    if (!(selectedOption.value == "בחר"))
-      setData({ ...data, [name]: selectedOption.value });
-    else {
-      let tempdata = { ...data };
-      delete tempdata[name];
-      setData(tempdata);
-    }
-  }
+	const init = () => {
+		var reportid = match.params.formId;
+		axios
+			.get(`http://localhost:8000/report/${reportid}`)
+			.then((response) => {
+				let tempuser = { ...response.data };
+				setData(tempuser);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+		loadPikods();
+		getMagadals();
+	};
 
-  const init = () => {
-    var reportid = match.params.formId;
-    axios.get(`http://localhost:8000/report/${reportid}`)
-      .then(response => {
-        let tempuser = { ...response.data };
-        setData(tempuser);
-      })
-      .catch((error) => {
-        console.log(error);
-      })
-      loadPikods();
-      getMagadals();  
-  }
+	useEffect(() => {
+		init();
+	}, []);
 
-  useEffect(() => {
-    init();
-  }, []);
+	useEffect(() => {
+		setOgdas([]);
+		loadOgdas(data.pikod);
+	}, [data.pikod]);
 
-  useEffect(() => {
-    setOgdas([]);
-    loadOgdas(data.pikod);
-  }, [data.pikod]);
+	useEffect(() => {
+		setHativas([]);
+		loadHativas(data.ogda);
+	}, [data.ogda]);
 
-  useEffect(() => {
-    setHativas([]);
-    loadHativas(data.ogda);
-  }, [data.ogda]);
+	useEffect(() => {
+		setGdods([]);
+		loadGdods(data.hativa);
+	}, [data.hativa]);
 
-  useEffect(() => {
-    setGdods([]);
-    loadGdods(data.hativa);
-  }, [data.hativa]);
+	useEffect(() => {
+		setMagads([]);
+		getMagads(data.magadal);
+	}, [data.magadal]);
 
-  useEffect(() => {
-    setMagads([]);
-    getMagads(data.magadal);
-  }, [data.magadal]);
+	useEffect(() => {
+		setMkabazs([]);
+		getMkabazs(data.magad);
+	}, [data.magad]);
 
-  useEffect(() => {
-    setMkabazs([]);
-    getMkabazs(data.magad);
-  }, [data.magad]);
+	return (
+		<div>
+			<Container className="mt--8 pb-5">
+				<Row className="justify-content-center">
+					<Col
+						lg="20"
+						md="7"
+					>
+						<Card className="shadow border-0">
+							<CardBody className="px-lg-5 py-lg-5">
+								<div className="text-center text-muted mb-4">
+									<big>צפייה בדיווח</big>
+								</div>
+								<div className="text-center text-muted mb-4">
+									<small>פרטי מדווח</small>
+								</div>
+								<Form role="form">
+									<FormGroup dir="rtl">
+										<Input
+											placeholder="שם פרטי"
+											name="name"
+											type="text"
+											value={data.name}
+											disabled
+										/>
+									</FormGroup>
 
+									<FormGroup dir="rtl">
+										<Input
+											placeholder="שם משפחה"
+											name="lastname"
+											type="text"
+											value={data.lastname}
+											disabled
+										/>
+									</FormGroup>
 
-  return (
-    <div>
-    <Container className="mt--8 pb-5">
-    <Row className="justify-content-center">
-<Col lg="20" md="7">
-<Card className="shadow border-0">
-  <CardBody className="px-lg-5 py-lg-5">
-    <div className="text-center text-muted mb-4">
-      <big>צפייה בדיווח</big>
-    </div>
-    <div className="text-center text-muted mb-4">
-      <small>פרטי מדווח</small>
-    </div>
-    <Form role="form">
-      <FormGroup dir="rtl">
-        <Input
-          placeholder="שם פרטי"
-          name="name"
-          type="text"
-          value={data.name}
-          disabled
-        />
-      </FormGroup>
+									<FormGroup
+										className="mb-3"
+										dir="rtl"
+									>
+										<Input
+											placeholder="מספר אישי"
+											name="personalnumber"
+											type="string"
+											maxlength="7"
+											value={data.personalnumber}
+											disabled
+										/>
+									</FormGroup>
 
-      <FormGroup dir="rtl">
-        <Input
-          placeholder="שם משפחה"
-          name="lastname"
-          type="text"
-          value={data.lastname}
-          disabled
-        />
-      </FormGroup>
+									<FormGroup
+										className="mb-3"
+										dir="rtl"
+									>
+										<Input
+											placeholder="טלפון נייד"
+											name="cellphone"
+											type="tel"
+											maxlength="10"
+											value={data.cellphone}
+											disabled
+										/>
+									</FormGroup>
 
-      <FormGroup className="mb-3" dir="rtl">
-        <Input
-          placeholder="מספר אישי"
-          name="personalnumber"
-          type="string"
-          maxlength="7"
-          value={data.personalnumber}
-          disabled
-        />
-      </FormGroup>
+									<div className="text-center text-muted mb-4">
+										<small>פרטי יחידה מדווחת</small>
+									</div>
 
-      <FormGroup className="mb-3" dir="rtl">
-        <Input
-          placeholder="טלפון נייד"
-          name="cellphone"
-          type="tel"
-          maxlength="10"
-          value={data.cellphone}
-          disabled
-        />
-      </FormGroup>
+									<Row style={{ paddingTop: "2px" }}>
+										{!data.ogda ? (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>פיקוד</h6>
+												<Select
+													data={pikods}
+													handleChange2={handleChange2}
+													name={"pikod"}
+													val={data.pikod ? data.pikod : undefined}
+												/>
+											</Col>
+										) : (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>פיקוד</h6>
+												<Select
+													data={pikods}
+													handleChange2={handleChange2}
+													name={"pikod"}
+													val={data.pikod ? data.pikod : undefined}
+													isDisabled={true}
+												/>
+											</Col>
+										)}
 
-      <div className="text-center text-muted mb-4">
-      <small>פרטי יחידה מדווחת</small>
-    </div>
+										<>
+											{data.pikod && !data.hativa ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>אוגדה</h6>
+													<Select
+														data={ogdas}
+														handleChange2={handleChange2}
+														name={"ogda"}
+														val={data.ogda ? data.ogda : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>אוגדה</h6>
+													<Select
+														data={ogdas}
+														handleChange2={handleChange2}
+														name={"ogda"}
+														val={data.ogda ? data.ogda : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
 
-      <Row style={{ paddingTop: '2px' }}>
-        {(!(data.ogda)) ?
-          <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-            <h6>פיקוד</h6>
-            <Select data={pikods}
-             handleChange2={handleChange2}
-              name={'pikod'} val={data.pikod ? data.pikod : undefined} />
-          </Col> :
-          <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-            <h6>פיקוד</h6>
-            <Select data={pikods} 
-            handleChange2={handleChange2} 
-            name={'pikod'} val={data.pikod ? data.pikod : undefined} isDisabled={true} />
-          </Col>}
+										<>
+											{data.ogda && !data.gdod ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>חטיבה</h6>
+													<Select
+														data={hativas}
+														handleChange2={handleChange2}
+														name={"hativa"}
+														val={data.hativa ? data.hativa : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>חטיבה</h6>
+													<Select
+														data={hativas}
+														handleChange2={handleChange2}
+														name={"hativa"}
+														val={data.hativa ? data.hativa : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
 
-      <>
-        {((data.pikod) && !(data.hativa)) ?
-          <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-            <h6>אוגדה</h6>
-            <Select data={ogdas} 
-            handleChange2={handleChange2} 
-            name={'ogda'} val={data.ogda ? data.ogda : undefined} />
-          </Col> :
-          <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-            <h6>אוגדה</h6>
-            <Select data={ogdas}
-             handleChange2={handleChange2}
-              name={'ogda'} val={data.ogda ? data.ogda : undefined} isDisabled={true} />
-          </Col>}
-      </>
+										<>
+											{data.hativa ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+														data={gdods}
+														handleChange2={handleChange2}
+														name={"gdod"}
+														val={data.gdod ? data.gdod : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+														data={gdods}
+														handleChange2={handleChange2}
+														name={"gdod"}
+														val={data.gdod ? data.gdod : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+									</Row>
 
-      <>
-        {((data.ogda) && !(data.gdod)) ?
-          <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-            <h6>חטיבה</h6>
-            <Select data={hativas}
-             handleChange2={handleChange2} 
-             name={'hativa'} val={data.hativa ? data.hativa : undefined} />
-          </Col> :
-          <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-            <h6>חטיבה</h6>
-            <Select data={hativas}
-             handleChange2={handleChange2}
-              name={'hativa'} val={data.hativa ? data.hativa : undefined} isDisabled={true} />
-          </Col>}
-      </>
+									<div
+										className="text-center text-muted mb-4"
+										style={{ paddingTop: "20px" }}
+									>
+										<small>פרטי אירוע</small>
+									</div>
 
-      <>
-        {((data.hativa)) ?
-          <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-            <h6>גדוד</h6>
-            <Select data={gdods}
-             handleChange2={handleChange2}
-              name={'gdod'} val={data.gdod ? data.gdod : undefined} />
-          </Col> :
-          <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-            <h6>גדוד</h6>
-            <Select data={gdods}
-             handleChange2={handleChange2} 
-             name={'gdod'} val={data.gdod ? data.gdod : undefined} isDisabled={true} />
-          </Col>}
-      </>
-  </Row>
-          
-      <div className="text-center text-muted mb-4" style={{ paddingTop: '20px' }}>
-        <small>פרטי אירוע</small>
-      </div>
+									<div style={{ textAlign: "right", paddingTop: "10px" }}>
+										סיבת האירוע
+									</div>
+									<FormGroup>
+										<Input
+											type="select"
+											name="resevent"
+											value={data.resevent}
+											id="res"
+											disabled
+										>
+											<option value={"0"}>בחר</option>
+											<option value={"1"}>תאונה</option>
+											<option value={"2"}>כשל טכני</option>
+											<option value={"4"}>טעות אנוש</option>
+											<option value={"3"}>לא ידוע</option>
+										</Input>
+									</FormGroup>
 
-      <div style={{ textAlign: "right", paddingTop: "10px" }}>
-        סיבת האירוע
-      </div>
-     <FormGroup>
-        <Input
-          type="select"
-          name="resevent"
-          value={data.resevent}
-          id="res"
-          disabled
-        >
-          <option value={"0"}>בחר</option>
-          <option value={"1"}>תאונה</option>
-          <option value={"2"}>כשל טכני</option>
-          <option value={"4"}>טעות אנוש</option>
-          <option value={"3"}>לא ידוע</option>
-        </Input>
-      </FormGroup>
+									<div style={{ textAlign: "right", paddingTop: "10px" }}>
+										סוג הרק"ם
+									</div>
+									<FormGroup>
+										<Input
+											type="select"
+											name="cli"
+											value={data.cli}
+											id="sel"
+											disabled
+										>
+											<option value={"0"}>בחר</option>
+											<option value={"1"}>סתם</option>
+										</Input>
+									</FormGroup>
 
-          <div style={{ textAlign: "right", paddingTop: "10px" }}>
-            סוג הרק"ם
-          </div>
-          <FormGroup>
-            <Input
-              type="select"
-              name="cli"
-              value={data.cli}
-              id="sel"
-              disabled
-            >
-              <option value={"0"}>בחר</option>
-              <option value={"1"}>סתם</option>
+									<div style={{ textAlign: "right", paddingTop: "10px" }}>
+										האם נגרם נזק לרק"ם
+									</div>
 
-            </Input>
-          </FormGroup>
+									<div style={{ textAlign: "right" }}>
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													type="radio"
+													name="yn"
+													value={true}
+													id="YES"
+													disabled
+												/>
+												כן
+											</div>
+										</FormGroup>
 
-          <div style={{ textAlign: "right", paddingTop: "10px" }}>
-            האם נגרם נזק לרק"ם
-          </div>
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													type="radio"
+													id="NO"
+													name="yn"
+													value={false}
+													disabled
+												/>
+												לא
+											</div>
+										</FormGroup>
+									</div>
 
-          <div style={{ textAlign: "right"}}>
-          <FormGroup check inline>
-            <div style={{ textAlign: "right", paddingTop: "10px" }}>
-              <Input
-                type="radio"
-                name="yn"
-                value={true}
-                id="YES"
-                disabled
-              />
-              כן  
-            </div>
-            </FormGroup>
+									<FormGroup dir="rtl">
+										<Input
+											placeholder="פירוט האירוע"
+											name="pirot"
+											type="textarea"
+											value={data.pirot}
+											disabled
+										/>
+									</FormGroup>
 
-            <FormGroup check inline>
-            <div style={{ textAlign: "right", paddingTop: "10px" }}>
-            <Input
-              type="radio"
-              id="NO"
-              name="yn"
-              value={false}
-              disabled
-            />
-            לא
-            </div>
-          </FormGroup>
-          </div>
+									<div style={{ textAlign: "right", paddingTop: "10px" }}>
+										תאריך אירוע
+									</div>
+									<FormGroup dir="rtl">
+										<Input
+											placeholder="תאריך אירוע"
+											name="datevent"
+											type="datetime-local"
+											value={data.datevent.slice(0, 21)}
+											disabled
+										/>
+									</FormGroup>
 
-          <FormGroup dir="rtl">
-        <Input
-          placeholder="פירוט האירוע"
-          name="pirot"
-          type="textarea"
-          value={data.pirot}
-          disabled
-        />
-      </FormGroup> 
+									<FormGroup dir="rtl">
+										<Input
+											placeholder="מיקום האירוע"
+											name="mikom"
+											type="string"
+											value={data.mikom}
+											disabled
+										/>
+									</FormGroup>
 
-    <div style={{ textAlign: "right", paddingTop: "10px" }}>
-        תאריך אירוע
-    </div>                  
-      <FormGroup dir="rtl">
-        <Input
-          placeholder="תאריך אירוע"
-          name="datevent"
-          type="datetime-local"
-          value={data.datevent}
-          disabled
-        />
-      </FormGroup>
+									<FormGroup dir="rtl">
+										<Input
+											placeholder="כמה נפגעים היו באירוע"
+											name="nifga"
+											type="number"
+											value={data.nifga}
+											disabled
+										/>
+									</FormGroup>
 
-      <FormGroup dir="rtl">
-        <Input
-          placeholder="מיקום האירוע"
-          name="mikom"
-          type="string"
-          value={data.mikom}
-          disabled
-        />
-      </FormGroup>
-
-      <FormGroup dir="rtl">
-        <Input
-          placeholder="כמה נפגעים היו באירוע"
-          name="nifga"
-          type="number"
-          value={data.nifga}
-          disabled
-        />
-      </FormGroup>
-
-       {/* {data.nifga > "0" && (
+									{/* {data.nifga > "0" && (
         <>
           <div style={{ textAlign: "right", paddingTop: "10px" }}>
             מצב הנפגע
@@ -519,23 +632,18 @@ const loadGdods = async (hativaids) => {
       </>
       )} */}
 
-      <div className="text-center">
-      <Link to={`/historeport`}>
-        <button 
-        className="btn-new-blue">
-          חזרה
-        </button>
-        </Link>
-      </div>
-    </Form>
-  </CardBody>
-</Card>
-</Col>
-</Row>
-    </Container>
-</div>
-
-);
-}
+									<div className="text-center">
+										<Link to={`/historeport`}>
+											<button className="btn-new-blue">חזרה</button>
+										</Link>
+									</div>
+								</Form>
+							</CardBody>
+						</Card>
+					</Col>
+				</Row>
+			</Container>
+		</div>
+	);
+};
 export default withRouter(EditReport);
-

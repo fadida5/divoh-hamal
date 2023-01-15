@@ -77,6 +77,7 @@ function SidebarAdmin(props) {
 		});
 	};
 	// todo: to find out how to relod the sidebar on login
+
 	return (
 		<>
 			{/* לוגו המערכת */}
