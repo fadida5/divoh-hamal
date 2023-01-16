@@ -28,7 +28,7 @@ export default function SignUpForm() {
 		lastname: "",
 		personalnumber: "",
 		role: "0",
-
+		pikodid: "",
 		errortype: "",
 		error: false,
 		successmsg: false,
@@ -114,6 +114,7 @@ export default function SignUpForm() {
 			name: data.name,
 			lastname: data.lastname,
 			role: data.role,
+			pikodid: "",
 			personalnumber: data.personalnumber,
 		};
 		axios

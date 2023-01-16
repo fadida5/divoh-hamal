@@ -7,6 +7,12 @@ router.route("/").get((req, res) => {
 		.catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/pikod/:pikod").get((req, res) => {
+	Report.find({ pikod: req.params.pikod })
+		.then((request) => res.json(request))
+		.catch((err) => res.status(400).json("Error: " + err));
+});
+
 router.route("/add").post((req, res) => {
 	console.groupCollapsed("add post");
 	console.log(res);

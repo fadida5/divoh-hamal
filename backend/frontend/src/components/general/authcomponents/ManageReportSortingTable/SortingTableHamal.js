@@ -94,16 +94,28 @@ const SortingTableHamal = ({ match }) => {
 	// }, []);
 
 	useEffect(() => {
-		axios
-			.get(`http://localhost:8000/report/`)
-			.then((response) => {
-				console.log(response.data);
-				setData(response.data);
-			})
-			.catch((error) => {
-				console.log(error);
-				setIsError(true);
-			});
+		user.role === "2"
+			? axios
+					.get(`http://localhost:8000/report/`)
+					.then((response) => {
+						console.log(response.data);
+						setData(response.data);
+					})
+					.catch((error) => {
+						console.log(error);
+						setIsError(true);
+					})
+			: axios
+					.get(`http://localhost:8000/report/pikod/${user.pikodid}`)
+					.then((response) => {
+						console.log(user.pikodid);
+						console.log(response.data);
+						setData(response.data);
+					})
+					.catch((error) => {
+						console.log(error);
+						setIsError(true);
+					});
 	}, []);
 
 	const {
