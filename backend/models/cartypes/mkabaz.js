@@ -1,16 +1,14 @@
-const mongoose = require('mongoose');
-
-
+const mongoose = require("mongoose");
 
 const mkabazSchema = new mongoose.Schema({
-    _id:{type:String},
-    name:{type:String},
-    magad:{type:String},
-    index:{type:Number},
-    main_group:{type:String},
+	// _id: { type: String },
+	name: { type: String },
+	magadss: { type: String },
+	isRekem: { type: Boolean },
+	matafEngine: { type: Boolean },
+	matafCre: { type: Boolean },
 });
 
-const Mkabaz = mongoose.model('Mkabaz', mkabazSchema);
+const Mkabaz = mongoose.model("Mkabaz", mkabazSchema);
 
 module.exports = Mkabaz;
-

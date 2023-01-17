@@ -63,7 +63,10 @@ const Report = ({ match }) => {
 
 	const [mkabazs, setMkabazs] = useState([]);
 	const [magads, setMagads] = useState([]);
+	// ? for magad that have matafim
+	const [mkabazsMataf, setMkabazsMataf] = useState([]);
 	const [magadals, setMagadals] = useState([]);
+	const [indexM, setIndexM] = useState(0);
 
 	const getMagadals = async () => {
 		await axios
@@ -106,6 +109,18 @@ const Report = ({ match }) => {
 				});
 			setMkabazs(tempmagadmkabazs);
 		}
+	};
+
+	const getMkabazsMataf = async () => {
+		await axios
+			.get(`http://localhost:8000/api/mkabaz`)
+			.then((response) => {
+				setMkabazsMataf(response.data);
+				// console.log(response.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	};
 
 	const loadPikods = async () => {
@@ -193,7 +208,32 @@ const Report = ({ match }) => {
 
 	function handleChange(evt) {
 		const value = evt.target.value;
+		console.log(evt.target.value);
 		setData({ ...data, [evt.target.name]: value });
+	}
+
+	async function matafHandleChange(selectedOption, name) {
+		if (!(selectedOption.value == "בחר")) {
+			let i = mkabazsMataf.map((item, index) => {
+				return mkabazsMataf[index].name;
+			});
+			console.log(1);
+			let nameIndex = await i.indexOf(selectedOption.label);
+			// console.log(selectedOption.label);
+			console.log(nameIndex);
+			await setIndexM(nameIndex);
+			// console.log(mkabazsMataf[nameIndex]);
+			console.log(indexM);
+			console.log(mkabazsMataf[indexM].matafEngine);
+			console.log(mkabazsMataf[indexM].matafCre);
+
+			setData({ ...data, [name]: selectedOption.value });
+		} else {
+			let tempdata = { ...data };
+			console.log(tempdata);
+			delete tempdata[name];
+			setData(tempdata);
+		}
 	}
 
 	function handleChange2(selectedOption, name) {
@@ -359,14 +399,14 @@ const Report = ({ match }) => {
 				flag = false;
 				ErrorReason += "סוג מטף ריק \n";
 			}
-			if (
-				document.getElementById("rekem").options[
-					document.getElementById("rekem").selectedIndex
-				].value == "0"
-			) {
-				flag = false;
-				ErrorReason += " סוג הרק'ם ריק \n";
-			}
+			// if (
+			// 	document.getElementById("rekem").options[
+			// 		document.getElementById("rekem").selectedIndex
+			// 	].value == "0"
+			// ) {
+			// 	flag = false;
+			// 	ErrorReason += " סוג הרק'ם ריק \n";
+			// }
 			if (
 				document.getElementById("mazav").options[
 					document.getElementById("mazav").selectedIndex
@@ -465,7 +505,7 @@ const Report = ({ match }) => {
 			resevent: data.resevent,
 			magadal: data.magadal,
 			// magad:data.magad,
-			// mkabaz:data.mkabaz,
+			mkabaz: data.mkabaz,
 			yn: data.yn,
 			status:
 				data.dt /* //?if there is no need for the status button ==> data.dt != undefined || null ? data.dt : "0",*/,
@@ -555,6 +595,17 @@ const Report = ({ match }) => {
 		getMkabazs(data.magad);
 	}, [data.magad]);
 
+	useEffect(() => {
+		setMkabazsMataf([]);
+		getMkabazsMataf();
+	}, [data.mkabaz]);
+
+	// useEffect(() => {
+	// 	setIndexM(0);
+	// }, []);
+
+	// const selectElem = document.getElementById("mkabazM");
+
 	return (
 		<div>
 			<Container className="mt--8 pb-5">
@@ -573,7 +624,7 @@ const Report = ({ match }) => {
 								</div>
 								<Form role="form">
 									<FormGroup dir="rtl">
-										<Input
+										<InputS
 											placeholder="שם פרטי"
 											name="name"
 											type="text"
@@ -983,47 +1034,6 @@ const Report = ({ match }) => {
 													</div>
 												</FormGroup>
 											</div>
-											{/* //* ------------------ status checker ----------------------- */}
-											<div style={{ textAlign: "right", paddingTop: "10px" }}>
-												סטטוס
-											</div>
-											<div style={{ textAlign: "right" }}>
-												<FormGroup
-													check
-													inline
-												>
-													<div
-														style={{ textAlign: "right", paddingTop: "10px" }}
-													>
-														<Input
-															type="radio"
-															name="dt"
-															value="1"
-															onChange={handleChange}
-															id="delt"
-														/>
-														סגור
-													</div>
-												</FormGroup>
-
-												<FormGroup
-													check
-													inline
-												>
-													<div
-														style={{ textAlign: "right", paddingTop: "10px" }}
-													>
-														<Input
-															type="radio"
-															id="notDelt"
-															name="dt"
-															value="0"
-															onChange={handleChange}
-														/>
-														בטיפול
-													</div>
-												</FormGroup>
-											</div>
 										</>
 									)}
 
@@ -1086,48 +1096,6 @@ const Report = ({ match }) => {
 														לא
 													</div>
 												</FormGroup>
-
-												{/* //* ------------------ status checker ----------------------- */}
-												<div style={{ textAlign: "right", paddingTop: "10px" }}>
-													סטטוס
-												</div>
-												<div style={{ textAlign: "right" }}>
-													<FormGroup
-														check
-														inline
-													>
-														<div
-															style={{ textAlign: "right", paddingTop: "10px" }}
-														>
-															<Input
-																type="radio"
-																name="dt"
-																value="1"
-																onChange={handleChange}
-																id="delt"
-															/>
-															סגור
-														</div>
-													</FormGroup>
-
-													<FormGroup
-														check
-														inline
-													>
-														<div
-															style={{ textAlign: "right", paddingTop: "10px" }}
-														>
-															<Input
-																type="radio"
-																id="notDelt"
-																name="dt"
-																value="0"
-																onChange={handleChange}
-															/>
-															בטיפול
-														</div>
-													</FormGroup>
-												</div>
 											</div>
 
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
@@ -1152,7 +1120,7 @@ const Report = ({ match }) => {
 										</>
 									)}
 
-									{/*  תאונת עבודה אנשי טנ"א */}
+									{/*//*  תאונת עבודה אנשי טנ"א */}
 
 									{data.typevent === "6" && (
 										<>
@@ -1203,26 +1171,177 @@ const Report = ({ match }) => {
 										</>
 									)}
 
-									{/* פריקת מטפים*/}
+									{/*//* ------- פריקת מטפים ------------------*/}
 
 									{data.typevent === "7" && (
 										<>
+											<Row>
+												{!data.magad ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד על</h6>
+														<Select
+															data={magadals}
+															handleChange2={handleChange2}
+															name={"magadal"}
+															val={data.magadal ? data.magadal : undefined}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד על</h6>
+														<Select
+															data={magadals}
+															handleChange2={handleChange2}
+															name={"magadal"}
+															val={data.magadal ? data.magadal : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+
+												{!data.magadal && !data.mkabaz ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד</h6>
+														<Select
+															data={magads}
+															handleChange2={handleChange2}
+															name={"magad"}
+															val={data.magad ? data.magad : undefined}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד</h6>
+														<Select
+															data={magads}
+															handleChange2={handleChange2}
+															name={"magad"}
+															val={data.magad ? data.magad : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+
+												{!data.magad && !data.makat ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מקבץ</h6>
+														<Select
+															data={mkabazsMataf}
+															handleChange2={matafHandleChange}
+															val={data.mkabaz ? data.mkabaz : undefined}
+															id="mkabazM"
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מקבץ</h6>
+														<Select
+															data={mkabazsMataf}
+															handleChange2={matafHandleChange}
+															val={data.mkabaz ? data.mkabaz : undefined}
+															isDisabled={true}
+															id="mkabazM"
+														/>
+													</Col>
+												)}
+											</Row>
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												סוג המטף
 											</div>
 											<FormGroup>
-												<Input
-													type="select"
-													name="mataftype"
-													value={data.mataftype}
-													onChange={handleChange}
-													id="mataf"
-												>
-													<option value={"0"}>בחר</option>
-												</Input>
-											</FormGroup>
+												{/* {console.log(mkabazsMataf)} */}
+												{/* {console.log(mkabazsMataf[indexM])}
+												{console.log(mkabazsMataf[indexM].matafEngine)}
+												{console.log(mkabazsMataf[indexM].matafCre)} */}
 
-											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												{mkabazsMataf[indexM] ==
+												undefined ? null : mkabazsMataf[indexM].matafEngine &&
+												  mkabazsMataf[indexM].matafCre ? (
+													<Input
+														type="select"
+														name="mataftype"
+														value={data.mataftype}
+														onChange={handleChange}
+														id="mataf"
+													>
+														<option value={"0"}>בחר</option>
+														<option value={"1"}>תא מנוע</option>
+														<option value={"2"}>תא צוות</option>
+														<option value={"3"}>תא מנוע ותא צוות</option>
+													</Input>
+												) : mkabazsMataf[indexM].matafEngine ? (
+													<Input
+														type="select"
+														name="mataftype"
+														value={data.mataftype}
+														onChange={handleChange}
+														id="mataf"
+													>
+														<option value={"0"}>בחר</option>
+														<option value={"1"}>תא מנוע</option>
+													</Input>
+												) : mkabazsMataf[indexM].matafCre ? (
+													<Input
+														type="select"
+														name="mataftype"
+														value={data.mataftype}
+														onChange={handleChange}
+														id="mataf"
+													>
+														<option value={"0"}>בחר</option>
+														<option value={"2"}>תא צוות</option>
+													</Input>
+												) : (
+													<Input
+														type="select"
+														name="mataftype"
+														value={data.mataftype}
+														onChange={handleChange}
+														id="mataf"
+													>
+														<option value={"0"}>בחר</option>
+														<option value={""}>לא נמצאו כלים </option>
+													</Input>
+												)}
+											</FormGroup>
+											{/* //! to be checked */}
+											{/* <div style={{ textAlign: "right", paddingTop: "10px" }}>
 												סוג הרק"ם
 											</div>
 											<FormGroup>
@@ -1235,7 +1354,7 @@ const Report = ({ match }) => {
 												>
 													<option value={"0"}>בחר</option>
 												</Input>
-											</FormGroup>
+											</FormGroup> */}
 
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												מצב הרק"ם במהלך הפריקה
@@ -1338,24 +1457,119 @@ const Report = ({ match }) => {
 										</>
 									)}
 
-									{/* חילוץ */}
+									{/* //* ------ חילוץ  --------------*/}
 
 									{data.typevent === "9" && (
 										<>
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												סוג הכלי המחולץ
 											</div>
-											<FormGroup>
-												<Input
-													type="select"
-													name="mholaztype"
-													value={data.mholaztype}
-													onChange={handleChange}
-													id="mholaz"
-												>
-													<option value={"0"}>בחר</option>
-												</Input>
-											</FormGroup>
+											<Row>
+												{!data.magad ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד על</h6>
+														<Select
+															data={magadals}
+															handleChange2={handleChange2}
+															name={"magadal"}
+															val={data.magadal ? data.magadal : undefined}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד על</h6>
+														<Select
+															data={magadals}
+															handleChange2={handleChange2}
+															name={"magadal"}
+															val={data.magadal ? data.magadal : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+
+												{data.magadal && !data.mkabaz ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד</h6>
+														<Select
+															data={magads}
+															handleChange2={handleChange2}
+															name={"magad"}
+															val={data.magad ? data.magad : undefined}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד</h6>
+														<Select
+															data={magads}
+															handleChange2={handleChange2}
+															name={"magad"}
+															val={data.magad ? data.magad : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+
+												{data.magad && !data.makat ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מקבץ</h6>
+														<Select
+															data={mkabazs}
+															handleChange2={handleChange2}
+															name={"mkabaz"}
+															val={data.mkabaz ? data.mkabaz : undefined}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מקבץ</h6>
+														<Select
+															data={mkabazs}
+															handleChange2={handleChange2}
+															name={"mkabaz"}
+															val={data.mkabaz ? data.mkabaz : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+											</Row>
 											{/* <div style={{ textAlign: "right", paddingTop: "10px" }}>
                     סוג הכלי המחלץ
                   </div>
@@ -1373,6 +1587,44 @@ const Report = ({ match }) => {
  */}
 										</>
 									)}
+
+									{/* //* ------------------ status checker ----------------------- */}
+									<div style={{ textAlign: "right", paddingTop: "10px" }}>
+										סטטוס
+									</div>
+									<div style={{ textAlign: "right" }}>
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													type="radio"
+													name="dt"
+													value="1"
+													onChange={handleChange}
+													id="delt"
+												/>
+												סגור
+											</div>
+										</FormGroup>
+
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													type="radio"
+													id="notDelt"
+													name="dt"
+													value="0"
+													onChange={handleChange}
+												/>
+												בטיפול
+											</div>
+										</FormGroup>
+									</div>
 
 									<FormGroup dir="rtl">
 										<Input

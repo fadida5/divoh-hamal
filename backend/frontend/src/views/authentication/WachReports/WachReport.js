@@ -62,7 +62,8 @@ const EditReport = ({ match }) => {
 	const [hativas, setHativas] = useState([]);
 	const [ogdas, setOgdas] = useState([]);
 	const [pikods, setPikods] = useState([]);
-
+	const [mkabazsMataf, setMkabazsMataf] = useState([]);
+	const [indexM, setIndexM] = useState(0);
 	const [mkabazs, setMkabazs] = useState([]);
 	const [magads, setMagads] = useState([]);
 	const [magadals, setMagadals] = useState([]);
@@ -108,6 +109,18 @@ const EditReport = ({ match }) => {
 				});
 			setMkabazs(tempmagadmkabazs);
 		}
+	};
+
+	const getMkabazsMataf = async () => {
+		await axios
+			.get(`http://localhost:8000/api/mkabaz`)
+			.then((response) => {
+				setMkabazsMataf(response.data);
+				// console.log(response.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
 	};
 
 	const loadPikods = async () => {
@@ -202,6 +215,35 @@ const EditReport = ({ match }) => {
 			setData(tempdata);
 		}
 	}
+	function handleChange(evt) {
+		const value = evt.target.value;
+		console.log(evt.target.value);
+		setData({ ...data, [evt.target.name]: value });
+	}
+
+	async function matafHandleChange(selectedOption, name) {
+		if (!(selectedOption.value == "בחר")) {
+			let i = mkabazsMataf.map((item, index) => {
+				return mkabazsMataf[index].name;
+			});
+			console.log(1);
+			let nameIndex = await i.indexOf(selectedOption.label);
+			// console.log(selectedOption.label);
+			console.log(nameIndex);
+			await setIndexM(nameIndex);
+			// console.log(mkabazsMataf[nameIndex]);
+			console.log(indexM);
+			console.log(mkabazsMataf[indexM].matafEngine);
+			console.log(mkabazsMataf[indexM].matafCre);
+
+			setData({ ...data, [name]: selectedOption.value });
+		} else {
+			let tempdata = { ...data };
+			console.log(tempdata);
+			delete tempdata[name];
+			setData(tempdata);
+		}
+	}
 
 	const init = () => {
 		var reportid = match.params.formId;
@@ -246,6 +288,11 @@ const EditReport = ({ match }) => {
 		setMkabazs([]);
 		getMkabazs(data.magad);
 	}, [data.magad]);
+
+	useEffect(() => {
+		setMkabazsMataf([]);
+		getMkabazsMataf();
+	}, [data.mkabaz]);
 
 	return (
 		<div>
@@ -331,6 +378,7 @@ const EditReport = ({ match }) => {
 													handleChange2={handleChange2}
 													name={"pikod"}
 													val={data.pikod ? data.pikod : undefined}
+													isDisabled={true}
 												/>
 											</Col>
 										) : (
@@ -367,6 +415,7 @@ const EditReport = ({ match }) => {
 														handleChange2={handleChange2}
 														name={"ogda"}
 														val={data.ogda ? data.ogda : undefined}
+														isDisabled={true}
 													/>
 												</Col>
 											) : (
@@ -404,6 +453,7 @@ const EditReport = ({ match }) => {
 														handleChange2={handleChange2}
 														name={"hativa"}
 														val={data.hativa ? data.hativa : undefined}
+														isDisabled={true}
 													/>
 												</Col>
 											) : (
@@ -441,6 +491,7 @@ const EditReport = ({ match }) => {
 														handleChange2={handleChange2}
 														name={"gdod"}
 														val={data.gdod ? data.gdod : undefined}
+														isDisabled={true}
 													/>
 												</Col>
 											) : (
@@ -543,6 +594,7 @@ const EditReport = ({ match }) => {
 															handleChange2={handleChange2}
 															name={"magadal"}
 															val={data.magadal ? data.magadal : undefined}
+															isDisabled={true}
 														/>
 													</Col>
 												) : (
@@ -578,6 +630,7 @@ const EditReport = ({ match }) => {
 															handleChange2={handleChange2}
 															name={"magad"}
 															val={data.magad ? data.magad : undefined}
+															isDisabled={true}
 														/>
 													</Col>
 												) : (
@@ -812,40 +865,182 @@ const EditReport = ({ match }) => {
 										</>
 									)}
 
-									{/* פריקת מטפים*/}
+									{/*//* ------- פריקת מטפים ------------------*/}
 
 									{data.typevent === "7" && (
 										<>
+											<Row>
+												{!data.magad ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד על</h6>
+														<Select
+															data={magadals}
+															handleChange2={handleChange2}
+															name={"magadal"}
+															val={data.magadal ? data.magadal : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד על</h6>
+														<Select
+															data={magadals}
+															handleChange2={handleChange2}
+															name={"magadal"}
+															val={data.magadal ? data.magadal : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+
+												{!data.magadal && !data.mkabaz ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד</h6>
+														<Select
+															data={magads}
+															handleChange2={handleChange2}
+															name={"magad"}
+															val={data.magad ? data.magad : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד</h6>
+														<Select
+															data={magads}
+															handleChange2={handleChange2}
+															name={"magad"}
+															val={data.magad ? data.magad : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+
+												{!data.magad && !data.makat ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מקבץ</h6>
+														<Select
+															data={mkabazsMataf}
+															handleChange2={matafHandleChange}
+															val={data.mkabaz ? data.mkabaz : undefined}
+															id="mkabazM"
+															isDisabled={true}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מקבץ</h6>
+														<Select
+															data={mkabazsMataf}
+															handleChange2={matafHandleChange}
+															val={data.mkabaz ? data.mkabaz : undefined}
+															isDisabled={true}
+															id="mkabazM"
+														/>
+													</Col>
+												)}
+											</Row>
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												סוג המטף
 											</div>
 											<FormGroup>
-												<Input
-													type="select"
-													name="mataftype"
-													value={data.mataftype}
-													id="mataf"
-													disabled
-												>
-													<option value={"0"}>בחר</option>
-												</Input>
-											</FormGroup>
+												{/* {console.log(mkabazsMataf)} */}
+												{/* {console.log(mkabazsMataf[indexM])}
+												{console.log(mkabazsMataf[indexM].matafEngine)}
+												{console.log(mkabazsMataf[indexM].matafCre)} */}
 
-											<div style={{ textAlign: "right", paddingTop: "10px" }}>
-												סוג הרק"ם
-											</div>
-											<FormGroup>
-												<Input
-													type="select"
-													name="rekemtype"
-													value={data.rekemtype}
-													id="rekem"
-													disabled
-												>
-													<option value={"0"}>בחר</option>
-												</Input>
+												{mkabazsMataf[indexM] ==
+												undefined ? null : mkabazsMataf[indexM].matafEngine &&
+												  mkabazsMataf[indexM].matafCre ? (
+													<Input
+														type="select"
+														name="mataftype"
+														value={data.mataftype}
+														onChange={handleChange}
+														id="mataf"
+														disabled
+													>
+														<option value={"0"}>בחר</option>
+														<option value={"1"}>תא מנוע</option>
+														<option value={"2"}>תא צוות</option>
+														<option value={"3"}>תא מנוע ותא צוות</option>
+													</Input>
+												) : mkabazsMataf[indexM].matafEngine ? (
+													<Input
+														type="select"
+														name="mataftype"
+														value={data.mataftype}
+														onChange={handleChange}
+														id="mataf"
+														disabled
+													>
+														<option value={"0"}>בחר</option>
+														<option value={"1"}>תא מנוע</option>
+													</Input>
+												) : mkabazsMataf[indexM].matafCre ? (
+													<Input
+														type="select"
+														name="mataftype"
+														value={data.mataftype}
+														onChange={handleChange}
+														id="mataf"
+														disabled
+													>
+														<option value={"0"}>בחר</option>
+														<option value={"2"}>תא צוות</option>
+													</Input>
+												) : (
+													<Input
+														type="select"
+														name="mataftype"
+														value={data.mataftype}
+														onChange={handleChange}
+														id="mataf"
+														disabled
+													>
+														<option value={"0"}>בחר</option>
+														<option value={""}>לא נמצאו כלים </option>
+													</Input>
+												)}
 											</FormGroup>
-
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												מצב הרק"ם במהלך הפריקה
 											</div>
@@ -947,24 +1142,123 @@ const EditReport = ({ match }) => {
 										</>
 									)}
 
-									{/* חילוץ */}
+									{/*//* --------- חילוץ --------------------*/}
 
 									{data.typevent === "9" && (
 										<>
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												סוג הכלי המחולץ
 											</div>
-											<FormGroup>
-												<Input
-													type="select"
-													name="mholaztype"
-													value={data.mholaztype}
-													id="mholaz"
-													disabled
-												>
-													<option value={"0"}>בחר</option>
-												</Input>
-											</FormGroup>
+											<Row>
+												{!data.magad ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד על</h6>
+														<Select
+															data={magadals}
+															handleChange2={handleChange2}
+															name={"magadal"}
+															val={data.magadal ? data.magadal : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד על</h6>
+														<Select
+															data={magadals}
+															handleChange2={handleChange2}
+															name={"magadal"}
+															val={data.magadal ? data.magadal : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+
+												{data.magadal && !data.mkabaz ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד</h6>
+														<Select
+															data={magads}
+															handleChange2={handleChange2}
+															name={"magad"}
+															val={data.magad ? data.magad : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מאגד</h6>
+														<Select
+															data={magads}
+															handleChange2={handleChange2}
+															name={"magad"}
+															val={data.magad ? data.magad : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+
+												{data.magad && !data.makat ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מקבץ</h6>
+														<Select
+															data={mkabazs}
+															handleChange2={handleChange2}
+															name={"mkabaz"}
+															val={data.mkabaz ? data.mkabaz : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>מקבץ</h6>
+														<Select
+															data={mkabazs}
+															handleChange2={handleChange2}
+															name={"mkabaz"}
+															val={data.mkabaz ? data.mkabaz : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+											</Row>
+
 											{/* <div style={{ textAlign: "right", paddingTop: "10px" }}>
         סוג הכלי המחלץ
       </div>
