@@ -19,9 +19,11 @@ import {
 import axios from "axios";
 import history from "history.js";
 import { toast } from "react-toastify";
+import { isAuthenticated } from "auth";
 
 const AdminSignInForm = () => {
 	const [reportDB, setReportDB] = useState([]);
+	const { user } = isAuthenticated();
 	const [isError, setIsError] = useState(false);
 	const eventTypeArray = {
 		בחר: "",
@@ -40,16 +42,28 @@ const AdminSignInForm = () => {
 		"רק'ם": 'רק"ם',
 	};
 	useEffect(() => {
-		axios
-			.get(`http://localhost:8000/report/`)
-			.then((response) => {
-				console.log(response.data);
-				setReportDB(response.data);
-			})
-			.catch((error) => {
-				console.log(error);
-				setIsError(true);
-			});
+		user.role == 2
+			? axios
+					.get(`http://localhost:8000/report/`)
+					.then((response) => {
+						console.log(response.data);
+						setReportDB(response.data);
+					})
+					.catch((error) => {
+						console.log(error);
+						setIsError(true);
+					})
+			: axios
+					.get(`http://localhost:8000/report/pikod/${user.pikodid}`)
+					.then((response) => {
+						console.log(user.pikodid);
+						console.log(response.data);
+						setReportDB(response.data);
+					})
+					.catch((error) => {
+						console.log(error);
+						setIsError(true);
+					});
 	}, []);
 
 	return (
