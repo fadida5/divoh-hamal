@@ -624,7 +624,7 @@ const Report = ({ match }) => {
 								</div>
 								<Form role="form">
 									<FormGroup dir="rtl">
-										<InputS
+										<Input
 											placeholder="שם פרטי"
 											name="name"
 											type="text"
