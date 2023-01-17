@@ -192,46 +192,90 @@ const SortingTable = ({ match }) => {
 											}
 										}
 									})}
-									{/* {console.log(row.original._id)} */}
 
-									<td role="cell">
-										{" "}
-										<div
-											style={{
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-											}}
-										>
+									{row.original.typevent != "רק'ם" ? (
+										<td role="cell">
 											{" "}
-											<Link to={`/editreport/${row.original._id}`}>
-												<button className="btn-new">עדכן</button>
-											</Link>{" "}
-										</div>{" "}
-									</td>
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												{" "}
+												{/* {console.log(row.original.typevent)} */}
+												<Link to={`/editreport/${row.original._id}`}>
+													<button className="btn-new">עדכן</button>
+												</Link>{" "}
+											</div>{" "}
+										</td>
+									) : (
+										<td role="cell">
+											{" "}
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												{" "}
+												{/* {console.log(row.original.typevent)} */}
+												<Link to={`/editreportrekem/${row.original._id}`}>
+													<button className="btn-new">עדכן</button>
+												</Link>{" "}
+											</div>{" "}
+										</td>
+									)}
 
-									{/*row.original._id=user._id*/}
-									<td role="cell">
-										{" "}
-										<div
-											style={{
-												display: "flex",
-												alignItems: "center",
-												justifyContent: "center",
-											}}
-										>
+									{/* // ? row.original._id=user._id*/}
+									{/*//* -------- view report --------------- */}
+									{row.original.typevent != "רק'ם" ? (
+										<td role="cell">
 											{" "}
-											{/* <button
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												{" "}
+												{/* // ? <button
                         className="btn-new-delete"
                         onClick={() => UserDelete(row.original._id)}
                       >
                         צפייה
                       </button> */}
-											<Link to={`/wachreport/${row.original._id}`}>
-												<button className="btn-new-delete">צפייה</button>
-											</Link>{" "}
-										</div>
-									</td>
+												<Link to={`/wachreport/${row.original._id}`}>
+													<button className="btn-new-delete">צפייה</button>
+												</Link>{" "}
+											</div>
+										</td>
+									) : (
+										<td role="cell">
+											{" "}
+											<div
+												style={{
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+												}}
+											>
+												{" "}
+												{/* // ? <button
+                        className="btn-new-delete"
+                        onClick={() => UserDelete(row.original._id)}
+                      >
+                        צפייה
+                      </button> */}
+												<Link to={`/wachreportrekem/${row.original._id}`}>
+													<button className="btn-new-delete">צפייה</button>
+												</Link>{" "}
+											</div>
+										</td>
+									)}
 								</tr>
 							);
 						})}
