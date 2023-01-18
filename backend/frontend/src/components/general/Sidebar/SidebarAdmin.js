@@ -3,17 +3,17 @@ import { NavLink, Link, useLocation } from "react-router-dom";
 
 // reactstrap components
 import {
-  Collapse,
-  Navbar,
-  NavbarToggler,
-  NavbarBrand,
-  Nav,
-  NavItem,
+	Collapse,
+	Navbar,
+	NavbarToggler,
+	NavbarBrand,
+	Nav,
+	NavItem,
 } from "reactstrap";
 
 import {
-  BackgroundColorContext,
-  backgroundColors,
+	BackgroundColorContext,
+	backgroundColors,
 } from "contexts/BackgroundColorContext";
 
 import { ThemeContext, themes } from "contexts/ThemeContext";
@@ -47,91 +47,372 @@ import { signout } from "auth/index";
 import history from "../../../history";
 
 import {
-  Button,
-  Card,
-  CardHeader,
-  CardBody,
-  CardTitle,
-  Container,
-  FormGroup,
-  Form,
-  Input,
-  InputGroupAddon,
-  InputGroupText,
-  InputGroup,
-  Row,
-  Alert,
-  Spinner,
-  Label,
-  Col,
+	Button,
+	Card,
+	CardHeader,
+	CardBody,
+	CardTitle,
+	Container,
+	FormGroup,
+	Form,
+	Input,
+	InputGroupAddon,
+	InputGroupText,
+	InputGroup,
+	Row,
+	Alert,
+	Spinner,
+	Label,
+	Col,
 } from "reactstrap";
 
 import { isAuthenticated } from "auth/index";
+const { user } = isAuthenticated();
 
 function SidebarAdmin(props) {
+	const clickSubmit = (event) => {
+		event.preventDefault();
+		signout().then((response) => {
+			history.push(`/signin`);
+		});
+	};
+	// todo: to find out how to relod the sidebar on login
 
-  const clickSubmit = (event) => {
-    event.preventDefault();
-    signout().then((response) => {
-      history.push(`/signin`);
-    });
-  };
+	return (
+		<>
+			{/* לוגו המערכת */}
+			<div className="logo">
+				<img src={logodiv}></img>
+			</div>
+			<Nav style={{ textAlign: "right" }}>
+				<li>
+					<NavLink
+						to="/dashamal"
+						style={{ margin: "0px" }}
+						activeClassName="sidebar_active_link"
+					>
+						<Row style={{ direction: "rtl" }}>
+							<Col
+								xs={12}
+								md={3}
+								style={{
+									paddingLeft: "0px",
+									textAlign: "center",
+									alignSelf: "center",
+								}}
+							>
+								{props.theme == "white" ? (
+									<img
+										src={table}
+										style={{ height: "20px" }}
+									></img>
+								) : (
+									<img
+										src={table_white}
+										style={{ height: "20px" }}
+									></img>
+								)}
+							</Col>
+							<Col
+								xs={12}
+								md={9}
+								style={{ paddingRight: "0px" }}
+							>
+								<h4
+									style={{
+										margin: "0px",
+										paddingTop: "6px",
+										paddingBottom: "6px",
+									}}
+								>
+									דף ראשי
+								</h4>
+							</Col>
+						</Row>
+					</NavLink>
+				</li>
+				<li>
+					<NavLink
+						to="/report"
+						style={{ margin: "0px" }}
+						activeClassName="sidebar_active_link"
+					>
+						<Row style={{ direction: "rtl" }}>
+							<Col
+								xs={12}
+								md={3}
+								style={{
+									paddingLeft: "0px",
+									textAlign: "center",
+									alignSelf: "center",
+								}}
+							>
+								{props.theme == "white" ? (
+									<img
+										src={table}
+										style={{ height: "20px" }}
+									></img>
+								) : (
+									<img
+										src={table_white}
+										style={{ height: "20px" }}
+									></img>
+								)}
+							</Col>
+							<Col
+								xs={12}
+								md={9}
+								style={{ paddingRight: "0px" }}
+							>
+								<h4
+									style={{
+										margin: "0px",
+										paddingTop: "6px",
+										paddingBottom: "6px",
+									}}
+								>
+									דיווח אירוע חריג
+								</h4>
+							</Col>
+						</Row>
+					</NavLink>
+				</li>
+				<li>
+					<NavLink
+						to={`/reportrekem`}
+						style={{ margin: "0px" }}
+						activeClassName="sidebar_active_link"
+					>
+						<Row style={{ direction: "rtl" }}>
+							<Col
+								xs={12}
+								md={3}
+								style={{
+									paddingLeft: "0px",
+									textAlign: "center",
+									alignSelf: "center",
+								}}
+							>
+								{props.theme == "white" ? (
+									<img
+										src={table}
+										style={{ height: "20px" }}
+									></img>
+								) : (
+									<img
+										src={table_white}
+										style={{ height: "20px" }}
+									></img>
+								)}
+							</Col>
+							<Col
+								xs={12}
+								md={9}
+								style={{ paddingRight: "0px" }}
+							>
+								<h4
+									style={{
+										margin: "0px",
+										paddingTop: "6px",
+										paddingBottom: "6px",
+									}}
+								>
+									דיווח תאונת רק"ם
+								</h4>
+							</Col>
+						</Row>
+					</NavLink>
+				</li>
+				<li>
+					<NavLink
+						to={`/historeport`}
+						style={{ margin: "0px" }}
+						activeClassName="sidebar_active_link"
+					>
+						<Row style={{ direction: "rtl" }}>
+							<Col
+								xs={12}
+								md={3}
+								style={{
+									paddingLeft: "0px",
+									textAlign: "center",
+									alignSelf: "center",
+								}}
+							>
+								{props.theme == "white" ? (
+									<img
+										src={table}
+										style={{ height: "20px" }}
+									></img>
+								) : (
+									<img
+										src={table_white}
+										style={{ height: "20px" }}
+									></img>
+								)}
+							</Col>
+							<Col
+								xs={12}
+								md={9}
+								style={{ paddingRight: "0px" }}
+							>
+								<h4
+									style={{
+										margin: "0px",
+										paddingTop: "6px",
+										paddingBottom: "6px",
+									}}
+								>
+									היסטוריית דיווחים
+								</h4>
+							</Col>
+						</Row>
+					</NavLink>
+				</li>
+				{user.role === "2" ? (
+					<li>
+						<NavLink
+							to="/manageusers"
+							style={{ margin: "0px" }}
+							activeClassName="sidebar_active_link"
+						>
+							<Row style={{ direction: "rtl" }}>
+								<Col
+									xs={12}
+									md={3}
+									style={{
+										paddingLeft: "0px",
+										textAlign: "center",
+										alignSelf: "center",
+									}}
+								>
+									{props.theme == "white" ? (
+										<img
+											src={table}
+											style={{ height: "20px" }}
+										></img>
+									) : (
+										<img
+											src={table_white}
+											style={{ height: "20px" }}
+										></img>
+									)}
+								</Col>
+								<Col
+									xs={12}
+									md={9}
+									style={{ paddingRight: "0px" }}
+								>
+									<h4
+										style={{
+											margin: "0px",
+											paddingTop: "6px",
+											paddingBottom: "6px",
+										}}
+									>
+										ניהול הרשאות
+									</h4>
+								</Col>
+							</Row>
+						</NavLink>
+					</li>
+				) : null}
 
-  return (
-    <>
-    {/* לוגו המערכת */}
-      <div className="logo">
-        <img src={logodiv}></img>
-      </div>
-      <Nav style={{ textAlign: "right" }}>
-        <li>
-          <NavLink to="/dashamal" style={{ margin: '0px' }} activeClassName="sidebar_active_link">
-            <Row style={{ direction: "rtl" }}>
-              <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
-                {props.theme == 'white' ? <img src={table} style={{ height: "20px" }}></img>
-                  : <img src={table_white} style={{ height: "20px" }}></img>}
-              </Col>
-              <Col xs={12} md={9} style={{ paddingRight: "0px" }}>
-                <h4 style={{ margin: "0px", paddingTop: '6px', paddingBottom: '6px' }}>
-                  דף ראשי
-                </h4>
-              </Col>
-            </Row>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/manageusers" style={{ margin: '0px' }} activeClassName="sidebar_active_link">
-            <Row style={{ direction: "rtl" }}>
-              <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
-                {props.theme == 'white' ? <img src={table} style={{ height: "20px" }}></img>
-                  : <img src={table_white} style={{ height: "20px" }}></img>}
-              </Col>
-              <Col xs={12} md={9} style={{ paddingRight: "0px" }}>
-                <h4 style={{ margin: "0px", paddingTop: '6px', paddingBottom: '6px' }}>
-                  ניהול הרשאות
-                </h4>
-              </Col>
-            </Row>
-          </NavLink>
-        </li>
-        <li>
-          <NavLink to="/odot" style={{ margin: '0px' }} activeClassName="sidebar_active_link">
-            <Row style={{ direction: "rtl" }}>
-              <Col xs={12} md={3} style={{ paddingLeft: "0px", textAlign: 'center', alignSelf: 'center' }}>
-                {props.theme == 'white' ? <img src={table} style={{ height: "20px" }}></img>
-                  : <img src={table_white} style={{ height: "20px" }}></img>}
-              </Col>
-              <Col xs={12} md={9} style={{ paddingRight: "0px" }}>
-                <h4 style={{ margin: "0px", paddingTop: '6px', paddingBottom: '6px' }}>
-                  אודות המערכת
-                </h4>
-              </Col>
-            </Row>
-          </NavLink>
-        </li>
-      </Nav>
-    </>
-  );
+				<li>
+					<NavLink
+						to="/odot"
+						style={{ margin: "0px" }}
+						activeClassName="sidebar_active_link"
+					>
+						<Row style={{ direction: "rtl" }}>
+							<Col
+								xs={12}
+								md={3}
+								style={{
+									paddingLeft: "0px",
+									textAlign: "center",
+									alignSelf: "center",
+								}}
+							>
+								{props.theme == "white" ? (
+									<img
+										src={table}
+										style={{ height: "20px" }}
+									></img>
+								) : (
+									<img
+										src={table_white}
+										style={{ height: "20px" }}
+									></img>
+								)}
+							</Col>
+							<Col
+								xs={12}
+								md={9}
+								style={{ paddingRight: "0px" }}
+							>
+								<h4
+									style={{
+										margin: "0px",
+										paddingTop: "6px",
+										paddingBottom: "6px",
+									}}
+								>
+									אודות המערכת
+								</h4>
+							</Col>
+						</Row>
+					</NavLink>
+				</li>
+				<li>
+					<NavLink
+						to={`/summarizingreport`}
+						style={{ margin: "0px" }}
+						activeClassName="sidebar_active_link"
+					>
+						<Row style={{ direction: "rtl" }}>
+							<Col
+								xs={12}
+								md={3}
+								style={{
+									paddingLeft: "0px",
+									textAlign: "center",
+									alignSelf: "center",
+								}}
+							>
+								{props.theme == "white" ? (
+									<img
+										src={table}
+										style={{ height: "20px" }}
+									></img>
+								) : (
+									<img
+										src={table_white}
+										style={{ height: "20px" }}
+									></img>
+								)}
+							</Col>
+							<Col
+								xs={12}
+								md={9}
+								style={{ paddingRight: "0px" }}
+							>
+								<h4
+									style={{
+										margin: "0px",
+										paddingTop: "6px",
+										paddingBottom: "6px",
+									}}
+								>
+									סיכום דיווחים
+								</h4>
+							</Col>
+						</Row>
+					</NavLink>
+				</li>
+			</Nav>
+		</>
+	);
 }
 
 export default SidebarAdmin;

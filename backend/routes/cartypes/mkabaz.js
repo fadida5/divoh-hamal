@@ -1,20 +1,30 @@
-const express = require('express');
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 
+const {
+	create,
+	find,
+	read,
+	remove,
+	findById,
+	update,
+	mkabazsbymagad,
+	mkabazsbymataf,
+} = require("../../controllers/cartypes/mkabaz");
 
-const {create, find, read, remove, findById,update,mkabazsbymagad} = require("../../controllers/cartypes/mkabaz")
+router.post("/mkabaz", create);
 
-router.post('/mkabaz', create);
+router.get("/mkabaz/:id", findById);
+router.get("/mkabaz", find);
 
-router.get('/mkabaz/:id', findById)
-router.get('/mkabaz', find);
+router.get("/mkabaz/:id", read);
 
-router.get('/mkabaz/:id', read);
+router.post("/mkabaz/update", update);
 
-router.post('/mkabaz/update', update)
+router.post("/mkabaz/remove/:id", remove);
 
-router.post('/mkabaz/remove/:id', remove);
+router.get("/mkabaz/mkabazsbymagad/:magadid", mkabazsbymagad);
 
-router.get('/mkabaz/mkabazsbymagad/:magadid', mkabazsbymagad);
+router.get("/mkabaz/mkabazsbymataf", mkabazsbymataf);
 
-module.exports = router
+module.exports = router;

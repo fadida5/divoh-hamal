@@ -7,41 +7,80 @@ import {
 	usePagination,
 } from "react-table";
 import { withRouter, Redirect, Link } from "react-router-dom";
-import { COLUMNS } from "./coulmns";
+import { COLUMNSSUM } from "./ColumnsSum";
 import { GlobalFilter } from "./GlobalFilter";
 import axios from "axios";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { isAuthenticated } from "auth";
 import history from "history.js";
 
-const SortingTable = ({ match }) => {
-	const columns = useMemo(() => COLUMNS, []);
+const SortingTableHamal = ({ match }) => {
+	const columns = useMemo(() => COLUMNSSUM, []);
 	const { user } = isAuthenticated();
 	const [data, setData] = useState([]);
+	const [isError, setIsError] = useState(false);
+	const [diff, setDiff] = useState([]);
+
+	// ! alternative is to enter the timestamp to the database and then call it like we do with the other columns
+	// * ------ geting only on loading the difference btween the dates --------------------------------
+
+	useEffect(() => {
+		console.log(user.personalnumber);
+		if (user.role == "0") {
+			history.push(`/historeport`);
+		}
+		console.log(data.length);
+		// * ------ making the dates subtractable --------------------------------
+		const creatArray = data.map((item, index) => {
+			return new Date(data[index].createdAt);
+		});
+		const dateArray = data.map((item, index) => {
+			return new Date(data[index].datevent);
+		});
+
+		// * ---------- makeing sure that there are not any problems --------------------------------
+		try {
+			setDiff(
+				creatArray.map((item, index) => {
+					return Math.round(
+						(creatArray[index].getTime() - dateArray[index].getTime()) /
+							86400000
+					);
+				})
+			);
+			// console.log(diff);
+			// todo: maybe to reload the page if error
+		} catch (error) {
+			console.log(error);
+		}
+	}, [data]);
+
+	// ? -------------- idk if needs to be in admin route -----------------------
 	//units
 
-	const UserDelete = (UserId) => {
-		axios
-			.post(`http://localhost:8000/api/user/remove/${UserId}`)
-			.then((response) => {
-				loadUsers();
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	};
+	// const UserDelete = (UserId) => {
+	// 	axios
+	// 		.post(`http://localhost:8000/api/user/remove/${UserId}`)
+	// 		.then((response) => {
+	// 			loadUsers();
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log(error);
+	// 		});
+	// };
 
-	const loadUsers = () => {
-		axios
-			.get("http://localhost:8000/api/usersvalidated")
-			.then((response) => {
-				setData(response.data);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	};
+	// const loadUsers = () => {
+	// 	axios
+	// 		.get("http://localhost:8000/api/usersvalidated")
+	// 		.then((response) => {
+	// 			setData(response.data);
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log(error);
+	// 		});
+	// };
 
+	// ? ------------------- was commented out ---------------------------------
 	// useEffect(() => {
 	//   (async () => {
 	//     console.log("================================================");
@@ -55,17 +94,28 @@ const SortingTable = ({ match }) => {
 	// }, []);
 
 	useEffect(() => {
-		axios
-			.get(
-				`http://localhost:8000/report/requestByPersonalnumber/${user.personalnumber}`
-			)
-			.then((response) => {
-				console.log(response.data);
-				setData(response.data);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+		user.role === "2"
+			? axios
+					.get(`http://localhost:8000/report/`)
+					.then((response) => {
+						console.log(response.data);
+						setData(response.data);
+					})
+					.catch((error) => {
+						console.log(error);
+						setIsError(true);
+					})
+			: axios
+					.get(`http://localhost:8000/report/pikod/${user.pikodid}`)
+					.then((response) => {
+						console.log(user.pikodid);
+						console.log(response.data);
+						setData(response.data);
+					})
+					.catch((error) => {
+						console.log(error);
+						setIsError(true);
+					});
 	}, []);
 
 	const {
@@ -142,7 +192,8 @@ const SortingTable = ({ match }) => {
 						))}
 					</thead>
 					<tbody {...getTableBodyProps()}>
-						{page.map((row) => {
+						{/* added an index so i could pull the diff for each row */}
+						{page.map((row, index) => {
 							prepareRow(row);
 							return (
 								<tr {...row.getRowProps()}>
@@ -150,7 +201,9 @@ const SortingTable = ({ match }) => {
 										if (
 											cell.column.id != "typevent" &&
 											cell.column.id != "pirot" &&
-											cell.column.id != "datevent"
+											cell.column.id != "datevent" &&
+											cell.column.id != "difftime" &&
+											cell.column.id != "status"
 										) {
 											return (
 												<td {...cell.getCellProps()}>{cell.render("Cell")}</td>
@@ -190,9 +243,26 @@ const SortingTable = ({ match }) => {
 													</td>
 												);
 											}
+
+											// * ------------- added difftime --------------------------------
+
+											if (cell.column.id == "difftime") {
+												return <td>{diff[index]}</td>;
+											}
+											// * ------------- added status --------------------------------
+											if (cell.column.id == "status") {
+												if (cell.value == "0") {
+													return <td>בטיפול</td>;
+												}
+												if (cell.value == "1") {
+													return <td>סגור</td>;
+												} else {
+													return <td>בטיפול</td>;
+												}
+											}
 										}
 									})}
-
+									{/*//* -------- update report --------------- */}
 									{row.original.typevent != "רק'ם" ? (
 										<td role="cell">
 											{" "}
@@ -228,7 +298,6 @@ const SortingTable = ({ match }) => {
 											</div>{" "}
 										</td>
 									)}
-
 									{/* // ? row.original._id=user._id*/}
 									{/*//* -------- view report --------------- */}
 									{row.original.typevent != "רק'ם" ? (
@@ -333,4 +402,4 @@ const SortingTable = ({ match }) => {
 		</>
 	);
 };
-export default withRouter(SortingTable);
+export default withRouter(SortingTableHamal);

@@ -23,9 +23,9 @@ import {
 	UncontrolledTooltip,
 } from "reactstrap";
 import axios from "axios";
-import ManageReportSortingTable from "components/general/authcomponents/ManageReportSortingTable/SortingTable";
+import ManageReportSortingTable from "components/general/authcomponents/ManageReportSortingTable/SortingTableHamal";
 
-const HistoReport = (props) => {
+const SummarizingReport = (props) => {
 	useEffect(() => {}, []);
 
 	return (
@@ -53,4 +53,4 @@ const HistoReport = (props) => {
 		</>
 	);
 };
-export default withRouter(HistoReport);
+export default withRouter(SummarizingReport);
