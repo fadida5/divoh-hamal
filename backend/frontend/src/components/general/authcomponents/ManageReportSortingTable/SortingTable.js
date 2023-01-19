@@ -13,11 +13,21 @@ import axios from "axios";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { isAuthenticated } from "auth";
 import history from "history.js";
+import CarDataFormModalView from "views/divoah/CarDataFormModalView";
+import CarDataFormModal from "views/divoah/CarDataFormModal";
+
 
 const SortingTable = ({ match }) => {
 	const columns = useMemo(() => COLUMNS, []);
 	const { user } = isAuthenticated();
 	const [data, setData] = useState([]);
+		//*cardata form modal
+		const [iscardataformopen, setIscardataformopen] = useState(false);
+		const [cardataidformodal, setCardataidformodal] = useState(undefined);
+		//* view modal
+		const [isviewmodalopen, setisviewmodalopen] = useState(false);
+		const [viewmodalid, setViewmodalid] = useState(undefined);
+	
 	//units
 
 	const UserDelete = (UserId) => {
@@ -68,6 +78,39 @@ const SortingTable = ({ match }) => {
 			});
 	}, []);
 
+	//* modal
+	function Toggle(evt) {
+		if (evt.currentTarget.value == "") {
+			setCardataidformodal(undefined);
+		} else {
+			setCardataidformodal(evt.currentTarget.value);
+		}
+		setIscardataformopen(!iscardataformopen);
+		// console.log(cardataidformodal);
+	}
+
+	function ToggleForModal(evt) {
+		setIscardataformopen(!iscardataformopen);
+		window.location.reload();
+	}
+
+	//* ------------ modal view --------------------------------
+
+	function ToggleView(evt) {
+		if (evt.currentTarget.value == "") {
+			setViewmodalid(undefined);
+		} else {
+			setViewmodalid(evt.currentTarget.value);
+		}
+		setisviewmodalopen(!iscardataformopen);
+		// console.log(cardataidformodal);
+	}
+
+	function ToggleForModalView(evt) {
+		setisviewmodalopen(!iscardataformopen);
+		window.location.reload();
+	}
+
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -101,6 +144,20 @@ const SortingTable = ({ match }) => {
 
 	return (
 		<>
+		{/*//* ----- modals --------------------------------
+				//? ++ unittype={props.unittype} unitid={props.unitid} */}
+				<CarDataFormModal
+				isOpen={iscardataformopen}
+				cardataid={cardataidformodal}
+				Toggle={Toggle}
+				ToggleForModal={ToggleForModal}
+			/>
+			<CarDataFormModalView
+				isOpen={isviewmodalopen}
+				cardataid={viewmodalid}
+				Toggle={ToggleView}
+				ToggleForModal={ToggleForModalView}
+			/>
 			<GlobalFilter
 				filter={globalFilter}
 				setFilter={setGlobalFilter}
@@ -205,9 +262,13 @@ const SortingTable = ({ match }) => {
 											>
 												{" "}
 												{/* {console.log(row.original.typevent)} */}
-												<Link to={`/editreport/${row.original._id}`}>
-													<button className="btn-new">עדכן</button>
-												</Link>{" "}
+												<button
+													className="btn-new"
+													value={row.original._id}
+													onClick={Toggle}
+												>
+													עדכן
+												</button>
 											</div>{" "}
 										</td>
 									) : (
@@ -222,9 +283,13 @@ const SortingTable = ({ match }) => {
 											>
 												{" "}
 												{/* {console.log(row.original.typevent)} */}
-												<Link to={`/editreportrekem/${row.original._id}`}>
-													<button className="btn-new">עדכן</button>
-												</Link>{" "}
+												<button
+													className="btn-new"
+													value={row.original._id}
+													onClick={Toggle}
+												>
+													עדכן
+												</button>
 											</div>{" "}
 										</td>
 									)}
@@ -248,9 +313,13 @@ const SortingTable = ({ match }) => {
                       >
                         צפייה
                       </button> */}
-												<Link to={`/wachreport/${row.original._id}`}>
-													<button className="btn-new-delete">צפייה</button>
-												</Link>{" "}
+					  <button
+													value={row.original._id}
+													onClick={ToggleView}
+													className="btn-new-delete"
+												>
+													צפייה
+												</button>
 											</div>
 										</td>
 									) : (
@@ -270,9 +339,13 @@ const SortingTable = ({ match }) => {
                       >
                         צפייה
                       </button> */}
-												<Link to={`/wachreportrekem/${row.original._id}`}>
-													<button className="btn-new-delete">צפייה</button>
-												</Link>{" "}
+					  <button
+													value={row.original._id}
+													onClick={ToggleView}
+													className="btn-new-delete"
+												>
+													צפייה
+												</button>
 											</div>
 										</td>
 									)}

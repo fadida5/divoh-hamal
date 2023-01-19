@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-unused-vars */
 import React, { useMemo, useState, useEffect } from "react";
 import {
 	useTable,
@@ -9,10 +11,13 @@ import {
 import { withRouter, Redirect, Link } from "react-router-dom";
 import { COLUMNSSUM } from "./ColumnsSum";
 import { GlobalFilter } from "./GlobalFilter";
+import CarDataFormModal from "views/divoah/CarDataFormModal";
+import CarDataFormModalView from "views/divoah/CarDataFormModalView";
 import axios from "axios";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { isAuthenticated } from "auth";
 import history from "history.js";
+import { toast } from "react-toastify";
 
 const SortingTableHamal = ({ match }) => {
 	const columns = useMemo(() => COLUMNSSUM, []);
@@ -20,6 +25,12 @@ const SortingTableHamal = ({ match }) => {
 	const [data, setData] = useState([]);
 	const [isError, setIsError] = useState(false);
 	const [diff, setDiff] = useState([]);
+	//*cardata form modal
+	const [iscardataformopen, setIscardataformopen] = useState(false);
+	const [cardataidformodal, setCardataidformodal] = useState(undefined);
+	//* view modal
+	const [isviewmodalopen, setisviewmodalopen] = useState(false);
+	const [viewmodalid, setViewmodalid] = useState(undefined);
 
 	// ! alternative is to enter the timestamp to the database and then call it like we do with the other columns
 	// * ------ geting only on loading the difference btween the dates --------------------------------
@@ -29,7 +40,7 @@ const SortingTableHamal = ({ match }) => {
 		if (user.role == "0") {
 			history.push(`/historeport`);
 		}
-		console.log(data.length);
+		// console.log(data.length);
 		// * ------ making the dates subtractable --------------------------------
 		const creatArray = data.map((item, index) => {
 			return new Date(data[index].createdAt);
@@ -54,6 +65,40 @@ const SortingTableHamal = ({ match }) => {
 			console.log(error);
 		}
 	}, [data]);
+
+	//* ------------ modal --------------------------------
+
+	function Toggle(evt) {
+		if (evt.currentTarget.value == "") {
+			setCardataidformodal(undefined);
+		} else {
+			setCardataidformodal(evt.currentTarget.value);
+		}
+		setIscardataformopen(!iscardataformopen);
+		// console.log(cardataidformodal);
+	}
+
+	function ToggleForModal(evt) {
+		setIscardataformopen(!iscardataformopen);
+		window.location.reload();
+	}
+
+	//* ------------ modal view --------------------------------
+
+	function ToggleView(evt) {
+		if (evt.currentTarget.value == "") {
+			setViewmodalid(undefined);
+		} else {
+			setViewmodalid(evt.currentTarget.value);
+		}
+		setisviewmodalopen(!iscardataformopen);
+		// console.log(cardataidformodal);
+	}
+
+	function ToggleForModalView(evt) {
+		setisviewmodalopen(!iscardataformopen);
+		window.location.reload();
+	}
 
 	// ? -------------- idk if needs to be in admin route -----------------------
 	//units
@@ -151,6 +196,21 @@ const SortingTableHamal = ({ match }) => {
 
 	return (
 		<>
+			{/*//* ----- modals --------------------------------
+				//? ++ unittype={props.unittype} unitid={props.unitid} */}
+			<CarDataFormModal
+				isOpen={iscardataformopen}
+				cardataid={cardataidformodal}
+				Toggle={Toggle}
+				ToggleForModal={ToggleForModal}
+			/>
+			<CarDataFormModalView
+				isOpen={isviewmodalopen}
+				cardataid={viewmodalid}
+				Toggle={ToggleView}
+				ToggleForModal={ToggleForModalView}
+			/>
+
 			<GlobalFilter
 				filter={globalFilter}
 				setFilter={setGlobalFilter}
@@ -275,9 +335,14 @@ const SortingTableHamal = ({ match }) => {
 											>
 												{" "}
 												{/* {console.log(row.original.typevent)} */}
-												<Link to={`/editreport/${row.original._id}`}>
-													<button className="btn-new">עדכן</button>
-												</Link>{" "}
+												{/* <Link to={`/editreport/${row.original._id}`}> */}
+												<button
+													className="btn-new"
+													value={row.original._id}
+													onClick={Toggle}
+												>
+													עדכן
+												</button>
 											</div>{" "}
 										</td>
 									) : (
@@ -292,9 +357,14 @@ const SortingTableHamal = ({ match }) => {
 											>
 												{" "}
 												{/* {console.log(row.original.typevent)} */}
-												<Link to={`/editreportrekem/${row.original._id}`}>
-													<button className="btn-new">עדכן</button>
-												</Link>{" "}
+												{/* <Link to={`/editreport/${row.original._id}`}> */}
+												<button
+													className="btn-new"
+													value={row.original._id}
+													onClick={Toggle}
+												>
+													עדכן
+												</button>
 											</div>{" "}
 										</td>
 									)}
@@ -317,9 +387,14 @@ const SortingTableHamal = ({ match }) => {
                       >
                         צפייה
                       </button> */}
-												<Link to={`/wachreport/${row.original._id}`}>
-													<button className="btn-new-delete">צפייה</button>
-												</Link>{" "}
+												{/* <Link to={`/wachreport/${row.original._id}`}> */}
+												<button
+													value={row.original._id}
+													onClick={ToggleView}
+													className="btn-new-delete"
+												>
+													צפייה
+												</button>
 											</div>
 										</td>
 									) : (
@@ -339,9 +414,14 @@ const SortingTableHamal = ({ match }) => {
                       >
                         צפייה
                       </button> */}
-												<Link to={`/wachreportrekem/${row.original._id}`}>
-													<button className="btn-new-delete">צפייה</button>
-												</Link>{" "}
+												{/* <Link to={`/wachreportrekem/${row.original._id}`}> */}
+												<button
+													value={row.original._id}
+													onClick={ToggleView}
+													className="btn-new-delete"
+												>
+													צפייה
+												</button>
 											</div>
 										</td>
 									)}

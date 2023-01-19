@@ -63,6 +63,53 @@ const Report = ({ props }) => {
 	const [ogdas, setOgdas] = useState([]);
 	const [pikods, setPikods] = useState([]);
 
+	const [mkabazs, setMkabazs] = useState([]);
+	const [magads, setMagads] = useState([]);
+	const [magadals, setMagadals] = useState([]);
+
+	const getMagadals = async () => {
+		await axios
+			.get(`http://localhost:8000/api/magadal`)
+			.then((response) => {
+				setMagadals(response.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
+	const getMagads = async (magadalid) => {
+		let tempmagadalsmagads = [];
+		if (magadalid != undefined) {
+			await axios
+				.get(`http://localhost:8000/api/magad/magadsbymagadal/${magadalid}`)
+				.then((response) => {
+					for (let j = 0; j < response.data.length; j++)
+						tempmagadalsmagads.push(response.data[j]);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+			setMagads(tempmagadalsmagads);
+		}
+	};
+
+	const getMkabazs = async (magadid) => {
+		let tempmagadmkabazs = [];
+		if (magadid != undefined) {
+			await axios
+				.get(`http://localhost:8000/api/mkabaz/mkabazsbymagad/${magadid}`)
+				.then((response) => {
+					for (let j = 0; j < response.data.length; j++)
+						tempmagadmkabazs.push(response.data[j]);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+			setMkabazs(tempmagadmkabazs);
+		}
+	};
+
 	const loadPikods = async () => {
 		await axios
 			.get("http://localhost:8000/api/pikod")
@@ -225,14 +272,14 @@ const Report = ({ props }) => {
 			flag = false;
 			ErrorReason += " ,סיבת האירוע ריקה \n";
 		}
-		if (
-			document.getElementById("sel").options[
-				document.getElementById("sel").selectedIndex
-			].value == "0"
-		) {
-			flag = false;
-			ErrorReason += " ,סוג הרקם ריק \n";
-		}
+		// if (
+		// 	document.getElementById("sel").options[
+		// 		document.getElementById("sel").selectedIndex
+		// 	].value == "0"
+		// ) {
+		// 	flag = false;
+		// 	ErrorReason += " ,סוג הרקם ריק \n";
+		// }
 		if (
 			!document.getElementById("YES").checked &&
 			!document.getElementById("NO").checked
@@ -614,18 +661,112 @@ const Report = ({ props }) => {
 									<div style={{ textAlign: "right", paddingTop: "10px" }}>
 										סוג הרק"ם
 									</div>
-									<FormGroup>
-										<Input
-											type="select"
-											name="cli"
-											value={data.cli}
-											onChange={handleChange}
-											id="sel"
-										>
-											<option value={"0"}>בחר</option>
-											<option value={"1"}>סתם</option>
-										</Input>
-									</FormGroup>
+									<Row>
+										{!data.magad ? (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>מאגד על</h6>
+												<Select
+													data={magadals}
+													handleChange2={handleChange2}
+													name={"magadal"}
+													val={data.magadal ? data.magadal : undefined}
+												/>
+											</Col>
+										) : (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>מאגד על</h6>
+												<Select
+													data={magadals}
+													handleChange2={handleChange2}
+													name={"magadal"}
+													val={data.magadal ? data.magadal : undefined}
+													isDisabled={true}
+												/>
+											</Col>
+										)}
+
+										{data.magadal && !data.mkabaz ? (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>מאגד</h6>
+												<Select
+													data={magads}
+													handleChange2={handleChange2}
+													name={"magad"}
+													val={data.magad ? data.magad : undefined}
+												/>
+											</Col>
+										) : (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>מאגד</h6>
+												<Select
+													data={magads}
+													handleChange2={handleChange2}
+													name={"magad"}
+													val={data.magad ? data.magad : undefined}
+													isDisabled={true}
+												/>
+											</Col>
+										)}
+
+										{data.magad && !data.makat ? (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>מקבץ</h6>
+												<Select
+													data={mkabazs}
+													handleChange2={handleChange2}
+													name={"mkabaz"}
+													val={data.mkabaz ? data.mkabaz : undefined}
+												/>
+											</Col>
+										) : (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>מקבץ</h6>
+												<Select
+													data={mkabazs}
+													handleChange2={handleChange2}
+													name={"mkabaz"}
+													val={data.mkabaz ? data.mkabaz : undefined}
+													isDisabled={true}
+												/>
+											</Col>
+										)}
+									</Row>
 
 									<div style={{ textAlign: "right", paddingTop: "10px" }}>
 										האם נגרם נזק לרק"ם
