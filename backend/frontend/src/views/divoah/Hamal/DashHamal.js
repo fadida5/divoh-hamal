@@ -2,19 +2,20 @@ import React, { useState, useEffect } from "react";
 
 import { Link, withRouter, Redirect } from "react-router-dom";
 import {
-	Button,
-	Card,
-	CardHeader,
-	Container,
-	CardBody,
-	FormGroup,
-	Form,
-	Input,
-	InputGroupAddon,
-	InputGroupText,
-	InputGroup,
-	Row,
-	Col,
+  Button,
+  Card,
+  CardHeader,
+  Container,
+  CardBody,
+  FormGroup,
+  Form,
+  Input,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroup,
+  Row,
+  Col,
+  Collapse,
 } from "reactstrap";
 import axios from "axios";
 import history from "history.js";
@@ -33,6 +34,11 @@ const AdminSignInForm = () => {
   const [hativas, setHativas] = useState([]);
   const [ogdas, setOgdas] = useState([]);
   const [pikods, setPikods] = useState([]);
+
+  const [collapseOpen, setcollapseOpen] = React.useState(false);
+  const toggleCollapse = () => {
+      setcollapseOpen(!collapseOpen);
+  };
 
  const eventTypeArray = {
   "בחר": "",
@@ -486,6 +492,66 @@ const datagdod = {
                 </Card>
               </Col>
           </Row>
+          <Row>
+          <div style={{ width: '100%', margin: 'auto', textAlign: 'right' }}>
+            <Button onClick={toggleCollapse} style={{}}>סינון</Button>
+            <Collapse isOpen={collapseOpen}>
+                <Card style={{ background: 'rgb(228,228,228,0.2)' }}>
+                    <Row style={{ margin: '0px' }}>
+                    <Col xs={12} md={8} style={{ textAlign: 'right' }}>
+                        <Row style={{ paddingTop: '10px', marginBottom: '15px' }}>
+                        {(!(data.ogda)) ?
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>פיקוד</h6>
+                        <Select data={pikods}
+                         handleChange2={handleChange2}
+                          name={'pikod'} val={data.pikod ? data.pikod : undefined} />
+                      </Col> :
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>פיקוד</h6>
+                        <Select data={pikods} 
+                        handleChange2={handleChange2} 
+                        name={'pikod'} val={data.pikod ? data.pikod : undefined} isDisabled={true} />
+                      </Col>}
+
+                  <>
+                    {((data.pikod) && !(data.hativa)) ?
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>אוגדה</h6>
+                        <Select data={ogdas} 
+                        handleChange2={handleChange2} 
+                        name={'ogda'} val={data.ogda ? data.ogda : undefined} />
+                      </Col> :
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>אוגדה</h6>
+                        <Select data={ogdas}
+                         handleChange2={handleChange2}
+                          name={'ogda'} val={data.ogda ? data.ogda : undefined} isDisabled={true} />
+                      </Col>}
+                  </>
+
+                  <>
+                    {((data.ogda) && !(data.gdod)) ?
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>חטיבה</h6>
+                        <Select data={hativas}
+                         handleChange2={handleChange2} 
+                         name={'hativa'} val={data.hativa ? data.hativa : undefined} />
+                      </Col> :
+                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
+                        <h6>חטיבה</h6>
+                        <Select data={hativas}
+                         handleChange2={handleChange2}
+                          name={'hativa'} val={data.hativa ? data.hativa : undefined} isDisabled={true} />
+                      </Col>}
+                  </>
+                  </Row>
+                  </Col>
+                    </Row>
+                </Card>
+             </Collapse>
+          </div>
+          </Row>
 
               <Row>
               <Col lg="4">
@@ -495,22 +561,6 @@ const datagdod = {
                       {" "}
                       מספר אירועים לפי אוגדה
                     </h3>
-                    {(!(data.ogda)) ?
-                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <h6>בחר פיקוד</h6>
-                        <Select data={pikods}
-                         handleChange2={handleChange2}
-                          name={'pikod'} val={data.pikod ? data.pikod : undefined} />
-                      </Col> :
-                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <h6>בחר פיקוד</h6>
-                        <Select data={pikods} 
-                        handleChange2={handleChange2} 
-                        name={'pikod'} val={data.pikod ? data.pikod : undefined} isDisabled={true} />
-                      </Col>}
-                      <div style={{paddingTop: "5px"}} className="text-center">
-                  </div>
-
                   </CardHeader>
                   <CardBody>
                   <Doughnut data={dataogda} options={options}/>
@@ -525,22 +575,6 @@ const datagdod = {
                       {" "}
                       מספר אירועים לפי חטיבה
                     </h3>
-                    {((data.pikod) && !(data.hativa)) ?
-                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <h6>בחר אוגדה</h6>
-                        <Select data={ogdas} 
-                        handleChange2={handleChange2} 
-                        name={'ogda'} val={data.ogda ? data.ogda : undefined} />
-                      </Col> :
-                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <h6>בחר אוגדה</h6>
-                        <Select data={ogdas}
-                         handleChange2={handleChange2}
-                          name={'ogda'} val={data.ogda ? data.ogda : undefined} isDisabled={true} />
-                      </Col>}
-                      <div style={{paddingTop: "5px"}} className="text-center">
-                  </div>
-
                   </CardHeader>
                   <CardBody>
                   <Doughnut data={datahativa} options={options}/>
@@ -554,22 +588,6 @@ const datagdod = {
                       {" "}
                       מספר אירועים לפי גדוד
                     </h3>
-                    {((data.ogda) && !(data.gdod)) ?
-                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <h6>בחר חטיבה</h6>
-                        <Select data={hativas}
-                         handleChange2={handleChange2} 
-                         name={'hativa'} val={data.hativa ? data.hativa : undefined} />
-                      </Col> :
-                      <Col style={{ justifyContent: 'right', alignContent: 'right', textAlign: 'right' }}>
-                        <h6>בחר חטיבה</h6>
-                        <Select data={hativas}
-                         handleChange2={handleChange2}
-                          name={'hativa'} val={data.hativa ? data.hativa : undefined} isDisabled={true} />
-                      </Col>}
-                      <div style={{paddingTop: "5px"}} className="text-center">
-                  </div>
-
                   </CardHeader>
                   <CardBody>
                   <Doughnut data={datagdod} options={options} />
