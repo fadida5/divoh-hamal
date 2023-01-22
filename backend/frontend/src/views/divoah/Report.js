@@ -31,6 +31,8 @@ const Report = ({ match }) => {
 		personalnumber: "",
 		cellphone: "",
 		pikod: "",
+		ogda: "",
+		hativa: "",
 		typevent: "0",
 		resevent: "0",
 		yn: "",
@@ -113,10 +115,28 @@ const Report = ({ match }) => {
 
 	const getMkabazsMataf = async () => {
 		await axios
-			.get(`http://localhost:8000/api/mkabaz`)
+			.get(`http://localhost:8000/api/mkabaz/mkabazsbymatafcre`)
 			.then((response) => {
-				setMkabazsMataf(response.data);
+				const tempdatacre = response.data;
 				// console.log(response.data);
+				axios
+					.get(`http://localhost:8000/api/mkabaz/mkabazsbymatafengine`)
+					.then((response) => {
+						const tempdataengine = response.data;
+						let filtered = tempdatacre;
+						// console.log(response.data);
+						tempdatacre.map((item, index) => {
+							if (tempdataengine[index].name !== tempdatacre[index].name) {
+								filtered.push(tempdataengine[index]);
+							}
+						});
+						console.log(filtered);
+
+						setMkabazsMataf(filtered);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
 			})
 			.catch((error) => {
 				console.log(error);
