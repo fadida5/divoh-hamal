@@ -62,7 +62,7 @@ const CarDataFormModalView = (match) => {
 		redirectToReferrer: false,
 		//
 	});
-
+	const [cardata, setCarData] = useState({});
 	const [gdods, setGdods] = useState([]);
 	const [hativas, setHativas] = useState([]);
 	const [ogdas, setOgdas] = useState([]);
@@ -73,6 +73,60 @@ const CarDataFormModalView = (match) => {
 	const [mkabazs, setMkabazs] = useState([]);
 	const [magads, setMagads] = useState([]);
 	const [magadals, setMagadals] = useState([]);
+
+	const loadcardata = async () => {
+		await axios
+			.get(`http://localhost:8000/api/cardata/${match.cardataid}`)
+			.then((response) => {
+				let tempcardata = response.data[0];
+				if (tempcardata.latest_recalibration_date)
+					tempcardata.latest_recalibration_date =
+						tempcardata.latest_recalibration_date.slice(0, 10);
+				setCarData(tempcardata);
+				// ? setFinalSpecialKeytwo(tempcardata.tipuls);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
+	const fixnewcardataunitsbyunittype = async () => {
+		let tempcardata = {};
+		if (match.unittype == "pikod") {
+			tempcardata.pikod = match.unitid;
+		} else if (match.unittype == "ogda") {
+			tempcardata.ogda = match.unitid;
+			let response = await axios.get(
+				`http://localhost:8000/api/ogda/${match.unitid}`
+			);
+			tempcardata.pikod = response.data.pikod;
+		} else if (match.unittype == "hativa") {
+			tempcardata.hativa = match.unitid;
+			let response1 = await axios.get(
+				`http://localhost:8000/api/hativa/${match.unitid}`
+			);
+			tempcardata.ogda = response1.data.ogda;
+			let response = await axios.get(
+				`http://localhost:8000/api/ogda/${tempcardata.ogda}`
+			);
+			tempcardata.pikod = response.data.pikod;
+		} else if (match.unittype == "gdod") {
+			tempcardata.gdod = match.unitid;
+			let response2 = await axios.get(
+				`http://localhost:8000/api/gdod/${match.unitid}`
+			);
+			tempcardata.hativa = response2.data.hativa;
+			let response1 = await axios.get(
+				`http://localhost:8000/api/hativa/${tempcardata.hativa}`
+			);
+			tempcardata.ogda = response1.data.ogda;
+			let response = await axios.get(
+				`http://localhost:8000/api/ogda/${tempcardata.ogda}`
+			);
+			tempcardata.pikod = response.data.pikod;
+		}
+		setCarData(tempcardata);
+	};
 
 	const getMagadals = async () => {
 		await axios
@@ -255,23 +309,21 @@ const CarDataFormModalView = (match) => {
 	};
 
 	const init = () => {
-		// console.log(match);
-		var reportid = match.cardataid;
-		axios
-			.get(`http://localhost:8000/report/${reportid}`)
-			.then((response) => {
-				let tempuser = { ...response.data };
-				setData(tempuser);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-		loadPikods();
+		if (match.cardataid != undefined) {
+			loadcardata();
+		} else {
+			fixnewcardataunitsbyunittype();
+		}
 		getMagadals();
+		loadPikods();
 	};
 
 	useEffect(() => {
 		if (match.isOpen == true) init();
+		else {
+			setCarData({});
+			// setFinalSpecialKeytwo([])
+		}
 	}, [match.isOpen]);
 
 	useEffect(() => {
