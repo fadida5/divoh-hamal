@@ -681,10 +681,7 @@ const CarDataFormModal = (match) => {
 						<div>
 							<Container className="mt--8 pb-5">
 								<Row className="justify-content-center">
-									<Col
-										lg="20"
-										md="7"
-									>
+
 										<Card className="shadow border-0">
 											{data.typevent != "רק'ם" ? (
 												<CardBody
@@ -2499,7 +2496,6 @@ const CarDataFormModal = (match) => {
 												</CardBody>
 											)}
 										</Card>
-									</Col>
 								</Row>
 							</Container>
 						</div>
