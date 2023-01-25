@@ -263,8 +263,8 @@ const CarDataFormModalView = (match) => {
 		axios
 			.get(`http://localhost:8000/report/${reportid}`)
 			.then((response) => {
-				let tempuser = { ...response.data };
-				setData(tempuser);
+				let tempcardata = response.data[0];
+				setData(tempcardata);
 			})
 			.catch((error) => {
 				console.log(error);

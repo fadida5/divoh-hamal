@@ -30,9 +30,11 @@ const Report = ({ match }) => {
 		lastname: "",
 		personalnumber: "",
 		cellphone: "",
-		pikod: "",
-		ogda: "",
-		hativa: "",
+		// pikod: "",
+		// ogda: "",
+		// hativa: "",
+		gdod: "",
+		mkabazs: "",
 		typevent: "0",
 		resevent: "0",
 		yn: "",
@@ -57,17 +59,17 @@ const Report = ({ match }) => {
 		loading: false,
 		redirectToReferrer: false,
 	});
-
+	//* pikod data
 	const [gdods, setGdods] = useState([]);
 	const [hativas, setHativas] = useState([]);
 	const [ogdas, setOgdas] = useState([]);
 	const [pikods, setPikods] = useState([]);
-
+	// * cardata
 	const [mkabazs, setMkabazs] = useState([]);
 	const [magads, setMagads] = useState([]);
+	const [magadals, setMagadals] = useState([]);
 	// ? for magad that have matafim
 	const [mkabazsMataf, setMkabazsMataf] = useState([]);
-	const [magadals, setMagadals] = useState([]);
 	const [indexM, setIndexM] = useState(0);
 
 	const getMagadals = async () => {
@@ -293,36 +295,36 @@ const Report = ({ match }) => {
 		}
 
 		// if (
-		//   document.getElementById("pikod").options[
-		//     document.getElementById("pikod").selectedIndex
-		//   ].value == "0"
+		// 	document.getElementById("pikod").options[
+		// 		document.getElementById("pikod").selectedIndex
+		// 	].value == "0"
 		// ) {
-		//   flag = false;
-		//   ErrorReason += " פיקוד ריק \n";
+		// 	flag = false;
+		// 	ErrorReason += " פיקוד ריק \n";
 		// }
 		// if (
-		//   document.getElementById("ogda").options[
-		//     document.getElementById("ogda").selectedIndex
-		//   ].value == "0"
+		// 	document.getElementById("ogda").options[
+		// 		document.getElementById("ogda").selectedIndex
+		// 	].value == "0"
 		// ) {
-		//   flag = false;
-		//   ErrorReason += " אוגדה ריק \n";
+		// 	flag = false;
+		// 	ErrorReason += " אוגדה ריק \n";
 		// }
 		// if (
-		//   document.getElementById("hativa").options[
-		//     document.getElementById("hativa").selectedIndex
-		//   ].value == "0"
+		// 	document.getElementById("hativa").options[
+		// 		document.getElementById("hativa").selectedIndex
+		// 	].value == "0"
 		// ) {
-		//   flag = false;
-		//   ErrorReason += " חטיבה ריק \n";
+		// 	flag = false;
+		// 	ErrorReason += " חטיבה ריק \n";
 		// }
 		// if (
-		//   document.getElementById("gdod").options[
-		//     document.getElementById("gdod").selectedIndex
-		//   ].value == "0"
+		// 	document.getElementById("gdod").options[
+		// 		document.getElementById("gdod").selectedIndex
+		// 	].value == "0"
 		// ) {
-		//   flag = false;
-		//   ErrorReason += " גדוד ריק \n";
+		// 	flag = false;
+		// 	ErrorReason += " גדוד ריק \n";
 		// }
 
 		if (
@@ -517,13 +519,13 @@ const Report = ({ match }) => {
 			lastname: data.lastname,
 			personalnumber: data.personalnumber,
 			cellphone: data.cellphone,
-			pikod: data.pikod,
+			gdod: data.gdod,
 			// ogda:data.ogda,
 			// hativa:data.hativa,
 			// gdod:data.gdod,
 			typevent: data.typevent,
 			resevent: data.resevent,
-			magadal: data.magadal,
+			// magadal: data.magadal,
 			// magad:data.magad,
 			mkabaz: data.mkabaz,
 			yn: data.yn,
