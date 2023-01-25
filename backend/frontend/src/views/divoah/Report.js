@@ -258,6 +258,7 @@ const Report = ({ match }) => {
 		}
 	}
 
+	// * only for pikod... and magadal... should be saved in cardats not data (the report itself)
 	function handleChange2(selectedOption, name) {
 		if (!(selectedOption.value == "בחר"))
 			setData({ ...data, [name]: selectedOption.value });

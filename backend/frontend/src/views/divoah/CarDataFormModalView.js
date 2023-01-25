@@ -345,10 +345,7 @@ const CarDataFormModalView = (match) => {
 						<div>
 							<Container className="mt--8 pb-5">
 								<Row className="justify-content-center">
-									<Col
-										lg="20"
-										md="7"
-									>
+
 										<Card className="shadow border-0">
 											{data.typevent != "רק'ם" ? (
 												<CardBody className="px-lg-5 py-lg-5">
@@ -2215,7 +2212,6 @@ const CarDataFormModalView = (match) => {
 												</button>
 											</div>
 										</Card>
-									</Col>
 								</Row>
 							</Container>
 						</div>
