@@ -19,24 +19,36 @@ import {
 import axios from "axios";
 import history from "history.js";
 import { toast } from "react-toastify";
+import { produce } from "immer";
+import { generate } from "shortid";
 import { isAuthenticated } from "auth";
 import MultiSelect from "components/general/Select/AnimatedMultiSelect";
 import Select from "components/general/Select/AnimatedSelect";
+import deletepic from "assets/img/delete.png";
+import CarTypesFilterObjectRekem from "components/general/CarTypeFilter/CarTypesFilterObjectRekem";
+import Background from "components/general/Background/Background";
 
 const Report = ({ props }) => {
 	const { user } = isAuthenticated();
+	const digits_only = (string) =>
+		[...string].every((c) => "0123456789".includes(c));
+	const [infohurtarray, setinfohurtarray] = useState([]);
+	const [cartypesfilterarray, setCartypesfilterarray] = useState([]);
 
 	const [data, setData] = useState({
 		name: "",
 		lastname: "",
 		personalnumber: "",
 		cellphone: "",
-		// pikod: "",
-		// ogda: "",
-		// hativa: "",
+		pikodrep: "",
+		ogdarep: "",
+		hativarep: "",
 		gdod: "",
-		mkabazs: "",
-		typevent: "רק'ם",
+		gdodrep: "",
+		mkabaz: "",
+		arraymkabaz: [],
+		zadik: "",
+		typevent: "רקם",
 		resevent: "0",
 		cli: "0",
 		yn: "",
@@ -51,10 +63,15 @@ const Report = ({ props }) => {
 		mholaztype: "0",
 		// mhalztype:"0",
 		pirot: "",
+		lessons: "",
 		datevent: "",
 		mikom: "",
 		nifga: "",
-		status: "0",
+		hurtarray: [],
+		totalWorkHours: "0",
+		totalCostWorkHours: "0",
+		damageCost: "0",
+		spareCost: "0",
 
 		error: false,
 		successmsg: false,
@@ -62,11 +79,17 @@ const Report = ({ props }) => {
 		redirectToReferrer: false,
 	});
 
+	//* pikod data
 	const [gdods, setGdods] = useState([]);
 	const [hativas, setHativas] = useState([]);
 	const [ogdas, setOgdas] = useState([]);
 	const [pikods, setPikods] = useState([]);
-
+	//* pikodrep data
+	const [gdodsrep, setGdodsrep] = useState([]);
+	const [hativasrep, setHativasrep] = useState([]);
+	const [ogdasrep, setOgdasrep] = useState([]);
+	const [pikodsrep, setPikodsrep] = useState([]);
+	// * cardata
 	const [mkabazs, setMkabazs] = useState([]);
 	const [magads, setMagads] = useState([]);
 	const [magadals, setMagadals] = useState([]);
@@ -116,11 +139,13 @@ const Report = ({ props }) => {
 		}
 	};
 
+	//* manmarit
 	const loadPikods = async () => {
 		await axios
 			.get("http://localhost:8000/api/pikod")
 			.then((response) => {
 				setPikods(response.data);
+				// setPikodsrep(response.data);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -149,6 +174,7 @@ const Report = ({ props }) => {
 			}
 		}
 		setOgdas(temppikodsogdas);
+		// setOgdasrep(temppikodsogdas);
 	};
 
 	const loadHativas = async (ogdaids) => {
@@ -173,6 +199,7 @@ const Report = ({ props }) => {
 			}
 		}
 		setHativas(tempogdashativas);
+		// setHativasrep(tempogdashativas)
 	};
 
 	const loadGdods = async (hativaids) => {
@@ -197,11 +224,120 @@ const Report = ({ props }) => {
 			}
 		}
 		setGdods(temphativasgdods);
+		// setGdodsrep(temphativasgdods);
 	};
+
+	//* rep
+
+	const loadPikodsrep = async () => {
+		await axios
+			.get("http://localhost:8000/api/pikod")
+			.then((response) => {
+				// setPikods(response.data);
+				setPikodsrep(response.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
+	const loadOgdasrep = async (pikodids) => {
+		let temppikodids = pikodids;
+		if (temppikodids != undefined && !temppikodids.isArray) {
+			temppikodids = [pikodids];
+		}
+		let temppikodsogdas = [];
+		if (temppikodids != undefined && temppikodids.length > 0) {
+			for (let i = 0; i < temppikodids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/ogda/ogdasbypikodid", {
+						pikod: temppikodids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							temppikodsogdas.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		// setOgdas(temppikodsogdas);
+		setOgdasrep(temppikodsogdas);
+	};
+
+	const loadHativasrep = async (ogdaids) => {
+		let tempogdaids = ogdaids;
+		if (tempogdaids != undefined && !tempogdaids.isArray) {
+			tempogdaids = [ogdaids];
+		}
+		let tempogdashativas = [];
+		if (tempogdaids != undefined && tempogdaids.length > 0) {
+			for (let i = 0; i < tempogdaids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/hativa/hativasbyogdaid", {
+						ogda: tempogdaids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							tempogdashativas.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		// setHativas(tempogdashativas);
+		setHativasrep(tempogdashativas);
+	};
+
+	const loadGdodsrep = async (hativaids) => {
+		let temphativaids = hativaids;
+		if (temphativaids != undefined && !temphativaids.isArray) {
+			temphativaids = [hativaids];
+		}
+		let temphativasgdods = [];
+		if (temphativaids != undefined && temphativaids.length > 0) {
+			for (let i = 0; i < temphativaids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/gdod/gdodsbyhativaid", {
+						hativa: temphativaids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							temphativasgdods.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		// setGdods(temphativasgdods);
+		setGdodsrep(temphativasgdods);
+	};
+
+	//* handle changes
 
 	function handleChange(evt) {
 		const value = evt.target.value;
-		setData({ ...data, [evt.target.name]: value });
+		if (evt.target.name == "nifga") {
+			if (value == 1) {
+				setData({ ...data, [evt.target.name]: value });
+				setinfohurtarray((currentSpec) => [...currentSpec, { id: generate() }]);
+			} else {
+				setData({ ...data, [evt.target.name]: value });
+			}
+		}
+		if (evt.target.name != "cellphone" && evt.target.name != "zadik") {
+			setData({ ...data, [evt.target.name]: value });
+		} else {
+			if (digits_only(value)) {
+				setData({ ...data, [evt.target.name]: value });
+			} else {
+				// console.log("you used letter in the phone number");
+				toast.error("לא ניתן לכתוב אותיות בשדה זה");
+			}
+		}
 	}
 
 	function handleChange2(selectedOption, name) {
@@ -293,13 +429,6 @@ const Report = ({ props }) => {
 			flag = false;
 			ErrorReason += " ,אם נגרם נזק ריק \n";
 		}
-		if (
-			!document.getElementById("delt").checked &&
-			!document.getElementById("notDelt").checked
-		) {
-			flag = false;
-			ErrorReason += " ,אם נגרם נזק לכלי ריק \n";
-		}
 		if (data.pirot == "") {
 			flag = false;
 			ErrorReason += "  פירוט האירוע ריק \n";
@@ -316,6 +445,18 @@ const Report = ({ props }) => {
 			flag = false;
 			ErrorReason += "כמות הנפגעים ריקה \n";
 		}
+		if(data.nifga== "1"){
+		for (let i = 0; i < infohurtarray.length; i++) {
+			if (!infohurtarray[i].dargahurt) {
+				ErrorReason += "   לא הוזן דרגת פגיעה \n";
+				flag = false;
+			}
+			if (!infohurtarray[i].mikomhurt) {
+				ErrorReason += "   לא הוזן כמות ימים \n";
+				flag = false;
+			}
+		}
+	}
 
 		if (flag == true) {
 			SendFormData(event);
@@ -338,11 +479,14 @@ const Report = ({ props }) => {
 			lastname: data.lastname,
 			personalnumber: data.personalnumber,
 			cellphone: data.cellphone,
-			// pikod: data.pikod,
-			// ogda:data.ogda,
-			// hativa:data.hativa,
+			pikodrep: data.pikodrep,
+			ogdarep: data.ogdarep,
+			hativarep: data.hativarep,
 			gdod: data.gdod,
-			status: data.dt,
+			gdodrep: data.gdodrep,
+			mkabaz: data.mkabaz,
+			arraymkabaz: cartypesfilterarray,
+			zadik: data.zadik,
 			typevent: data.typevent,
 			resevent: data.resevent,
 			yn: data.yn,
@@ -357,39 +501,66 @@ const Report = ({ props }) => {
 			mholaztype: data.mholaztype,
 			// mhalztype: data.mhalztype,
 			pirot: data.pirot,
+			lessons: data.lessons,
 			datevent: data.datevent,
 			mikom: data.mikom,
 			nifga: data.nifga,
+			hurtarray: infohurtarray,
+			totalWorkHours: data.totalWorkHours,
+			totalCostWorkHours: data.totalCostWorkHours,
+			damageCost: data.damageCost,
+			spareCost: data.spareCost,
 		};
 		console.log("In the SendFormData Func");
 		console.log(requestData);
 
 		console.groupCollapsed("Axios");
 
-		axios
-			.post(`http://localhost:8000/report/add`, requestData)
-			.then((res) => {
-				console.groupCollapsed("Axios then");
-				console.log(res);
-				setData({ ...data, loading: false, error: false, successmsg: true });
-				toast.success(` הדיווח נשלח בהצלחה`);
-				history.push(`/dash`);
-				console.log(res.data);
+		if (!requestData.gdod == "") {
+			if (!requestData.gdodrep == "") {
+				axios
+					.post(`http://localhost:8000/report/add`, requestData)
+					.then((res) => {
+						console.groupCollapsed("Axios then");
+						console.log(res);
+						setData({
+							...data,
+							loading: false,
+							error: false,
+							successmsg: true,
+						});
+						toast.success(` הדיווח נשלח בהצלחה`);
+						if (user.role == "0") {
+							history.push(`/dash`);
+						} else if (user.role == "1") {
+							history.push(`/dashamal`);
+						} else if (user.role == "2") {
+							history.push(`/dashadmin`);
+						} else if (user.role == "3") {
+							history.push(`/dash`);
+						}
+						console.log(res.data);
+						console.groupEnd();
+					})
+					.catch((error) => {
+						console.groupCollapsed("Axios catch error");
+						console.log(error);
+						toast.error("שגיאה בשליחת הדיווח");
+						setData({
+							...data,
+							errortype: error.response.data.error,
+							loading: false,
+							error: true,
+						});
+						console.groupEnd();
+					});
 				console.groupEnd();
-			})
-			.catch((error) => {
-				console.groupCollapsed("Axios catch error");
-				console.log(error);
-				toast.error("שגיאה בשליחת הדיווח");
-				setData({
-					...data,
-					errortype: error.response.data.error,
-					loading: false,
-					error: true,
-				});
-				console.groupEnd();
-			});
-		console.groupEnd();
+			} else {
+				toast.error("לא הוזנה יחידה מדווחת");
+			}
+		} else {
+			toast.error("לא הוזנה יחידה מנמרית");
+		}
 	};
 
 	const initWithUserData = () => {
@@ -400,12 +571,15 @@ const Report = ({ props }) => {
 			personalnumber: user.personalnumber,
 		});
 		loadPikods();
+		loadPikodsrep();
+		getMagadals();
 	};
 
 	useEffect(() => {
 		initWithUserData();
 	}, []);
 
+	// * ------ manmarit --------------------------------
 	useEffect(() => {
 		setOgdas([]);
 		loadOgdas(data.pikod);
@@ -420,14 +594,43 @@ const Report = ({ props }) => {
 		setGdods([]);
 		loadGdods(data.hativa);
 	}, [data.hativa]);
+	//* ------ rep ----------------------------------------------------------------
+	useEffect(() => {
+		setOgdasrep([]);
+		loadOgdasrep(data.pikodrep);
+	}, [data.pikodrep]);
+
+	useEffect(() => {
+		setHativasrep([]);
+		loadHativasrep(data.ogdarep);
+	}, [data.ogdarep]);
+
+	useEffect(() => {
+		setGdodsrep([]);
+		loadGdodsrep(data.hativarep);
+	}, [data.hativarep]);
+	//* ------ magdal .... --------------------------------
+	useEffect(() => {
+		setMagads([]);
+		getMagads(data.magadal);
+	}, [data.magadal]);
+
+	useEffect(() => {
+		setMkabazs([]);
+		getMkabazs(data.magad);
+	}, [data.magad]);
 
 	useEffect(() => {
 		setMkabazs([]);
 		getMkabazs();
 	}, [data.mkabaz]);
 
+	useEffect(() => {
+		setCartypesfilterarray([]);
+	}, []);
+
 	return (
-		<div>
+		<Background>
 			<Container className="mt--8 pb-5">
 				<Row className="justify-content-center">
 					<Col
@@ -491,8 +694,162 @@ const Report = ({ props }) => {
 										/>
 									</FormGroup>
 
+									{/*//* --------------------------------------- rep ------------------------------------------- */}
 									<div className="text-center text-muted mb-4">
 										<small>פרטי יחידה מדווחת</small>
+									</div>
+
+									<Row style={{ paddingTop: "2px" }}>
+										{!data.ogdarep ? (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>פיקוד</h6>
+												<Select
+													data={pikodsrep}
+													handleChange2={handleChange2}
+													name={"pikodrep"}
+													val={data.pikodrep ? data.pikodrep : undefined}
+												/>
+											</Col>
+										) : (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>פיקוד</h6>
+												<Select
+													data={pikodsrep}
+													handleChange2={handleChange2}
+													name={"pikodrep"}
+													val={data.pikodrep ? data.pikodrep : undefined}
+													isDisabled={true}
+												/>
+											</Col>
+										)}
+
+										<>
+											{data.pikodrep && !data.hativarep ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>אוגדה</h6>
+													<Select
+														data={ogdasrep}
+														handleChange2={handleChange2}
+														name={"ogdarep"}
+														val={data.ogdarep ? data.ogdarep : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>אוגדה</h6>
+													<Select
+														data={ogdasrep}
+														handleChange2={handleChange2}
+														name={"ogdarep"}
+														val={data.ogdarep ? data.ogdarep : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+
+										<>
+											{data.ogdarep && !data.gdodrep ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>חטיבה</h6>
+													<Select
+														data={hativasrep}
+														handleChange2={handleChange2}
+														name={"hativarep"}
+														val={data.hativarep ? data.hativarep : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>חטיבה</h6>
+													<Select
+														data={hativasrep}
+														handleChange2={handleChange2}
+														name={"hativarep"}
+														val={data.hativarep ? data.hativarep : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+
+										<>
+											{data.hativarep ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+														data={gdodsrep}
+														handleChange2={handleChange2}
+														name={"gdodrep"}
+														val={data.gdodrep ? data.gdodrep : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+														data={gdodsrep}
+														handleChange2={handleChange2}
+														name={"gdodrep"}
+														val={data.gdodrep ? data.gdodrep : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+									</Row>
+									{/* //* ----------------------------------------- manmarit ---------------------------------------------- */}
+
+									<div className="text-center text-muted mb-4">
+										<small>פרטי יחידה מנמרית</small>
 									</div>
 
 									<Row style={{ paddingTop: "2px" }}>
@@ -664,120 +1021,48 @@ const Report = ({ props }) => {
 											<option value={"0"}>בחר</option>
 											<option value={"1"}>תאונה</option>
 											<option value={"2"}>כשל טכני</option>
-											<option value={"4"}>טעות אנוש</option>
-											<option value={"3"}>לא ידוע</option>
+											<option value={"3"}>טעות אנוש</option>
+											<option value={"4"}>לא ידוע</option>
 										</Input>
 									</FormGroup>
 
 									<div style={{ textAlign: "right", paddingTop: "10px" }}>
 										סוג הרק"ם
 									</div>
-									<Row>
-										{!data.magad ? (
-											<Col
-												style={{
-													justifyContent: "right",
-													alignContent: "right",
-													textAlign: "right",
+									<Row style={{ padding: "0px" }}>
+										<Col
+											style={{
+												display: "flex",
+												justifyContent: "right",
+												paddingTop: "15px",
+												paddingRight: "0px",
+											}}
+										>
+											<Button
+												style={{ width: "100px", padding: "10px" }}
+												type="button"
+												onClick={() => {
+													setCartypesfilterarray((currentSpec) => [
+														...currentSpec,
+														{ id: generate() },
+													]);
 												}}
 											>
-												<h6>מאגד על</h6>
-												<Select
-													data={magadals}
-													handleChange2={handleChange2}
-													name={"magadal"}
-													val={data.magadal ? data.magadal : undefined}
-												/>
-											</Col>
-										) : (
-											<Col
-												style={{
-													justifyContent: "right",
-													alignContent: "right",
-													textAlign: "right",
-												}}
-											>
-												<h6>מאגד על</h6>
-												<Select
-													data={magadals}
-													handleChange2={handleChange2}
-													name={"magadal"}
-													val={data.magadal ? data.magadal : undefined}
-													isDisabled={true}
-												/>
-											</Col>
-										)}
-
-										{data.magadal && !data.mkabaz ? (
-											<Col
-												style={{
-													justifyContent: "right",
-													alignContent: "right",
-													textAlign: "right",
-												}}
-											>
-												<h6>מאגד</h6>
-												<Select
-													data={magads}
-													handleChange2={handleChange2}
-													name={"magad"}
-													val={data.magad ? data.magad : undefined}
-												/>
-											</Col>
-										) : (
-											<Col
-												style={{
-													justifyContent: "right",
-													alignContent: "right",
-													textAlign: "right",
-												}}
-											>
-												<h6>מאגד</h6>
-												<Select
-													data={magads}
-													handleChange2={handleChange2}
-													name={"magad"}
-													val={data.magad ? data.magad : undefined}
-													isDisabled={true}
-												/>
-											</Col>
-										)}
-
-										{data.magad && !data.makat ? (
-											<Col
-												style={{
-													justifyContent: "right",
-													alignContent: "right",
-													textAlign: "right",
-												}}
-											>
-												<h6>מקבץ</h6>
-												<Select
-													data={mkabazs}
-													handleChange2={handleChange2}
-													name={"mkabaz"}
-													val={data.mkabaz ? data.mkabaz : undefined}
-												/>
-											</Col>
-										) : (
-											<Col
-												style={{
-													justifyContent: "right",
-													alignContent: "right",
-													textAlign: "right",
-												}}
-											>
-												<h6>מקבץ</h6>
-												<Select
-													data={mkabazs}
-													handleChange2={handleChange2}
-													name={"mkabaz"}
-													val={data.mkabaz ? data.mkabaz : undefined}
-													isDisabled={true}
-												/>
-											</Col>
-										)}
+												הוסף רק"ם
+											</Button>
+										</Col>
 									</Row>
+
+									{cartypesfilterarray.map((cartypesfilterobject, index) => {
+										return (
+											<CarTypesFilterObjectRekem
+												user={user}
+												cartypesfilterobject={cartypesfilterobject}
+												index={index}
+												setCartypesfilterarray={setCartypesfilterarray}
+											/>
+										);
+									})}
 
 									<div style={{ textAlign: "right", paddingTop: "10px" }}>
 										האם נגרם נזק לרק"ם
@@ -817,50 +1102,22 @@ const Report = ({ props }) => {
 										</FormGroup>
 									</div>
 
-									{/* //* ------------------ status checker ----------------------- */}
-									<div style={{ textAlign: "right", paddingTop: "10px" }}>
-										סטטוס
-									</div>
-									<div style={{ textAlign: "right" }}>
-										<FormGroup
-											check
-											inline
-										>
-											<div style={{ textAlign: "right", paddingTop: "10px" }}>
-												<Input
-													type="radio"
-													name="dt"
-													value="1"
-													onChange={handleChange}
-													id="delt"
-												/>
-												סגור
-											</div>
-										</FormGroup>
-
-										<FormGroup
-											check
-											inline
-										>
-											<div style={{ textAlign: "right", paddingTop: "10px" }}>
-												<Input
-													type="radio"
-													id="notDelt"
-													name="dt"
-													value="0"
-													onChange={handleChange}
-												/>
-												בטיפול
-											</div>
-										</FormGroup>
-									</div>
-
 									<FormGroup dir="rtl">
 										<Input
 											placeholder="פירוט האירוע"
 											name="pirot"
 											type="textarea"
 											value={data.pirot}
+											onChange={handleChange}
+										/>
+									</FormGroup>
+
+									<FormGroup dir="rtl">
+										<Input
+											placeholder="לקחים ותובנות"
+											name="lessons"
+											type="textarea"
+											value={data.lessons}
 											onChange={handleChange}
 										/>
 									</FormGroup>
@@ -875,6 +1132,8 @@ const Report = ({ props }) => {
 											type="datetime-local"
 											value={data.datevent}
 											onChange={handleChange}
+											min={"1900-01-01T00:00:00"}
+											max={"2100-01-01T00:00:00"}
 										/>
 									</FormGroup>
 
@@ -888,55 +1147,210 @@ const Report = ({ props }) => {
 										/>
 									</FormGroup>
 
-									<FormGroup dir="rtl">
-										<Input
-											placeholder="כמה נפגעים היו באירוע"
-											name="nifga"
-											type="number"
-											value={data.nifga}
-											onChange={handleChange}
-										/>
-									</FormGroup>
+									<div style={{ textAlign: "right", paddingTop: "10px" }}>
+										האם יש נפגעים
+									</div>
+									<div
+										className="mb-2"
+										style={{ textAlign: "right" }}
+									>
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													// placeholder="ללא נפגעים "
+													name="nifga"
+													type="radio"
+													value="1"
+													onChange={handleChange}
+												/>
+												כן
+											</div>
+										</FormGroup>
 
-									{/* {data.nifga > "0" && (
-                    <>
-                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                        מצב הנפגע
-                      </div>
-                      <FormGroup>
-                        <Input
-                          type="select"
-                          name="mazavnifga"
-                          value={data.mazavnifga}
-                          onChange={handleChange}
-                          id="mazav"
-                        >
-                          <option value={"0"}>בחר</option>
-                          <option value={"1"}>קל</option>
-                          <option value={"2"}>בינוני</option>
-                          <option value={"3"}>קשה</option>
-                          <option value={"4"}>נהרג</option>
-                        </Input>
-                      </FormGroup>
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													// placeholder="הוסף נפגעים"
+													name="nifga"
+													type="radio"
+													value="0"
+													onChange={handleChange}
+												/>
+												ללא נפגעים
+											</div>
+										</FormGroup>
 
-                      <FormGroup dir="rtl">
-                    <Input
-                      placeholder="מיקום הפגיעה בגוף"
-                      name="mikompgia"
-                      type="string"
-                      value={data.mikompgia}
-                      onChange={handleChange}
-                    />
-                  </FormGroup> 
-                  <div style={{ textAlign: 'right', paddingTop: '10px' }}>
-                  <button
-                  //  onClick={clickSubmit} 
-                   className="btn btn-primary">
-                      +
-                 </button>
-                 </div>
-                  </>
-                  )} */}
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													// placeholder="הוסף נפגעים"
+													name="nifga"
+													type="radio"
+													value="2"
+													onChange={handleChange}
+												/>
+												לא ידוע
+											</div>
+										</FormGroup>
+									</div>
+
+									{data.nifga === "1" && (
+										<>
+											<div>
+												{infohurtarray.length == 0 ? (
+													<Row>
+														<Col
+															style={{ display: "flex", textAlign: "right" }}
+														>
+															<Button
+																style={{ width: "100px", padding: "5px" }}
+																type="button"
+																onClick={() => {
+																	setinfohurtarray((currentSpec) => [
+																		...currentSpec,
+																		{ id: generate() },
+																	]);
+																}}
+															>
+																הוסף נפגע
+															</Button>
+														</Col>
+													</Row>
+												) : (
+													infohurtarray.map((p, index) => {
+														return (
+															<div>
+																{index == 0 ? (
+																	<Row>
+																		<Col
+																			style={{
+																				display: "flex",
+																				textAlign: "right",
+																			}}
+																		>
+																			<Button
+																				style={{
+																					width: "100px",
+																					padding: "5px",
+																				}}
+																				type="button"
+																				onClick={() => {
+																					setinfohurtarray((currentSpec) => [
+																						...currentSpec,
+																						{ id: generate() },
+																					]);
+																				}}
+																			>
+																				הוסף נפגע
+																			</Button>
+																		</Col>
+																	</Row>
+																) : null}
+																{
+																	<Row>
+																		<Col
+																			xs={12}
+																			md={4}
+																		>
+																			<div>
+																				<p
+																					style={{
+																						margin: "0px",
+																						float: "right",
+																					}}
+																				>
+																					דרגת הפציעה
+																				</p>
+																				<Input
+																					onChange={(e) => {
+																						const dargahurt = e.target.value;
+																						if (e.target.value != "בחר")
+																							setinfohurtarray((currentSpec) =>
+																								produce(currentSpec, (v) => {
+																									v[index].dargahurt =
+																										dargahurt;
+																								})
+																							);
+																					}}
+																					value={p.dargahurt}
+																					type="select"
+																					placeholder="דרגת הפציעה"
+																				>
+																					<option value={"בחר"}>{"בחר"}</option>
+																					<option value={"קל"}>{"קל"}</option>
+																					<option value={"בינוני"}>
+																						{"בינוני"}
+																					</option>
+																					<option value={"קשה"}>{"קשה"}</option>
+																					<option value={"מת"}>{"מת"}</option>
+																					<option value={"לא ידוע"}>
+																						{"לא ידוע"}
+																					</option>
+																				</Input>
+																			</div>
+																		</Col>
+																		<Col
+																			xs={12}
+																			md={4}
+																		>
+																			<div>
+																				<p
+																					style={{
+																						margin: "0px",
+																						float: "right",
+																					}}
+																				>
+																					מספר ימי מחלה
+																				</p>
+																				<Input
+																					onChange={(e) => {
+																						const mikomhurt = e.target.value;
+																						if (e.target.value != "")
+																							setinfohurtarray((currentSpec) =>
+																								produce(currentSpec, (v) => {
+																									v[index].mikomhurt =
+																										mikomhurt;
+																								})
+																							);
+																					}}
+																					value={p.mikomhurt}
+																					type="number"
+																					placeholder="0"
+																					min="0"
+																				/>
+																			</div>
+																		</Col>
+																	</Row>
+																}
+																<Button
+																	type="button"
+																	onClick={() => {
+																		setinfohurtarray((currentSpec) =>
+																			currentSpec.filter((x) => x.id !== p.id)
+																		);
+																	}}
+																>
+																	<img
+																		src={deletepic}
+																		height="20px"
+																	></img>
+																</Button>
+															</div>
+														);
+													})
+												)}
+											</div>
+										</>
+									)}
 
 									<div className="text-center">
 										<button
@@ -952,7 +1366,7 @@ const Report = ({ props }) => {
 					</Col>
 				</Row>
 			</Container>
-		</div>
+		</Background>
 	);
 };
 export default withRouter(Report);

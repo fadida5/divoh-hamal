@@ -20,25 +20,38 @@ import {
 import axios from "axios";
 import history from "history.js";
 import { toast } from "react-toastify";
+import { produce } from "immer";
+import { generate } from "shortid";
 import { isAuthenticated } from "auth";
 import Select from "components/general/Select/AnimatedSelect";
+import deletepic from "assets/img/delete.png";
+import CarTypesFilterObject from "components/general/CarTypeFilter/CarTypesFilterObject";
+import Background from "components/general/Background/Background";
 
 const Report = ({ match }) => {
 	const { user } = isAuthenticated();
+	const digits_only = (string) =>
+		[...string].every((c) => "0123456789".includes(c));
+	const [cartypesfilterarray, setCartypesfilterarray] = useState([]);
+	const [infohurtarray, setinfohurtarray] = useState([]);
+
 	const [data, setData] = useState({
 		name: "",
 		lastname: "",
 		personalnumber: "",
 		cellphone: "",
-		// pikod: "",
-		// ogda: "",
-		// hativa: "",
+		pikodrep: "",
+		ogdarep: "",
+		hativarep: "",
 		gdod: "",
-		mkabazs: "",
+		gdodrep: "",
+		mkabaz: "",
+		arraymkabaz: [],
+		zadik: "",
 		typevent: "0",
 		resevent: "0",
-		yn: "",
-		selneshek: "0",
+		yn: "0",
+		selneshek: "",
 		whap: "0",
 		amlahtype: "",
 		rekemtype: "0",
@@ -47,12 +60,18 @@ const Report = ({ match }) => {
 		mataftype: "0",
 		apitype: "0",
 		mholaztype: "0",
-		status: "0",
 		// mhalztype:"0",
 		pirot: "",
+		lessons: "",
 		datevent: "",
 		mikom: "",
 		nifga: "",
+		wnifga: "",
+		hurtarray: [],
+		totalWorkHours: "0",
+		totalCostWorkHours: "0",
+		damageCost: "0",
+		spareCost: "0",
 
 		error: false,
 		successmsg: false,
@@ -64,12 +83,17 @@ const Report = ({ match }) => {
 	const [hativas, setHativas] = useState([]);
 	const [ogdas, setOgdas] = useState([]);
 	const [pikods, setPikods] = useState([]);
+	//* pikodrep data
+	const [gdodsrep, setGdodsrep] = useState([]);
+	const [hativasrep, setHativasrep] = useState([]);
+	const [ogdasrep, setOgdasrep] = useState([]);
+	const [pikodsrep, setPikodsrep] = useState([]);
 	// * cardata
 	const [mkabazs, setMkabazs] = useState([]);
 	const [magads, setMagads] = useState([]);
 	const [magadals, setMagadals] = useState([]);
-	// ? for magad that have matafim
-	const [mkabazsMataf, setMkabazsMataf] = useState([]);
+	//* isRekem
+	const [mkabazsRekem, setRekem] = useState([]);
 	const [indexM, setIndexM] = useState(0);
 
 	const getMagadals = async () => {
@@ -115,41 +139,30 @@ const Report = ({ match }) => {
 		}
 	};
 
-	const getMkabazsMataf = async () => {
-		await axios
-			.get(`http://localhost:8000/api/mkabaz/mkabazsbymatafcre`)
-			.then((response) => {
-				const tempdatacre = response.data;
-				// console.log(response.data);
-				axios
-					.get(`http://localhost:8000/api/mkabaz/mkabazsbymatafengine`)
-					.then((response) => {
-						const tempdataengine = response.data;
-						let filtered = tempdatacre;
-						// console.log(response.data);
-						tempdatacre.map((item, index) => {
-							if (tempdataengine[index].name !== tempdatacre[index].name) {
-								filtered.push(tempdataengine[index]);
-							}
-						});
-						console.log(filtered);
-
-						setMkabazsMataf(filtered);
-					})
-					.catch((error) => {
-						console.log(error);
-					});
-			})
-			.catch((error) => {
-				console.log(error);
-			});
+	const getRekem = async (magadid) => {
+		let tempmagadmkabazs = [];
+		if (magadid != undefined) {
+			await axios
+				//? should work need to test on real db
+				.get(`http://localhost:8000/api/mkabaz/mkabazsbyrekem/${magadid}`)
+				.then((response) => {
+					for (let j = 0; j < response.data.length; j++)
+						tempmagadmkabazs.push(response.data[j]);
+				})
+				.catch((error) => {
+					console.log(error);
+				});
+			console.log(tempmagadmkabazs);
+			setRekem(tempmagadmkabazs);
+		}
 	};
-
+	//* manmarit
 	const loadPikods = async () => {
 		await axios
 			.get("http://localhost:8000/api/pikod")
 			.then((response) => {
 				setPikods(response.data);
+				// setPikodsrep(response.data);
 			})
 			.catch((error) => {
 				console.log(error);
@@ -178,6 +191,7 @@ const Report = ({ match }) => {
 			}
 		}
 		setOgdas(temppikodsogdas);
+		// setOgdasrep(temppikodsogdas);
 	};
 
 	const loadHativas = async (ogdaids) => {
@@ -202,6 +216,7 @@ const Report = ({ match }) => {
 			}
 		}
 		setHativas(tempogdashativas);
+		// setHativasrep(tempogdashativas)
 	};
 
 	const loadGdods = async (hativaids) => {
@@ -226,18 +241,126 @@ const Report = ({ match }) => {
 			}
 		}
 		setGdods(temphativasgdods);
+		// setGdodsrep(temphativasgdods);
 	};
+
+	//* rep
+
+	const loadPikodsrep = async () => {
+		await axios
+			.get("http://localhost:8000/api/pikod")
+			.then((response) => {
+				// setPikods(response.data);
+				setPikodsrep(response.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
+	const loadOgdasrep = async (pikodids) => {
+		let temppikodids = pikodids;
+		if (temppikodids != undefined && !temppikodids.isArray) {
+			temppikodids = [pikodids];
+		}
+		let temppikodsogdas = [];
+		if (temppikodids != undefined && temppikodids.length > 0) {
+			for (let i = 0; i < temppikodids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/ogda/ogdasbypikodid", {
+						pikod: temppikodids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							temppikodsogdas.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		// setOgdas(temppikodsogdas);
+		setOgdasrep(temppikodsogdas);
+	};
+
+	const loadHativasrep = async (ogdaids) => {
+		let tempogdaids = ogdaids;
+		if (tempogdaids != undefined && !tempogdaids.isArray) {
+			tempogdaids = [ogdaids];
+		}
+		let tempogdashativas = [];
+		if (tempogdaids != undefined && tempogdaids.length > 0) {
+			for (let i = 0; i < tempogdaids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/hativa/hativasbyogdaid", {
+						ogda: tempogdaids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							tempogdashativas.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		// setHativas(tempogdashativas);
+		setHativasrep(tempogdashativas);
+	};
+
+	const loadGdodsrep = async (hativaids) => {
+		let temphativaids = hativaids;
+		if (temphativaids != undefined && !temphativaids.isArray) {
+			temphativaids = [hativaids];
+		}
+		let temphativasgdods = [];
+		if (temphativaids != undefined && temphativaids.length > 0) {
+			for (let i = 0; i < temphativaids.length; i++) {
+				await axios
+					.post("http://localhost:8000/api/gdod/gdodsbyhativaid", {
+						hativa: temphativaids[i],
+					})
+					.then((response) => {
+						for (let j = 0; j < response.data.length; j++)
+							temphativasgdods.push(response.data[j]);
+					})
+					.catch((error) => {
+						console.log(error);
+					});
+			}
+		}
+		// setGdods(temphativasgdods);
+		setGdodsrep(temphativasgdods);
+	};
+
+	//* handle changes
 
 	function handleChange(evt) {
 		const value = evt.target.value;
-		console.log(evt.target.value);
-		setData({ ...data, [evt.target.name]: value });
+		if (evt.target.name == "nifga") {
+			if (value == 1) {
+				setData({ ...data, [evt.target.name]: value });
+				setinfohurtarray((currentSpec) => [...currentSpec, { id: generate() }]);
+			} else {
+				setData({ ...data, [evt.target.name]: value });
+			}
+		}
+		if (evt.target.name != "cellphone" && evt.target.name != "zadik") {
+			setData({ ...data, [evt.target.name]: value });
+		} else {
+			if (digits_only(value)) {
+				setData({ ...data, [evt.target.name]: value });
+			} else {
+				// console.log("you used letter in the phone number");
+				toast.error("לא ניתן לכתוב אותיות בשדה זה");
+			}
+		}
 	}
 
 	async function matafHandleChange(selectedOption, name) {
 		if (!(selectedOption.value == "בחר")) {
-			let i = mkabazsMataf.map((item, index) => {
-				return mkabazsMataf[index].name;
+			let i = mkabazsRekem.map((item, index) => {
+				return mkabazsRekem[index].name;
 			});
 			console.log(1);
 			let nameIndex = await i.indexOf(selectedOption.label);
@@ -246,8 +369,8 @@ const Report = ({ match }) => {
 			await setIndexM(nameIndex);
 			// console.log(mkabazsMataf[nameIndex]);
 			console.log(indexM);
-			console.log(mkabazsMataf[indexM].matafEngine);
-			console.log(mkabazsMataf[indexM].matafCre);
+			console.log(mkabazsRekem[indexM].matafEngine);
+			console.log(mkabazsRekem[indexM].matafCre);
 
 			setData({ ...data, [name]: selectedOption.value });
 		} else {
@@ -260,9 +383,11 @@ const Report = ({ match }) => {
 
 	// * only for pikod... and magadal... should be saved in cardats not data (the report itself)
 	function handleChange2(selectedOption, name) {
-		if (!(selectedOption.value == "בחר"))
+		// console.log(selectedOption.value);
+		if (!(selectedOption.value == "בחר")) {
+			// console.log(selectedOption);
 			setData({ ...data, [name]: selectedOption.value });
-		else {
+		} else {
 			let tempdata = { ...data };
 			delete tempdata[name];
 			setData(tempdata);
@@ -294,6 +419,14 @@ const Report = ({ match }) => {
 			flag = false;
 			ErrorReason += " טלפון ריק \n";
 		}
+		// if (data.gdod == ("בחר" || "" || undefined || null)) {
+		// 	flag = false;
+		// 	ErrorReason += "  גדוד ריק \n";
+		// }
+		// if (data.gdodrep == ("בחר" || "" || undefined || null)) {
+		// 	flag = false;
+		// 	ErrorReason += "  גדוד ריק \n";
+		// }
 
 		// if (
 		// 	document.getElementById("pikod").options[
@@ -358,22 +491,11 @@ const Report = ({ match }) => {
 				flag = false;
 				ErrorReason += " ,אם נגרם נזק לכלי ריק \n";
 			}
-			if (
-				!document.getElementById("delt").checked &&
-				!document.getElementById("notDelt").checked
-			) {
-				flag = false;
-				ErrorReason += " ,    סטטוס ריק\n";
-			}
 		}
 		if (data.typevent === "5") {
-			if (
-				document.getElementById("neshek").options[
-					document.getElementById("neshek").selectedIndex
-				].value == "0"
-			) {
+			if (data.selneshek == "") {
 				flag = false;
-				ErrorReason += "סוג הנשק ריק \n";
+				ErrorReason += " סוג הנשק/ תחמושת ריק\n";
 			}
 			if (
 				!document.getElementById("YES").checked &&
@@ -381,13 +503,6 @@ const Report = ({ match }) => {
 			) {
 				flag = false;
 				ErrorReason += " ,אם נגרם נזק ריק \n";
-			}
-			if (
-				!document.getElementById("delt").checked &&
-				!document.getElementById("notDelt").checked
-			) {
-				flag = false;
-				ErrorReason += " סטטוס ריק   \n";
 			}
 
 			if (
@@ -414,14 +529,18 @@ const Report = ({ match }) => {
 			}
 		}
 		if (data.typevent === "7") {
-			if (
-				document.getElementById("mataf").options[
-					document.getElementById("mataf").selectedIndex
-				].value == "0"
-			) {
+			if (data.zadik == "") {
 				flag = false;
-				ErrorReason += "סוג מטף ריק \n";
+				ErrorReason += "  צ' ריק\n";
 			}
+			// if (
+			// 	document.getElementById("mataf").options[
+			// 		document.getElementById("mataf").selectedIndex
+			// 	].value == "0"
+			// ) {
+			// 	flag = false;
+			// 	ErrorReason += "סוג מטף ריק \n";
+			// }
 			// if (
 			// 	document.getElementById("rekem").options[
 			// 		document.getElementById("rekem").selectedIndex
@@ -454,24 +573,18 @@ const Report = ({ match }) => {
 				ErrorReason += " ,אם בפירוק / הרכבה ריק \n";
 			}
 		}
-		if (data.typevent === "8") {
-			if (
-				document.getElementById("apidmia").options[
-					document.getElementById("apidmia").selectedIndex
-				].value == "0"
-			) {
-				flag = false;
-				ErrorReason += "סוג אפידמיה ריק \n";
-			}
-		}
 		if (data.typevent === "9") {
-			if (
-				document.getElementById("mholaz").options[
-					document.getElementById("mholaz").selectedIndex
-				].value == "0"
-			) {
+			// if (
+			// 	document.getElementById("mholaz").options[
+			// 		document.getElementById("mholaz").selectedIndex
+			// 	].value == "0" || null
+			// ) {
+			// 	flag = false;
+			// 	ErrorReason += "סוג הכלי המחולץ ריק \n";
+			// }
+			if (data.zadik == "") {
 				flag = false;
-				ErrorReason += "סוג הכלי המחולץ ריק \n";
+				ErrorReason += "  צ' ריק\n";
 			}
 			// if (
 			//   document.getElementById("mhalz").options[
@@ -499,6 +612,18 @@ const Report = ({ match }) => {
 			flag = false;
 			ErrorReason += "כמות הנפגעים ריקה \n";
 		}
+		if(data.nifga== "1"){
+		for (let i = 0; i < infohurtarray.length; i++) {
+			if (!infohurtarray[i].dargahurt) {
+				ErrorReason += "   לא הוזן דרגת פגיעה \n";
+				flag = false;
+			}
+			if (!infohurtarray[i].mikomhurt) {
+				ErrorReason += "   לא הוזן כמות ימים \n";
+				flag = false;
+			}
+		}
+	    }
 
 		if (flag == true) {
 			SendFormData(event);
@@ -521,17 +646,18 @@ const Report = ({ match }) => {
 			personalnumber: data.personalnumber,
 			cellphone: data.cellphone,
 			gdod: data.gdod,
-			// ogda:data.ogda,
-			// hativa:data.hativa,
-			// gdod:data.gdod,
+			gdodrep: data.gdodrep,
+			ogdarep: data.ogdarep,
+			hativarep: data.hativarep,
+			pikodrep: data.pikodrep,
 			typevent: data.typevent,
 			resevent: data.resevent,
 			// magadal: data.magadal,
 			// magad:data.magad,
 			mkabaz: data.mkabaz,
+			arraymkabaz: cartypesfilterarray,
+			zadik: data.zadik,
 			yn: data.yn,
-			status:
-				data.dt /* //?if there is no need for the status button ==> data.dt != undefined || null ? data.dt : "0",*/,
 			selneshek: data.selneshek,
 			whap: data.whap,
 			amlahtype: data.amlahtype,
@@ -543,39 +669,65 @@ const Report = ({ match }) => {
 			mholaztype: data.mholaztype,
 			// mhalztype: data.mhalztype,
 			pirot: data.pirot,
+			lessons: data.lessons,
 			datevent: data.datevent,
 			mikom: data.mikom,
 			nifga: data.nifga,
+			hurtarray: infohurtarray,
+			wnifga: data.wnifga,
+			totalWorkHours: data.totalWorkHours,
+			totalCostWorkHours: data.totalCostWorkHours,
+			damageCost: data.damageCost,
+			spareCost: data.spareCost,
 		};
 		console.log("In the SendFormData Func");
-		console.log(requestData.status);
-
 		console.groupCollapsed("Axios");
+		if (!requestData.gdod == "") {
+			if (!requestData.gdodrep == "") {
+				axios
+					.post(`http://localhost:8000/report/add`, requestData)
+					.then((res) => {
+						console.groupCollapsed("Axios then");
+						console.log(res);
+						setData({
+							...data,
+							loading: false,
+							error: false,
+							successmsg: true,
+						});
+						toast.success(` הדיווח נשלח בהצלחה`);
+						if (user.role == "0") {
+							history.push(`/dash`);
+						} else if (user.role == "1") {
+							history.push(`/dashamal`);
+						} else if (user.role == "2") {
+							history.push(`/dashadmin`);
+						} else if (user.role == "3") {
+							history.push(`/dash`);
+						}
 
-		axios
-			.post(`http://localhost:8000/report/add`, requestData)
-			.then((res) => {
-				console.groupCollapsed("Axios then");
-				console.log(res);
-				setData({ ...data, loading: false, error: false, successmsg: true });
-				toast.success(` הדיווח נשלח בהצלחה`);
-				history.push(`/dash`);
-				console.log(res.data);
+						console.log(res.data);
+						console.groupEnd();
+					})
+					.catch((error) => {
+						console.groupCollapsed("Axios catch error");
+						console.log(error);
+						toast.error("שגיאה בשליחת הדיווח");
+						setData({
+							...data,
+							errortype: error.response.data.error,
+							loading: false,
+							error: true,
+						});
+						console.groupEnd();
+					});
 				console.groupEnd();
-			})
-			.catch((error) => {
-				console.groupCollapsed("Axios catch error");
-				console.log(error);
-				toast.error("שגיאה בשליחת הדיווח");
-				setData({
-					...data,
-					errortype: error.response.data.error,
-					loading: false,
-					error: true,
-				});
-				console.groupEnd();
-			});
-		console.groupEnd();
+			} else {
+				toast.error("לא הוזנה יחידה מדווחת");
+			}
+		} else {
+			toast.error("לא הוזנה יחידה מנמרית");
+		}
 	};
 
 	const initWithUserData = () => {
@@ -586,13 +738,14 @@ const Report = ({ match }) => {
 			personalnumber: user.personalnumber,
 		});
 		loadPikods();
+		loadPikodsrep();
 		getMagadals();
 	};
 
 	useEffect(() => {
 		initWithUserData();
 	}, []);
-
+	// * ------ manmarit --------------------------------
 	useEffect(() => {
 		setOgdas([]);
 		loadOgdas(data.pikod);
@@ -607,7 +760,22 @@ const Report = ({ match }) => {
 		setGdods([]);
 		loadGdods(data.hativa);
 	}, [data.hativa]);
+	//* ------ rep ----------------------------------------------------------------
+	useEffect(() => {
+		setOgdasrep([]);
+		loadOgdasrep(data.pikodrep);
+	}, [data.pikodrep]);
 
+	useEffect(() => {
+		setHativasrep([]);
+		loadHativasrep(data.ogdarep);
+	}, [data.ogdarep]);
+
+	useEffect(() => {
+		setGdodsrep([]);
+		loadGdodsrep(data.hativarep);
+	}, [data.hativarep]);
+	//* ------ magdal .... --------------------------------
 	useEffect(() => {
 		setMagads([]);
 		getMagads(data.magadal);
@@ -619,9 +787,15 @@ const Report = ({ match }) => {
 	}, [data.magad]);
 
 	useEffect(() => {
-		setMkabazsMataf([]);
-		getMkabazsMataf();
-	}, [data.mkabaz]);
+		setRekem([]);
+		getRekem(data.magad);
+		console.log(data.mkabaz);
+		console.log(mkabazsRekem);
+	}, [data.magad]);
+
+	useEffect(() => {
+		setCartypesfilterarray([]);
+	}, []);
 
 	// useEffect(() => {
 	// 	setIndexM(0);
@@ -630,7 +804,7 @@ const Report = ({ match }) => {
 	// const selectElem = document.getElementById("mkabazM");
 
 	return (
-		<div>
+		<Background>
 			<Container className="mt--8 pb-5">
 				<Row className="justify-content-center">
 					<Col
@@ -693,9 +867,162 @@ const Report = ({ match }) => {
 											onChange={handleChange}
 										/>
 									</FormGroup>
-
+									{/*//* --------------------------------------- rep ------------------------------------------- */}
 									<div className="text-center text-muted mb-4">
 										<small>פרטי יחידה מדווחת</small>
+									</div>
+
+									<Row style={{ paddingTop: "2px" }}>
+										{!data.ogdarep ? (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>פיקוד</h6>
+												<Select
+													data={pikodsrep}
+													handleChange2={handleChange2}
+													name={"pikodrep"}
+													val={data.pikodrep ? data.pikodrep : undefined}
+												/>
+											</Col>
+										) : (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>פיקוד</h6>
+												<Select
+													data={pikodsrep}
+													handleChange2={handleChange2}
+													name={"pikodrep"}
+													val={data.pikodrep ? data.pikodrep : undefined}
+													isDisabled={true}
+												/>
+											</Col>
+										)}
+
+										<>
+											{data.pikodrep && !data.hativarep ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>אוגדה</h6>
+													<Select
+														data={ogdasrep}
+														handleChange2={handleChange2}
+														name={"ogdarep"}
+														val={data.ogdarep ? data.ogdarep : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>אוגדה</h6>
+													<Select
+														data={ogdasrep}
+														handleChange2={handleChange2}
+														name={"ogdarep"}
+														val={data.ogdarep ? data.ogdarep : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+
+										<>
+											{data.ogdarep && !data.gdodrep ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>חטיבה</h6>
+													<Select
+														data={hativasrep}
+														handleChange2={handleChange2}
+														name={"hativarep"}
+														val={data.hativarep ? data.hativarep : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>חטיבה</h6>
+													<Select
+														data={hativasrep}
+														handleChange2={handleChange2}
+														name={"hativarep"}
+														val={data.hativarep ? data.hativarep : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+
+										<>
+											{data.hativarep ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+														data={gdodsrep}
+														handleChange2={handleChange2}
+														name={"gdodrep"}
+														val={data.gdodrep ? data.gdodrep : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+														data={gdodsrep}
+														handleChange2={handleChange2}
+														name={"gdodrep"}
+														val={data.gdodrep ? data.gdodrep : undefined}
+														isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+									</Row>
+									{/* //* ----------------------------------------- manmarit ---------------------------------------------- */}
+
+									<div className="text-center text-muted mt-3 mb-4">
+										<small>פרטי יחידה מנמרית</small>
 									</div>
 
 									<Row style={{ paddingTop: "2px" }}>
@@ -870,10 +1197,9 @@ const Report = ({ match }) => {
 											<option value={"2"}>התהפכות</option>
 											<option value={"3"}>הנתקות גלגל</option>
 											<option value={"4"}>שריפה</option>
-											<option value={"5"}>אירועי נשק / תחמושת</option>
+											<option value={"5"}>אירוע נשו"ת</option>
 											<option value={"6"}>תאונת עבודה אנשי טנ"א</option>
 											<option value={"7"}>פריקת מטפים</option>
-											<option value={"8"}>אפידמיה</option>
 											<option value={"9"}>חילוץ</option>
 											<option value={"10"}>נזק לתשתיות אחזקה / הח"י</option>
 											<option value={"11"}>אי קיום שגרת אחזקה</option>
@@ -910,112 +1236,42 @@ const Report = ({ match }) => {
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												סוג הכלי
 											</div>
-											<Row>
-												{!data.magad ? (
-													<Col
-														style={{
-															justifyContent: "right",
-															alignContent: "right",
-															textAlign: "right",
+											<Row style={{ padding: "0px" }}>
+												<Col
+													style={{
+														display: "flex",
+														justifyContent: "right",
+														paddingTop: "15px",
+														paddingRight: "0px",
+													}}
+												>
+													<Button
+														style={{ width: "100px", padding: "10px" }}
+														type="button"
+														onClick={() => {
+															setCartypesfilterarray((currentSpec) => [
+																...currentSpec,
+																{ id: generate() },
+															]);
 														}}
 													>
-														<h6>מאגד על</h6>
-														<Select
-															data={magadals}
-															handleChange2={handleChange2}
-															name={"magadal"}
-															val={data.magadal ? data.magadal : undefined}
-														/>
-													</Col>
-												) : (
-													<Col
-														style={{
-															justifyContent: "right",
-															alignContent: "right",
-															textAlign: "right",
-														}}
-													>
-														<h6>מאגד על</h6>
-														<Select
-															data={magadals}
-															handleChange2={handleChange2}
-															name={"magadal"}
-															val={data.magadal ? data.magadal : undefined}
-															isDisabled={true}
-														/>
-													</Col>
-												)}
-
-												{data.magadal && !data.mkabaz ? (
-													<Col
-														style={{
-															justifyContent: "right",
-															alignContent: "right",
-															textAlign: "right",
-														}}
-													>
-														<h6>מאגד</h6>
-														<Select
-															data={magads}
-															handleChange2={handleChange2}
-															name={"magad"}
-															val={data.magad ? data.magad : undefined}
-														/>
-													</Col>
-												) : (
-													<Col
-														style={{
-															justifyContent: "right",
-															alignContent: "right",
-															textAlign: "right",
-														}}
-													>
-														<h6>מאגד</h6>
-														<Select
-															data={magads}
-															handleChange2={handleChange2}
-															name={"magad"}
-															val={data.magad ? data.magad : undefined}
-															isDisabled={true}
-														/>
-													</Col>
-												)}
-
-												{data.magad && !data.makat ? (
-													<Col
-														style={{
-															justifyContent: "right",
-															alignContent: "right",
-															textAlign: "right",
-														}}
-													>
-														<h6>מקבץ</h6>
-														<Select
-															data={mkabazs}
-															handleChange2={handleChange2}
-															name={"mkabaz"}
-															val={data.mkabaz ? data.mkabaz : undefined}
-														/>
-													</Col>
-												) : (
-													<Col
-														style={{
-															justifyContent: "right",
-															alignContent: "right",
-															textAlign: "right",
-														}}
-													>
-														<h6>מקבץ</h6>
-														<Select
-															data={mkabazs}
-															handleChange2={handleChange2}
-															name={"mkabaz"}
-															val={data.mkabaz ? data.mkabaz : undefined}
-															isDisabled={true}
-														/>
-													</Col>
-												)}
+														הוסף כלים
+													</Button>
+												</Col>
 											</Row>
+
+											{cartypesfilterarray.map(
+												(cartypesfilterobject, index) => {
+													return (
+														<CarTypesFilterObject
+															user={user}
+															cartypesfilterobject={cartypesfilterobject}
+															index={index}
+															setCartypesfilterarray={setCartypesfilterarray}
+														/>
+													);
+												}
+											)}
 
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												האם נגרם נזק לכלי
@@ -1065,18 +1321,16 @@ const Report = ({ match }) => {
 									{data.typevent === "5" && (
 										<>
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
-												סוג הנשק
+												סוג הנשק/ תחמושת
 											</div>
 											<FormGroup>
 												<Input
-													type="select"
+													type="text"
 													name="selneshek"
 													value={data.selneshek}
 													onChange={handleChange}
-													id="neshek"
-												>
-													<option value={"0"}>בחר</option>
-												</Input>
+													id="selneshek"
+												></Input>
 											</FormGroup>
 
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
@@ -1234,7 +1488,7 @@ const Report = ({ match }) => {
 													</Col>
 												)}
 
-												{!data.magadal && !data.mkabaz ? (
+												{data.magadal && !data.mkabaz ? (
 													<Col
 														style={{
 															justifyContent: "right",
@@ -1269,7 +1523,7 @@ const Report = ({ match }) => {
 													</Col>
 												)}
 
-												{!data.magad && !data.makat ? (
+												{data.magad ? (
 													<Col
 														style={{
 															justifyContent: "right",
@@ -1279,10 +1533,10 @@ const Report = ({ match }) => {
 													>
 														<h6>מקבץ</h6>
 														<Select
-															data={mkabazsMataf}
-															handleChange2={matafHandleChange}
+															data={mkabazsRekem}
+															handleChange2={handleChange2}
+															name={"mkabaz"}
 															val={data.mkabaz ? data.mkabaz : undefined}
-															id="mkabazM"
 														/>
 													</Col>
 												) : (
@@ -1295,15 +1549,32 @@ const Report = ({ match }) => {
 													>
 														<h6>מקבץ</h6>
 														<Select
-															data={mkabazsMataf}
-															handleChange2={matafHandleChange}
+															data={mkabazsRekem}
+															handleChange2={handleChange2}
+															name={"mkabaz"}
 															val={data.mkabaz ? data.mkabaz : undefined}
 															isDisabled={true}
-															id="mkabazM"
 														/>
 													</Col>
 												)}
 											</Row>
+											{data.mkabaz == undefined ? null : !data.mkabaz == "" ? (
+												<div className="mt-3">
+													<FormGroup
+														className="mb-3"
+														dir="rtl"
+													>
+														<Input
+															placeholder="צ'"
+															name="zadik"
+															type="string"
+															value={data.zadik}
+															onChange={handleChange}
+														/>
+													</FormGroup>
+												</div>
+											) : null}
+
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												סוג המטף
 											</div>
@@ -1313,9 +1584,8 @@ const Report = ({ match }) => {
 												{console.log(mkabazsMataf[indexM].matafEngine)}
 												{console.log(mkabazsMataf[indexM].matafCre)} */}
 
-												{mkabazsMataf[indexM] ==
-												undefined ? null : mkabazsMataf[indexM].matafEngine &&
-												  mkabazsMataf[indexM].matafCre ? (
+												{mkabazsRekem[indexM] ==
+												undefined ? null : mkabazsRekem[indexM] ? (
 													<Input
 														type="select"
 														name="mataftype"
@@ -1328,39 +1598,19 @@ const Report = ({ match }) => {
 														<option value={"2"}>תא צוות</option>
 														<option value={"3"}>תא מנוע ותא צוות</option>
 													</Input>
-												) : mkabazsMataf[indexM].matafEngine ? (
-													<Input
-														type="select"
-														name="mataftype"
-														value={data.mataftype}
-														onChange={handleChange}
-														id="mataf"
-													>
-														<option value={"0"}>בחר</option>
-														<option value={"1"}>תא מנוע</option>
-													</Input>
-												) : mkabazsMataf[indexM].matafCre ? (
-													<Input
-														type="select"
-														name="mataftype"
-														value={data.mataftype}
-														onChange={handleChange}
-														id="mataf"
-													>
-														<option value={"0"}>בחר</option>
-														<option value={"2"}>תא צוות</option>
-													</Input>
 												) : (
-													<Input
-														type="select"
-														name="mataftype"
-														value={data.mataftype}
-														onChange={handleChange}
-														id="mataf"
-													>
-														<option value={"0"}>בחר</option>
-														<option value={""}>לא נמצאו כלים </option>
-													</Input>
+													!mkabazsRekem[indexM](
+														<Input
+															type="select"
+															name="mataftype"
+															value={data.mataftype}
+															onChange={handleChange}
+															id="mataf"
+														>
+															<option value={"0"}>בחר</option>
+															<option value={""}>לא נמצאו כלים </option>
+														</Input>
+													)
 												)}
 											</FormGroup>
 											{/* //! to be checked */}
@@ -1457,29 +1707,6 @@ const Report = ({ match }) => {
 										</>
 									)}
 
-									{/* אפידמיה */}
-
-									{data.typevent === "8" && (
-										<>
-											<div style={{ textAlign: "right", paddingTop: "10px" }}>
-												סוג האפידמיה
-											</div>
-											<FormGroup>
-												<Input
-													type="select"
-													name="apitype"
-													value={data.apitype}
-													onChange={handleChange}
-													id="apidmia"
-												>
-													<option value={"0"}>בחר</option>
-													<option value={"1"}>תפעולית</option>
-													<option value={"2"}>אחזקתית</option>
-												</Input>
-											</FormGroup>
-										</>
-									)}
-
 									{/* //* ------ חילוץ  --------------*/}
 
 									{data.typevent === "9" && (
@@ -1558,7 +1785,7 @@ const Report = ({ match }) => {
 													</Col>
 												)}
 
-												{data.magad && !data.makat ? (
+												{data.magad && !data.mkabaz ? (
 													<Col
 														style={{
 															justifyContent: "right",
@@ -1593,6 +1820,23 @@ const Report = ({ match }) => {
 													</Col>
 												)}
 											</Row>
+											{data.mkabaz == undefined ? null : !data.mkabaz == "" ? (
+												<div className="mt-3">
+													<FormGroup
+														className="mb-3"
+														dir="rtl"
+													>
+														<Input
+															placeholder="צ'"
+															name="zadik"
+															type="string"
+															value={data.zadik}
+															onChange={handleChange}
+														/>
+													</FormGroup>
+												</div>
+											) : null}
+
 											{/* <div style={{ textAlign: "right", paddingTop: "10px" }}>
                     סוג הכלי המחלץ
                   </div>
@@ -1611,50 +1855,22 @@ const Report = ({ match }) => {
 										</>
 									)}
 
-									{/* //* ------------------ status checker ----------------------- */}
-									<div style={{ textAlign: "right", paddingTop: "10px" }}>
-										סטטוס
-									</div>
-									<div style={{ textAlign: "right" }}>
-										<FormGroup
-											check
-											inline
-										>
-											<div style={{ textAlign: "right", paddingTop: "10px" }}>
-												<Input
-													type="radio"
-													name="dt"
-													value="1"
-													onChange={handleChange}
-													id="delt"
-												/>
-												סגור
-											</div>
-										</FormGroup>
-
-										<FormGroup
-											check
-											inline
-										>
-											<div style={{ textAlign: "right", paddingTop: "10px" }}>
-												<Input
-													type="radio"
-													id="notDelt"
-													name="dt"
-													value="0"
-													onChange={handleChange}
-												/>
-												בטיפול
-											</div>
-										</FormGroup>
-									</div>
-
 									<FormGroup dir="rtl">
 										<Input
 											placeholder="פירוט האירוע"
 											name="pirot"
 											type="textarea"
 											value={data.pirot}
+											onChange={handleChange}
+										/>
+									</FormGroup>
+
+									<FormGroup dir="rtl">
+										<Input
+											placeholder="לקחים ותובנות"
+											name="lessons"
+											type="textarea"
+											value={data.lessons}
 											onChange={handleChange}
 										/>
 									</FormGroup>
@@ -1669,6 +1885,8 @@ const Report = ({ match }) => {
 											type="datetime-local"
 											value={data.datevent}
 											onChange={handleChange}
+											min={"1900-01-01T00:00:00"}
+											max={"2100-01-01T00:00:00"}
 										/>
 									</FormGroup>
 
@@ -1682,55 +1900,210 @@ const Report = ({ match }) => {
 										/>
 									</FormGroup>
 
-									<FormGroup dir="rtl">
-										<Input
-											placeholder="כמה נפגעים היו באירוע"
-											name="nifga"
-											type="number"
-											value={data.nifga}
-											onChange={handleChange}
-										/>
-									</FormGroup>
-									{/* 
-                   {data.nifga > "0" && (
-                    <>
-                      <div style={{ textAlign: "right", paddingTop: "10px" }}>
-                        מצב הנפגע
-                      </div>
-                      <FormGroup>
-                        <Input
-                          type="select"
-                          name="mazavnifga"
-                          value={data.mazavnifga}
-                          onChange={handleChange}
-                          id="mazav"
-                        >
-                          <option value={"0"}>בחר</option>
-                          <option value={"1"}>קל</option>
-                          <option value={"2"}>בינוני</option>
-                          <option value={"3"}>קשה</option>
-                          <option value={"4"}>נהרג</option>
-                        </Input>
-                      </FormGroup>
+									<div style={{ textAlign: "right", paddingTop: "10px" }}>
+										האם יש נפגעים
+									</div>
+									<div
+										className="mb-2"
+										style={{ textAlign: "right" }}
+									>
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													// placeholder="ללא נפגעים "
+													name="nifga"
+													type="radio"
+													value="1"
+													onChange={handleChange}
+												/>
+												כן
+											</div>
+										</FormGroup>
 
-                      <FormGroup dir="rtl">
-                    <Input
-                      placeholder="מיקום הפגיעה בגוף"
-                      name="mikompgia"
-                      type="string"
-                      value={data.mikompgia}
-                      onChange={handleChange}
-                    />
-                  </FormGroup> 
-                  <div style={{ textAlign: 'right', paddingTop: '10px' }}>
-                  <button
-                //    onClick={clickSubmit} 
-                   className="btn btn-primary">
-                      +
-                 </button>
-                 </div>
-                  </>
-                  )} */}
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													// placeholder="הוסף נפגעים"
+													name="nifga"
+													type="radio"
+													value="0"
+													onChange={handleChange}
+												/>
+												ללא נפגעים
+											</div>
+										</FormGroup>
+
+										<FormGroup
+											check
+											inline
+										>
+											<div style={{ textAlign: "right", paddingTop: "10px" }}>
+												<Input
+													// placeholder="הוסף נפגעים"
+													name="nifga"
+													type="radio"
+													value="2"
+													onChange={handleChange}
+												/>
+												לא ידוע
+											</div>
+										</FormGroup>
+									</div>
+
+									{data.nifga === "1" && (
+										<>
+											<div>
+												{infohurtarray.length == 0 ? (
+													<Row>
+														<Col
+															style={{ display: "flex", textAlign: "right" }}
+														>
+															<Button
+																style={{ width: "100px", padding: "5px" }}
+																type="button"
+																onClick={() => {
+																	setinfohurtarray((currentSpec) => [
+																		...currentSpec,
+																		{ id: generate() },
+																	]);
+																}}
+															>
+																הוסף נפגע
+															</Button>
+														</Col>
+													</Row>
+												) : (
+													infohurtarray.map((p, index) => {
+														return (
+															<div>
+																{index == 0 ? (
+																	<Row>
+																		<Col
+																			style={{
+																				display: "flex",
+																				textAlign: "right",
+																			}}
+																		>
+																			<Button
+																				style={{
+																					width: "100px",
+																					padding: "5px",
+																				}}
+																				type="button"
+																				onClick={() => {
+																					setinfohurtarray((currentSpec) => [
+																						...currentSpec,
+																						{ id: generate() },
+																					]);
+																				}}
+																			>
+																				הוסף נפגע
+																			</Button>
+																		</Col>
+																	</Row>
+																) : null}
+																{
+																	<Row>
+																		<Col
+																			xs={12}
+																			md={4}
+																		>
+																			<div>
+																				<p
+																					style={{
+																						margin: "0px",
+																						float: "right",
+																					}}
+																				>
+																					דרגת הפציעה
+																				</p>
+																				<Input
+																					onChange={(e) => {
+																						const dargahurt = e.target.value;
+																						if (e.target.value != "בחר")
+																							setinfohurtarray((currentSpec) =>
+																								produce(currentSpec, (v) => {
+																									v[index].dargahurt =
+																										dargahurt;
+																								})
+																							);
+																					}}
+																					value={p.dargahurt}
+																					type="select"
+																					placeholder="דרגת הפציעה"
+																				>
+																					<option value={"בחר"}>{"בחר"}</option>
+																					<option value={"קל"}>{"קל"}</option>
+																					<option value={"בינוני"}>
+																						{"בינוני"}
+																					</option>
+																					<option value={"קשה"}>{"קשה"}</option>
+																					<option value={"מת"}>{"מת"}</option>
+																					<option value={"לא ידוע"}>
+																						{"לא ידוע"}
+																					</option>
+																				</Input>
+																			</div>
+																		</Col>
+																		<Col
+																			xs={12}
+																			md={4}
+																		>
+																			<div>
+																				<p
+																					style={{
+																						margin: "0px",
+																						float: "right",
+																					}}
+																				>
+																					מספר ימי מחלה
+																				</p>
+																				<Input
+																					onChange={(e) => {
+																						const mikomhurt = e.target.value;
+																						if (e.target.value != "")
+																							setinfohurtarray((currentSpec) =>
+																								produce(currentSpec, (v) => {
+																									v[index].mikomhurt =
+																										mikomhurt;
+																								})
+																							);
+																					}}
+																					value={p.mikomhurt}
+																					type="number"
+																					placeholder="0"
+																					min="0"
+																				/>
+																			</div>
+																		</Col>
+																	</Row>
+																}
+																<Button
+																	type="button"
+																	onClick={() => {
+																		setinfohurtarray((currentSpec) =>
+																			currentSpec.filter((x) => x.id !== p.id)
+																		);
+																	}}
+																>
+																	<img
+																		src={deletepic}
+																		height="20px"
+																	></img>
+																</Button>
+															</div>
+														);
+													})
+												)}
+											</div>
+										</>
+									)}
 
 									<div className="text-center">
 										<button
@@ -1746,7 +2119,7 @@ const Report = ({ match }) => {
 					</Col>
 				</Row>
 			</Container>
-		</div>
+		</Background>
 	);
 };
 

@@ -56,33 +56,12 @@ let readtipul = [
 
 	{
 		$lookup: {
-			from: "magads",
-			localField: "mkabaz_data.magad",
+			from: "mkabazs",
+			localField: "mkabaz",
 			foreignField: "_id",
-			as: "magad_data",
+			as: "mkabaz_data",
 		},
 	},
-	{
-		$set: {
-			magad: { $arrayElemAt: ["$magad_data._id", 0] },
-		},
-	},
-	{
-		$lookup: {
-			from: "magadals",
-			localField: "magad_data.magadal",
-			foreignField: "_id",
-			as: "magadal_data",
-		},
-	},
-	{
-		$set: {
-			magadal: { $arrayElemAt: ["$magadal_data._id", 0] },
-		},
-	},
-];
-
-let readtipulnotype = [
 	{
 		$set: {
 			mkabaz: { $arrayElemAt: ["$mkabaz_data._id", 0] },
@@ -116,64 +95,47 @@ let readtipulnotype = [
 	},
 ];
 
-//   exports.read = async (req, res) => {
-// 	let tipulfindquerry = readtipul.slice();
-// 	let finalquerry = tipulfindquerry;
-
-// 	let andquery = [];
-
-// 	andquery.push({ "_id": mongoose.Types.ObjectId(req.params.id) });
-
-// 	if (andquery.length != 0) {
-// 	  let matchquerry = {
-// 		"$match": {
-// 		  "$and": andquery
-// 		}
-// 	  };
-// 	  finalquerry.push(matchquerry)
-// 	}
-
-// console.log(matchquerry)
-//console.log(andquery)
-
-// 	Cardata.aggregate(finalquerry)
-// 	  .then((result) => {
-// 		if (result.length != 0) {
-// 		  res.json(result);
-// 		}
-// 		else {
-// 		  let tipulfindquerry = readtipulnotype.slice();
-// 		  let finalquerry = tipulfindquerry;
-
-// 		  let andquery = [];
-
-// 		  andquery.push({ "_id": mongoose.Types.ObjectId(req.params.id) });
-
-// 		  if (andquery.length != 0) {
-// 			let matchquerry = {
-// 			  "$match": {
-// 				"$and": andquery
-// 			  }
-// 			};
-// 			finalquerry.push(matchquerry)
-// 		  }
-
-// 		  // console.log(matchquerry)
-// 		  //console.log(andquery)
-
-// 		  Cardata.aggregate(finalquerry)
-// 			.then((result) => {
-// 			  res.json(result);
-// 			})
-// 			.catch((error) => {
-// 			  res.status(400).json('Error: ' + error);
-// 			});
-// 		}
-// 	  })
-// 	  .catch((error) => {
-// 		res.status(400).json('Error: ' + error);
-// 	  });
-//   }
+let readtipulnotype = [
+	{
+		$lookup: {
+			from: "mkabazs",
+			localField: "mkabaz",
+			foreignField: "_id",
+			as: "mkabaz_data",
+		},
+	},
+	{
+		$set: {
+			mkabaz: { $arrayElemAt: ["$mkabaz_data._id", 0] },
+		},
+	},
+	{
+		$lookup: {
+			from: "magads",
+			localField: "mkabaz_data.magad",
+			foreignField: "_id",
+			as: "magad_data",
+		},
+	},
+	{
+		$set: {
+			magad: { $arrayElemAt: ["$magad_data._id", 0] },
+		},
+	},
+	{
+		$lookup: {
+			from: "magadals",
+			localField: "magad_data.magadal",
+			foreignField: "_id",
+			as: "magadal_data",
+		},
+	},
+	{
+		$set: {
+			magadal: { $arrayElemAt: ["$magadal_data._id", 0] },
+		},
+	},
+];
 
 router.route("/").get((req, res) => {
 	Report.find()
@@ -181,8 +143,14 @@ router.route("/").get((req, res) => {
 		.catch((err) => res.status(400).json("Error: " + err));
 });
 
+router.route("/rekem").get((req, res) => {
+	Report.find({ typevent: "רקם" })
+		.then((request) => res.json(request))
+		.catch((err) => res.status(400).json("Error: " + err));
+});
+//! by rep, can be chaged to by manmarit
 router.route("/pikod/:pikod").get((req, res) => {
-	Report.find({ pikod: req.params.pikod })
+	Report.find({ pikodrep: req.params.pikod })
 		.then((request) => res.json(request))
 		.catch((err) => res.status(400).json("Error: " + err));
 });
@@ -195,21 +163,25 @@ router.route("/add").post((req, res) => {
 	const lastname = req.body.lastname;
 	const personalnumber = req.body.personalnumber;
 	const cellphone = req.body.cellphone;
-	// const pikod = req.body.pikod;
-	// const ogda = req.body.ogda;
-	// const hativa = req.body.hativa;
+	const pikodrep = req.body.pikodrep;
+	const ogdarep = req.body.ogdarep;
+	const hativarep = req.body.hativarep;
 	const gdod = req.body.gdod;
+	const gdodrep = req.body.gdodrep;
+
 	// const magadal = req.body.magadal;
 	// const magad = req.body.magad;
 	const mkabaz = req.body.mkabaz;
+	const arraymkabaz = req.body.arraymkabaz;
+	const zadik = req.body.zadik;
 	const typevent = req.body.typevent;
 	const resevent = req.body.resevent;
 	const yn = req.body.yn;
-	const status = req.body.status;
 	const selneshek = req.body.selneshek;
 	const whap = req.body.whap;
 	const rekemtype = req.body.rekemtype;
 	const amlahtype = req.body.amlahtype;
+	const wnifga = req.body.wnifga;
 	const mazavrekem = req.body.mazavrekem;
 	const dwork = req.body.dwork;
 	const mataftype = req.body.mataftype;
@@ -217,29 +189,38 @@ router.route("/add").post((req, res) => {
 	const mholaztype = req.body.mholaztype;
 	// const mhalztype = req.body.mhalztype;
 	const pirot = req.body.pirot;
+	const lessons = req.body.lessons;
 	const datevent = Date.parse(req.body.datevent);
 	const mikom = req.body.mikom;
 	const nifga = Number(req.body.nifga);
+	const hurtarray = req.body.hurtarray;
+	const totalWorkHours = Number(req.body.totalWorkHours);
+	const totalCostWorkHours = Number(req.body.totalCostWorkHours);
+	const damageCost = Number(req.body.damageCost);
+	const spareCost = Number(req.body.spareCost);
 
 	const newReport = new Report({
 		name,
 		lastname,
 		personalnumber,
 		cellphone,
-		// pikod,
-		// ogda,
-		// hativa,
+		pikodrep,
+		ogdarep,
+		hativarep,
 		gdod,
+		gdodrep,
 		// magadal,
 		// magad,
 		mkabaz,
+		arraymkabaz,
+		zadik,
 		typevent,
 		resevent,
 		yn,
-		status,
 		selneshek,
 		whap,
 		amlahtype,
+		wnifga,
 		rekemtype,
 		mazavrekem,
 		dwork,
@@ -248,9 +229,15 @@ router.route("/add").post((req, res) => {
 		mholaztype,
 		// mhalztype,
 		pirot,
+		lessons,
 		datevent,
 		mikom,
 		nifga,
+		hurtarray,
+		totalWorkHours,
+		totalCostWorkHours,
+		damageCost,
+		spareCost,
 	});
 	const formId = newReport.save((err, form) => {
 		console.groupCollapsed("formId");
@@ -284,12 +271,200 @@ router.route("/requestByPersonalnumber/:personalnumber").get((req, res) => {
 //     .exec()
 //     .then((request) => res.json(request))
 //     .catch((err) => res.status(400).json("Error: " + err));
-// });
+// });\
+
+router.route("/readall").get((req, res) => {
+	let tipulfindquerry = readtipul.slice();
+	let finalquerry = tipulfindquerry;
+	// let andquery = [];
+	// andquery.push();
+	// if (andquery.length != 0) {
+	// 	let matchquerry = {
+	// 		$match: {
+	// 			$and: andquery,
+	// 		},
+	// 	};
+	// 	// console.log(matchquerry);
+	// 	// console.log(andquery);
+	// 	finalquerry.push(matchquerry);
+	// }
+	Report.aggregate(finalquerry)
+		.then((result) => {
+			// console.log(result);
+			if (result.length != 0) {
+				res.json(result);
+			}
+		})
+		.catch((error) => {
+			res.status(400).json("Error: " + error);
+			console.log(error);
+		});
+});
+
+router.route("/pikod/readall/:pikod").get((req, res) => {
+	let tipulfindquerry = readtipul.slice();
+	let finalquerry = tipulfindquerry;
+	let andquery = [];
+	andquery.push({ pikod: req.params.pikod });
+	if (andquery.length != 0) {
+		let matchquerry = {
+			$match: {
+				$and: andquery,
+			},
+		};
+		// console.log(matchquerry);
+		// console.log(andquery);
+		finalquerry.push(matchquerry);
+	}
+	Report.aggregate(finalquerry)
+		.then((result) => {
+			// console.log(result);
+			if (result.length != 0) {
+				res.json(result);
+			}
+		})
+		.catch((error) => {
+			res.status(400).json("Error: " + error);
+			console.log(error);
+		});
+});
+
+router
+	.route("/byDate/pikod/readall/:fromdate/:todate/:pikod")
+	.get((req, res) => {
+		let tipulfindquerry = readtipul.slice();
+		let finalquerry = tipulfindquerry;
+		let andquery = [];
+		console.log("first check");
+		andquery.push({ pikod: req.params.pikod });
+		switch (true) {
+			case new Date(req.params.fromdate).setHours(0, 0, 0, 0) <
+				new Date(req.params.todate).setHours(0, 0, 0, 0):
+				// console.log("second check");
+
+				andquery.push({
+					datevent: {
+						$gt: new Date(req.params.fromdate),
+						$lt: new Date(req.params.todate),
+					},
+				});
+				break;
+
+			case new Date(req.params.fromdate).setHours(0, 0, 0, 0) >
+				new Date(req.params.todate).setHours(0, 0, 0, 0):
+				// console.log("third check");
+				andquery.push({
+					datevent: {
+						$lt: new Date(req.params.fromdate),
+						$gt: new Date(req.params.todate),
+					},
+				});
+				break;
+
+			case new Date(req.params.fromdate).setHours(0, 0, 0, 0) ==
+				new Date(req.params.todate).setHours(0, 0, 0, 0):
+				// console.log("forth check");
+				andquery.push({
+					datevent: new Date(req.params.fromdate),
+				});
+				break;
+			default:
+				console.log("error");
+				break;
+		}
+
+		if (andquery.length != 0) {
+			let matchquerry = {
+				$match: {
+					$and: andquery,
+				},
+			};
+			// console.log(matchquerry);
+			// console.log(andquery);
+			finalquerry.push(matchquerry);
+		}
+		Report.aggregate(finalquerry)
+			.then((result) => {
+				console.log(result);
+				if (result.length != 0) {
+					res.json(result);
+				}
+			})
+			.catch((error) => {
+				res.status(400).json("Error: " + error);
+				console.log(error);
+			});
+	});
+
+router.route("/byDate/readall/:fromdate/:todate").get((req, res) => {
+	let tipulfindquerry = readtipul.slice();
+	let finalquerry = tipulfindquerry;
+	let andquery = [];
+	console.log("first check");
+
+	switch (true) {
+		case new Date(req.params.fromdate).setHours(0, 0, 0, 0) <
+			new Date(req.params.todate).setHours(0, 0, 0, 0):
+			// console.log("second check");
+			andquery.push({
+				datevent: {
+					$gt: new Date(req.params.fromdate),
+					$lt: new Date(req.params.todate),
+				},
+			});
+			break;
+
+		case new Date(req.params.fromdate).setHours(0, 0, 0, 0) >
+			new Date(req.params.todate).setHours(0, 0, 0, 0):
+			// console.log("third check");
+			andquery.push({
+				datevent: {
+					$lt: new Date(req.params.fromdate),
+					$gt: new Date(req.params.todate),
+				},
+			});
+			break;
+
+		case new Date(req.params.fromdate).setHours(0, 0, 0, 0) ==
+			new Date(req.params.todate).setHours(0, 0, 0, 0):
+			// console.log("forth check");
+			andquery.push({
+				datevent: new Date(req.params.fromdate),
+			});
+			break;
+		default:
+			console.log("error");
+			break;
+	}
+
+	if (andquery.length != 0) {
+		let matchquerry = {
+			$match: {
+				$and: andquery,
+			},
+		};
+		// console.log(matchquerry);
+		// console.log(andquery);
+		finalquerry.push(matchquerry);
+	}
+	Report.aggregate(finalquerry)
+		.then((result) => {
+			console.log(result);
+			if (result.length != 0) {
+				res.json(result);
+			}
+		})
+		.catch((error) => {
+			res.status(400).json("Error: " + error);
+			console.log(error);
+		});
+});
 
 router.route("/:id").get((req, res) => {
 	// Report.findById(req.params.id)
 	// 	.then((request) => res.json(request))
 	// 	.catch((err) => res.status(400).json("Error: " + err));
+
 	let tipulfindquerry = readtipul.slice();
 	let finalquerry = tipulfindquerry;
 	let andquery = [];
@@ -300,38 +475,15 @@ router.route("/:id").get((req, res) => {
 				$and: andquery,
 			},
 		};
+		// console.log(matchquerry);
+		// console.log(andquery);
 		finalquerry.push(matchquerry);
 	}
-	// console.log(matchquerry);
-	// console.log(andquery);
 	Report.aggregate(finalquerry)
 		.then((result) => {
-			console.log(result);
+			// console.log(result);
 			if (result.length != 0) {
 				res.json(result);
-			} else {
-				let tipulfindquerry = readtipulnotype.slice();
-				let finalquerry = tipulfindquerry;
-				let andquery = [];
-				andquery.push({ _id: mongoose.Types.ObjectId(req.params.id) });
-				if (andquery.length != 0) {
-					let matchquerry = {
-						$match: {
-							$and: andquery,
-						},
-					};
-					finalquerry.push(matchquerry);
-				}
-				// console.log(matchquerry);
-				// console.log(andquery);
-				Report.aggregate(finalquerry)
-					.then((result) => {
-						res.json(result);
-					})
-					.catch((error) => {
-						res.status(400).json("Error: " + error);
-						console.log(error);
-					});
 			}
 		})
 		.catch((error) => {
@@ -353,20 +505,24 @@ router.route("/update/:id").put((req, res) => {
 			request.lastname = req.body.lastname;
 			request.personalnumber = req.body.personalnumber;
 			request.cellphone = req.body.cellphone;
-			// request.pikod = req.body.pikod;
-			// request.ogda = req.body.ogda;
-			// request.hativa = req.body.hativa;
+			request.pikodrep = req.body.pikodrep;
+			request.ogdarep = req.body.ogdarep;
+			request.hativarep = req.body.hativarep;
 			request.gdod = req.body.gdod;
+			request.gdodrep = req.body.gdodrep;
+
 			// request.magadal = req.body.magadal;
 			// request.magad = req.body.magad;
 			request.mkabaz = req.body.mkabaz;
+			request.arraymkabaz = req.body.arraymkabaz;
+			request.zadik = req.body.zadik;
 			request.typevent = req.body.typevent;
 			request.resevent = req.body.resevent;
 			request.yn = req.body.yn;
-			request.status = req.body.status;
 			request.selneshek = req.body.selneshek;
 			request.whap = req.body.whap;
 			request.amlahtype = req.body.amlahtype;
+			request.wnifga = req.body.wnifga;
 			request.rekemtype = req.body.rekemtype;
 			request.mazavrekem = req.body.mazavrekem;
 			request.dwork = req.body.dwork;
@@ -375,9 +531,15 @@ router.route("/update/:id").put((req, res) => {
 			request.mholaztype = req.body.mholaztype;
 			// request.mhalztype = req.body.mhalztype;
 			request.pirot = req.body.pirot;
+			request.lessons = req.body.lessons;
 			request.datevent = Date.parse(req.body.datevent);
 			request.mikom = req.body.mikom;
 			request.nifga = Number(req.body.nifga);
+			request.hurtarray = req.body.hurtarray;
+			request.totalWorkHours = Number(req.body.totalWorkHours);
+			request.totalCostWorkHours = Number(req.body.totalCostWorkHours);
+			request.damageCost = Number(req.body.damageCost);
+			request.spareCost = Number(req.body.spareCost);
 
 			request
 				.save()

@@ -16,10 +16,10 @@ const {
 
 router.post("/mkabaz", create);
 //! on tets /:id
-router.get("/mkabaz/mkabazsbymatafcre", mkabazsbymatafcre);
-router.get("/mkabaz/mkabazsbymatafengine", mkabazsbymatafengine);
+// router.get("/mkabaz/mkabazsbymatafcre", mkabazsbymatafcre);
+// router.get("/mkabaz/mkabazsbymatafengine", mkabazsbymatafengine);
 // * ----------------------------------------------------------------
-router.get("/mkabaz/mkabazsbyrekem/:id", mkabazsbyrekem);
+router.get("/mkabaz/mkabazsbyrekem/:magadid", mkabazsbyrekem);
 
 router.get("/mkabaz/:id", findById);
 router.get("/mkabaz", find);

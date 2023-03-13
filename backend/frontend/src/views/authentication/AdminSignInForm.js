@@ -68,6 +68,8 @@ function AdminSignInForm() {
 		if (redirectToReferrer) {
 			console.log(user);
 			if (user && user.validated == true) {
+				history.push("/dash");
+				/* //? by role to dashboard
 				if (user.role === "0") {
 					history.push(`/dash`);
 				}
@@ -75,8 +77,9 @@ function AdminSignInForm() {
 					history.push(`/dashamal`);
 				}
 				if (user.role === "2") {
-					history.push(`/dashamal`);
+					history.push(`/dashadmin`);
 				}
+				*/
 			} else {
 				toast.success("משתמש לא מאושר מערכת");
 				setValues({ ...values, redirectToReferrer: false });

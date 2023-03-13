@@ -1,3 +1,5 @@
+/* eslint-disable eqeqeq */
+/* eslint-disable no-unused-vars */
 import React, { useMemo, useState, useEffect } from "react";
 import {
 	useTable,
@@ -23,20 +25,24 @@ import {
 	Collapse,
 } from "reactstrap";
 import { withRouter, Redirect, Link } from "react-router-dom";
-import { COLUMNS } from "./coulmns";
+import { COLUMNSSUM } from "./ColumnsSum";
 import { GlobalFilter } from "./GlobalFilter";
+import CarDataFormModal from "views/divoah/CarDataFormModal";
+import CarDataFormModalHatal from "views/divoah/Hatal/CarDataFormModalHatal";
+import CarDataFormModalView from "views/divoah/CarDataFormModalView";
 import axios from "axios";
 import ReactHTMLTableToExcel from "react-html-table-to-excel";
 import { isAuthenticated } from "auth";
 import history from "history.js";
-import CarDataFormModalView from "views/divoah/CarDataFormModalView";
-import CarDataFormModal from "views/divoah/CarDataFormModal";
 import { toast } from "react-toastify";
 
-const SortingTable = ({ match }) => {
-	const columns = useMemo(() => COLUMNS, []);
+const SortingTableRekem = ({ match }) => {
+	const columns = useMemo(() => COLUMNSSUM, []);
 	const { user } = isAuthenticated();
 	const [data, setData] = useState([]);
+	const [isError, setIsError] = useState(false);
+	//* the difference between the date the report was created and the date the incident happened
+	const [diff, setDiff] = useState([]);
 	//* check if the report was created for more than 30 days
 	const [expired, setExpired] = useState([]);
 	//*cardata form modal
@@ -53,41 +59,8 @@ const SortingTable = ({ match }) => {
 		setcollapseOpen(!collapseOpen);
 	};
 
-	//units
-
-	const UserDelete = (UserId) => {
-		axios
-			.post(`http://localhost:8000/api/user/remove/${UserId}`)
-			.then((response) => {
-				loadUsers();
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	};
-
-	const loadUsers = () => {
-		axios
-			.get("http://localhost:8000/api/usersvalidated")
-			.then((response) => {
-				setData(response.data);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	};
-
-	// useEffect(() => {
-	//   (async () => {
-	//     console.log("================================================");
-	//     console.log(user.personalnumber);
-	//     const result = await axios.get(
-	//       `http://localhost:8000/report/requestByPersonalnumber/${user.personalnumber}`
-	//     );
-	//     console.log(result);
-	//     setData(result.data);
-	//   })();
-	// }, []);
+	// ! alternative is to enter the timestamp to the database and then call it like we do with the other columns
+	// * ------ geting only on loading the difference btween the dates --------------------------------
 
 	useEffect(() => {
 		console.log(user.personalnumber);
@@ -100,11 +73,29 @@ const SortingTable = ({ match }) => {
 		const creatArray = data.map((item, index) => {
 			return new Date(data[index].createdAt);
 		});
+		//* the date the incident happened:
+		const dateArray = data.map((item, index) => {
+			return new Date(data[index].datevent);
+		});
 		//* today:
 		const today = new Date();
 
 		// * ---------- makeing sure that there are not any problems --------------------------------
-
+		try {
+			setDiff(
+				creatArray.map((item, index) => {
+					//* ~~ == Math.floor
+					return ~~(
+						(creatArray[index].getTime() - dateArray[index].getTime()) /
+						86400000
+					);
+				})
+			);
+			// console.log(diff);
+			// todo: maybe to reload the page if error
+		} catch (error) {
+			console.log(error);
+		}
 		try {
 			setExpired(
 				creatArray.map((item, index) => {
@@ -121,26 +112,8 @@ const SortingTable = ({ match }) => {
 		} catch (error) {
 			console.log(error);
 		}
-		console.log(expired);
+		// console.log(expired);
 	}, [data]);
-
-	useEffect(() => {
-		axios
-			.get(
-				`http://localhost:8000/report/requestByPersonalnumber/${user.personalnumber}`
-			)
-			.then((response) => {
-				// console.log(response.data);
-				// setData(response.data);
-				const reports = response.data;
-				reports.reverse();
-				// console.log(reports);
-				setData(reports);
-			})
-			.catch((error) => {
-				console.log(error);
-			});
-	}, []);
 
 	function handleChange(evt) {
 		const value = evt.target.value;
@@ -151,14 +124,24 @@ const SortingTable = ({ match }) => {
 		console.log(date.todate);
 	}
 
-	//* modal
+	//* ------------ modal --------------------------------
+
 	function Toggle(evt) {
 		let index = +evt.currentTarget.id;
 		// console.log(index);
 		// console.log(expired[index]);
 		if (!evt.currentTarget.value == "") {
 			if (expired[index] == true) {
-				toast.error("עברו שלושים ימים מאז שהדוח הוזן לא ניתן לערוך אותו");
+				if (user.role == "2" || user.role == "3") {
+					if (evt.currentTarget.value == "") {
+						setCardataidformodal(undefined);
+					} else {
+						setCardataidformodal(evt.currentTarget.value);
+					}
+					setIscardataformopen(!iscardataformopen);
+				} else {
+					toast.error("עברו שלושים ימים מאז שהדוח הוזן לא ניתן לערוך אותו");
+				}
 			} else {
 				if (evt.currentTarget.value == "") {
 					setCardataidformodal(undefined);
@@ -200,6 +183,59 @@ const SortingTable = ({ match }) => {
 		window.location.reload();
 	}
 
+	// ? -------------- idk if needs to be in admin route -----------------------
+	//units
+
+	// const UserDelete = (UserId) => {
+	// 	axios
+	// 		.post(`http://localhost:8000/api/user/remove/${UserId}`)
+	// 		.then((response) => {
+	// 			loadUsers();
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log(error);
+	// 		});
+	// };
+
+	// const loadUsers = () => {
+	// 	axios
+	// 		.get("http://localhost:8000/api/usersvalidated")
+	// 		.then((response) => {
+	// 			setData(response.data);
+	// 		})
+	// 		.catch((error) => {
+	// 			console.log(error);
+	// 		});
+	// };
+
+	// ? ------------------- was commented out ---------------------------------
+	// useEffect(() => {
+	//   (async () => {
+	//     console.log("================================================");
+	//     console.log(user.personalnumber);
+	//     const result = await axios.get(
+	//       `http://localhost:8000/report/requestByPersonalnumber/${user.personalnumber}`
+	//     );
+	//     console.log(result);
+	//     setData(result.data);
+	//   })();
+	// }, []);
+
+	useEffect(() => {
+		axios
+			.get(`http://localhost:8000/report/rekem`)
+			.then((response) => {
+				const reports = response.data;
+				reports.reverse();
+				// console.log(reports);
+				setData(reports);
+			})
+			.catch((error) => {
+				console.log(error);
+				setIsError(true);
+			});
+	}, []);
+
 	const {
 		getTableProps,
 		getTableBodyProps,
@@ -233,38 +269,6 @@ const SortingTable = ({ match }) => {
 
 	return (
 		<>
-			{/*//* ----- modals --------------------------------
-				//? ++ unittype={props.unittype} unitid={props.unitid} */}
-			<CarDataFormModal
-				style={{
-					minHeight: "100%",
-					maxHeight: "100%",
-					minWidth: "60%",
-					maxWidth: "70%",
-					justifyContent: "center",
-					alignSelf: "center",
-					direction: "rtl",
-				}}
-				isOpen={iscardataformopen}
-				cardataid={cardataidformodal}
-				Toggle={Toggle}
-				ToggleForModal={ToggleForModal}
-			/>
-			<CarDataFormModalView
-				style={{
-					minHeight: "100%",
-					maxHeight: "100%",
-					minWidth: "60%",
-					maxWidth: "70%",
-					justifyContent: "center",
-					alignSelf: "center",
-					direction: "rtl",
-				}}
-				isOpen={isviewmodalopen}
-				cardataid={viewmodalid}
-				Toggle={ToggleView}
-				ToggleForModal={ToggleForModalView}
-			/>
 			<Row>
 				<div style={{ width: "100%", margin: "auto", textAlign: "right" }}>
 					<Button
@@ -311,10 +315,401 @@ const SortingTable = ({ match }) => {
 									</Row>
 								</Col>
 							</Row>
+							{/* {user.role === "2" ? (
+								<Row style={{ margin: "0px" }}>
+									<Col
+										xs={12}
+										md={8}
+										style={{ textAlign: "right" }}
+									>
+										<Row style={{ paddingTop: "10px", marginBottom: "15px" }}>
+											{!data.ogda ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>פיקוד</h6>
+													<Select
+														closeMenuOnSelect={false}
+														components={animatedComponents}
+														isMulti
+														options={pikodsop}
+														// data={pikods}
+														onChange={handleChange8}
+														name={"pikod"}
+														val={data.pikod ? data.pikod : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>פיקוד</h6>
+													<Select
+														closeMenuOnSelect={false}
+														components={animatedComponents}
+														isMulti
+														options={pikodsop}
+														handleChange2={handleChange8}
+														name={"pikod"}
+														val={data.pikod ? data.pikod : undefined}
+														isDisabled={true}
+														// isDisabled={
+														// 	!data.ogda
+														// 		? true
+														// 		: data.ogda.length < 1
+														// 		? false
+														// 		: true
+														// }
+													/>
+												</Col>
+											)}
+
+											<>
+												{data.pikod && !data.hativa ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>אוגדה</h6>
+														<Select
+															closeMenuOnSelect={false}
+															components={animatedComponents}
+															isMulti
+															options={ogdasop}
+															onChange={handleChange8}
+															name={"ogda"}
+															val={data.ogda ? data.ogda : undefined}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>אוגדה</h6>
+														<Select
+															components={animatedComponents}
+															isMulti
+															options={ogdasop}
+															onChange={handleChange8}
+															name={"ogda"}
+															val={data.ogda ? data.ogda : undefined}
+															isDisabled={true}
+															// isDisabled={
+															// 	!data.hativa
+															// 		? true
+															// 		: data.hativa.length < 1
+															// 		? false
+															// 		: true
+															// }
+														/>
+													</Col>
+												)}
+											</>
+
+											<>
+												{data.ogda && !data.gdod ? (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>חטיבה</h6>
+														<Select
+															components={animatedComponents}
+															isMulti
+															options={hativasop}
+															onChange={handleChange8}
+															name={"hativa"}
+															val={data.hativa ? data.hativa : undefined}
+														/>
+													</Col>
+												) : (
+													<Col
+														style={{
+															justifyContent: "right",
+															alignContent: "right",
+															textAlign: "right",
+														}}
+													>
+														<h6>חטיבה</h6>
+														<Select
+															components={animatedComponents}
+															isMulti
+															options={hativasop}
+															onChange={handleChange8}
+															name={"hativa"}
+															val={data.hativa ? data.hativa : undefined}
+															isDisabled={true}
+														/>
+													</Col>
+												)}
+											</>
+											<>
+											{data.hativa ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+															components={animatedComponents}
+															isMulti
+															options={gdodsop}
+															onChange={handleChange8}
+															name={"gdod"}
+															val={data.gdod ? data.gdod : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+															components={animatedComponents}
+															isMulti
+															options={gdodsop}
+															onChange={handleChange8}
+															name={"gdod"}
+															val={data.gdod ? data.gdod : undefined}
+															isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+										</Row>
+									</Col>
+								</Row>
+								):(
+									<Row style={{ margin: "0px" }}>
+									<Col
+										xs={12}
+										md={8}
+										style={{ textAlign: "right" }}
+									>
+										<Row style={{ paddingTop: "10px", marginBottom: "15px" }}>
+										{!data.hativa ? (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>אוגדה</h6>
+												<Select
+													closeMenuOnSelect={false}
+													components={animatedComponents}
+													isMulti
+													options={ogdasop}
+													onChange={handleChange8}
+													name={"ogda"}
+													val={data.ogda ? data.ogda : undefined}
+												/>
+											</Col>
+										) : (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>אוגדה</h6>
+												<Select
+													components={animatedComponents}
+													isMulti
+													options={ogdasop}
+													onChange={handleChange8}
+													name={"ogda"}
+													val={data.ogda ? data.ogda : undefined}
+													isDisabled={true}
+													// isDisabled={
+													// 	!data.hativa
+													// 		? true
+													// 		: data.hativa.length < 1
+													// 		? false
+													// 		: true
+													// }
+												/>
+											</Col>
+										)}
+									<>
+										{data.ogda && !data.gdod ? (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>חטיבה</h6>
+												<Select
+													components={animatedComponents}
+													isMulti
+													options={hativasop}
+													onChange={handleChange8}
+													name={"hativa"}
+													val={data.hativa ? data.hativa : undefined}
+												/>
+											</Col>
+										) : (
+											<Col
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>חטיבה</h6>
+												<Select
+													components={animatedComponents}
+													isMulti
+													options={hativasop}
+													onChange={handleChange8}
+													name={"hativa"}
+													val={data.hativa ? data.hativa : undefined}
+													isDisabled={true}
+												/>
+												</Col>
+											)}
+										</>
+										<>
+											{data.hativa ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+															components={animatedComponents}
+															isMulti
+															options={gdodsop}
+															onChange={handleChange8}
+															name={"gdod"}
+															val={data.gdod ? data.gdod : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>גדוד</h6>
+													<Select
+															components={animatedComponents}
+															isMulti
+															options={gdodsop}
+															onChange={handleChange8}
+															name={"gdod"}
+															val={data.gdod ? data.gdod : undefined}
+															isDisabled={true}
+													/>
+												</Col>
+											)}
+										</>
+										</Row>
+									</Col>
+								</Row>
+								)} */}
 						</Card>
 					</Collapse>
 				</div>
 			</Row>
+
+			<div style={{ float: "right", paddingBottom: "5px" }}>
+				<ReactHTMLTableToExcel
+					id="test-table-xls-button"
+					className="btn-green"
+					table="table-to-xls"
+					filename="קובץ - סיכום דיווחים"
+					sheet="קובץ - סיכום דיווחים"
+					buttonText="הורד כקובץ אקסל"
+					style={{ float: "right" }}
+				/>
+			</div>
+
+			{/*//* ----- modals --------------------------------
+				//? ++ unittype={props.unittype} unitid={props.unitid} */}
+			{user.role == "3" ? (
+				<CarDataFormModalHatal
+					style={{
+						minHeight: "100%",
+						maxHeight: "100%",
+						minWidth: "60%",
+						maxWidth: "70%",
+						justifyContent: "center",
+						alignSelf: "center",
+						direction: "rtl",
+					}}
+					isOpen={iscardataformopen}
+					cardataid={cardataidformodal}
+					Toggle={Toggle}
+					ToggleForModal={ToggleForModal}
+				/>
+			) : (
+				<CarDataFormModal
+					style={{
+						minHeight: "100%",
+						maxHeight: "100%",
+						minWidth: "60%",
+						maxWidth: "70%",
+						justifyContent: "center",
+						alignSelf: "center",
+						direction: "rtl",
+					}}
+					isOpen={iscardataformopen}
+					cardataid={cardataidformodal}
+					Toggle={Toggle}
+					ToggleForModal={ToggleForModal}
+				/>
+			)}
+
+			<CarDataFormModalView
+				style={{
+					minHeight: "100%",
+					maxHeight: "100%",
+					minWidth: "60%",
+					maxWidth: "70%",
+					justifyContent: "center",
+					alignSelf: "center",
+					direction: "rtl",
+				}}
+				isOpen={isviewmodalopen}
+				cardataid={viewmodalid}
+				Toggle={ToggleView}
+				ToggleForModal={ToggleForModalView}
+			/>
 
 			<GlobalFilter
 				filter={globalFilter}
@@ -325,14 +720,14 @@ const SortingTable = ({ match }) => {
 				style={{ overflow: "auto" }}
 			>
 				<table
-					id="table-to-xls-users"
+					id="table-to-xls"
 					{...getTableProps()}
 				>
 					<thead>
 						{headerGroups.map((headerGroup) => (
 							<tr {...headerGroup.getHeaderGroupProps()}>
 								{headerGroup.headers.map((column) => (
-									<th style={{ width: "30%" }}>
+									<th style={{ width: "18%" }}>
 										<div
 											{...column.getHeaderProps(column.getSortByToggleProps())}
 										>
@@ -557,6 +952,7 @@ const SortingTable = ({ match }) => {
 						</>
 					) : (
 						<tbody {...getTableBodyProps()}>
+							{/* added an index so i could pull the diff for each row */}
 							{page.map((row, index) => {
 								prepareRow(row);
 								return (
@@ -566,7 +962,9 @@ const SortingTable = ({ match }) => {
 												cell.column.id != "typevent" &&
 												cell.column.id != "pirot" &&
 												cell.column.id != "createdAt" &&
-												cell.column.id != "datevent"
+												cell.column.id != "datevent" &&
+												cell.column.id != "difftime" &&
+												cell.column.id != "status"
 											) {
 												return (
 													<td {...cell.getCellProps()}>
@@ -598,7 +996,7 @@ const SortingTable = ({ match }) => {
 															<div
 																style={{
 																	width: "100%",
-																	height: "40px",
+																	height: "60px",
 																	margin: "0",
 																	padding: "0",
 																	overflow: "auto",
@@ -633,9 +1031,26 @@ const SortingTable = ({ match }) => {
 														</td>
 													);
 												}
+
+												// * ------------- added difftime --------------------------------
+
+												if (cell.column.id == "difftime") {
+													return <td>{diff[index]}</td>;
+												}
+												// * ------------- added status --------------------------------
+												if (cell.column.id == "status") {
+													if (cell.value == "0") {
+														return <td>בטיפול</td>;
+													}
+													if (cell.value == "1") {
+														return <td>סגור</td>;
+													} else {
+														return <td>בטיפול</td>;
+													}
+												}
 											}
 										})}
-
+										{/*//* -------- update report --------------- */}
 										{row.original.typevent != "רקם" ? (
 											<td role="cell">
 												{" "}
@@ -648,6 +1063,7 @@ const SortingTable = ({ match }) => {
 												>
 													{" "}
 													{/* {console.log(row.original.typevent)} */}
+													{/* <Link to={`/editreport/${row.original._id}`}> */}
 													<button
 														className="btn-new"
 														id={row.index}
@@ -670,6 +1086,7 @@ const SortingTable = ({ match }) => {
 												>
 													{" "}
 													{/* {console.log(row.original.typevent)} */}
+													{/* <Link to={`/editreport/${row.original._id}`}> */}
 													<button
 														className="btn-new"
 														id={row.index}
@@ -681,7 +1098,6 @@ const SortingTable = ({ match }) => {
 												</div>{" "}
 											</td>
 										)}
-
 										{/* // ? row.original._id=user._id*/}
 										{/*//* -------- view report --------------- */}
 										{row.original.typevent != "רקם" ? (
@@ -701,6 +1117,7 @@ const SortingTable = ({ match }) => {
                       >
                         צפייה
                       </button> */}
+													{/* <Link to={`/wachreport/${row.original._id}`}> */}
 													<button
 														value={row.original._id}
 														onClick={ToggleView}
@@ -727,6 +1144,7 @@ const SortingTable = ({ match }) => {
                       >
                         צפייה
                       </button> */}
+													{/* <Link to={`/wachreportrekem/${row.original._id}`}> */}
 													<button
 														value={row.original._id}
 														onClick={ToggleView}
@@ -795,4 +1213,4 @@ const SortingTable = ({ match }) => {
 		</>
 	);
 };
-export default withRouter(SortingTable);
+export default withRouter(SortingTableRekem);

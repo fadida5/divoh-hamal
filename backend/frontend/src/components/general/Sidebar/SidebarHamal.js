@@ -69,7 +69,7 @@ import {
 import { isAuthenticated } from "auth/index";
 const { user } = isAuthenticated();
 
-function SidebarAdmin(props) {
+function SidebarHamal(props) {
 	const clickSubmit = (event) => {
 		event.preventDefault();
 		signout().then((response) => {
@@ -87,7 +87,7 @@ function SidebarAdmin(props) {
 			<Nav style={{ textAlign: "right" }}>
 				<li>
 					<NavLink
-						to="/dashadmin"
+						to="/dashamal"
 						style={{ margin: "0px" }}
 						activeClassName="sidebar_active_link"
 					>
@@ -315,7 +315,7 @@ function SidebarAdmin(props) {
 						</Row>
 					</NavLink>
 				</li>
-				{/* <li>
+				<li>
 					<NavLink
 						to={`/summarizingreportrekem`}
 						style={{ margin: "0px" }}
@@ -360,100 +360,7 @@ function SidebarAdmin(props) {
 							</Col>
 						</Row>
 					</NavLink>
-				</li> */}
-				<li>
-					<NavLink
-						to={`/summarizingreportrekem`}
-						style={{ margin: "0px" }}
-						activeClassName="sidebar_active_link"
-					>
-						<Row style={{ direction: "rtl" }}>
-							<Col
-								xs={12}
-								md={3}
-								style={{
-									paddingLeft: "0px",
-									textAlign: "center",
-									alignSelf: "center",
-								}}
-							>
-								{props.theme == "white" ? (
-									<img
-										src={table}
-										style={{ height: "20px" }}
-									></img>
-								) : (
-									<img
-										src={table_white}
-										style={{ height: "20px" }}
-									></img>
-								)}
-							</Col>
-							<Col
-								xs={12}
-								md={9}
-								style={{ paddingRight: "0px" }}
-							>
-								<h4
-									style={{
-										margin: "0px",
-										paddingTop: "6px",
-										paddingBottom: "6px",
-									}}
-								>
-									סיכום דיווחים חט"ל
-								</h4>
-							</Col>
-						</Row>
-					</NavLink>
 				</li>
-				<li>
-					<NavLink
-						to="/manageusers"
-						style={{ margin: "0px" }}
-						activeClassName="sidebar_active_link"
-					>
-						<Row style={{ direction: "rtl" }}>
-							<Col
-								xs={12}
-								md={3}
-								style={{
-									paddingLeft: "0px",
-									textAlign: "center",
-									alignSelf: "center",
-								}}
-							>
-								{props.theme == "white" ? (
-									<img
-										src={table}
-										style={{ height: "20px" }}
-									></img>
-								) : (
-									<img
-										src={table_white}
-										style={{ height: "20px" }}
-									></img>
-								)}
-							</Col>
-							<Col
-								xs={12}
-								md={9}
-								style={{ paddingRight: "0px" }}
-							>
-								<h4
-									style={{
-										margin: "0px",
-										paddingTop: "6px",
-										paddingBottom: "6px",
-									}}
-								>
-									ניהול הרשאות
-								</h4>
-							</Col>
-						</Row>
-					</NavLink>
-				</li>
-
 				<li>
 					<NavLink
 						to="/odot"
@@ -505,4 +412,4 @@ function SidebarAdmin(props) {
 	);
 }
 
-export default SidebarAdmin;
+export default SidebarHamal;

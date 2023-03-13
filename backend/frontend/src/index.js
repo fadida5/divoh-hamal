@@ -43,14 +43,15 @@ import WachReport from "views/authentication/WachReports/WachReport";
 import WachReportRekem from "views/authentication/WachReports/WachReportRekem";
 
 import Dash from "views/divoah/Dash";
+import DashAdmin from "views/divoah/DashAdmin";
+
 import Report from "views/divoah/Report";
 import ReportRekem from "views/divoah/ReportRekem";
-import SignInHamal from "views/divoah/SignInHamal";
 import DashHamal from "views/divoah/Hamal/DashHamal";
 import Odot from "views/divoah/Hamal/Odot";
 import HistoReport from "views/divoah/Hamal/HistoReport";
-import SignUpHamal from "views/divoah/SignUpHamal";
 import SummarizingReport from "views/divoah/Hamal/SummarizingReport";
+import SummarizingReportRekem from "views/divoah/Hamal/SummarizingReportRekem";
 
 ReactDOM.render(
 	<>
@@ -107,6 +108,12 @@ ReactDOM.render(
 							component={Dash}
 						/>
 						<LoggedinRoute
+							path="/dashadmin"
+							exact
+							component={DashAdmin}
+						/>
+
+						<LoggedinRoute
 							path="/report"
 							exact
 							component={Report}
@@ -125,6 +132,11 @@ ReactDOM.render(
 							path="/summarizingreport"
 							exact
 							component={SummarizingReport}
+						/>
+												<LoggedinRoute
+							path="/summarizingreportrekem"
+							exact
+							component={SummarizingReportRekem}
 						/>
 						<LoggedinRoute
 							path="/editreport/:formId"

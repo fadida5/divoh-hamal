@@ -16,23 +16,28 @@ export const COLUMNSSUM = [
 	{
 		Header: "תאריך אירוע",
 		Footer: "תאריך אירוע",
+		accessor: "createdAt",
+		Filter: ColumnFilter,
+	},
+	{
+		Header: "תאריך הדיווח",
+		Footer: "תאריך הדיווח",
 		accessor: "datevent",
 		Filter: ColumnFilter,
 	},
 	{
-		Header: " ימים מהדיווח",
-		Footer: " ימים מהדיווח",
+		Header: "ימים מהדיווח",
+		Footer: "ימים מהדיווח",
 		accessor: "difftime",
 		Filter: ColumnFilter,
-		
 	},
 	{
-		Header: "  סטטוס",
-		Footer: " סטטוס ",
-		accessor: "status",
+		Header: "נדרש המשך טיפול",
+		Footer: "נדרש המשך טיפול",
+		accessor: "tipul",
 		Filter: ColumnFilter,
-		
 	},
+
 	// {
 	//     Header: 'הרשאה',
 	//     Footer:'הרשאה',

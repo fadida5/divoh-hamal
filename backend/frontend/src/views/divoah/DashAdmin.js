@@ -24,9 +24,8 @@ import { Line, Pie, Doughnut, PolarArea } from "react-chartjs-2";
 import Select from "react-select";
 import makeAnimated from "react-select/animated";
 import Background from "components/general/Background/Background";
-import ToggleDarkModeButton from "../../../components/general/Navbars/BazakNavbar/ToggleDarkModeButton/ToggleDarkModeButton";
+import ToggleDarkModeButton from "../../components/general/Navbars/BazakNavbar/ToggleDarkModeButton/ToggleDarkModeButton";
 
-import { isAuthenticated } from "auth";
 const AdminSignInForm = (props) => {
 	const [isError, setIsError] = useState(false);
 	//* main data
@@ -34,7 +33,6 @@ const AdminSignInForm = (props) => {
 	const [data, setData] = useState([]);
 	const [reportDBFillter, setReportDFillter] = useState([]);
 	//* units
-
 	const [gdods, setGdods] = useState([]);
 	const [hativas, setHativas] = useState([]);
 	const [ogdas, setOgdas] = useState([]);
@@ -47,11 +45,9 @@ const AdminSignInForm = (props) => {
 
 	const [gdodim, setGdodim] = useState([]);
 
+	// const [filter, setFilter] = useState([]);
 	//* dark mode button
 	const [color, setcolor] = useState("white");
-	// const [filter, setFilter] = useState([]);
-
-	const { user } = isAuthenticated();
 
 	const [collapseOpen, setcollapseOpen] = React.useState(false);
 	const toggleCollapse = () => {
@@ -69,12 +65,15 @@ const AdminSignInForm = (props) => {
 		5: 'אירוע נשו"ת',
 		6: 'תאונת עבודה אנשי טנ"א',
 		7: "פריקת מטפים",
+		8: "אפידמיה",
 		9: "חילוץ",
 		10: 'נזק לתשתיות אחזקה / הח"י',
 		11: "אי קיום שגרת אחזקה",
 		12: "אחר",
 		רקם: 'רק"ם',
 	};
+
+	//* ------- supporting functions --------------------------------
 
 	const loadPikods = async () => {
 		await axios
@@ -173,16 +172,14 @@ const AdminSignInForm = (props) => {
 	};
 
 	const loadReports = () => {
-		axios
-			.get(`http://localhost:8000/report/pikod/readall/${user.pikod}`)
-			.then((res) => {
-				// console.log(res);
-				// console.log(res.data);
-				const reports = res.data;
-				// console.log(reports);
-				reports.reverse();
-				setReportDB(reports);
-			});
+		axios.get(`http://localhost:8000/report/readall`).then((res) => {
+			// console.log(res);
+			console.log("all");
+			console.log(res.data);
+			const reports = res.data;
+			reports.reverse();
+			setReportDB(reports);
+		});
 	};
 
 	const loadReportsByDate = (from, to) => {
@@ -190,9 +187,7 @@ const AdminSignInForm = (props) => {
 		// console.log(from);
 		// console.log(to);
 		axios
-			.get(
-				`http://localhost:8000/report/byDate/pikod/readall/${from}/${to}/${user.pikod}`
-			)
+			.get(`http://localhost:8000/report/byDate/readall/${from}/${to}`)
 			.then((res) => {
 				// console.log(res);
 				// console.log("by date");
@@ -211,15 +206,6 @@ const AdminSignInForm = (props) => {
 			delete tempdata[name];
 			setData(tempdata);
 		}
-	}
-
-	function handleChange(evt) {
-		const value = evt.target.value;
-		console.log(evt.target.value);
-		console.log(evt.target.name);
-		setData({ ...data, [evt.target.name]: value });
-		console.log(new Date(data.fromdate).setHours(0, 0, 0, 0));
-		console.log(data.todate);
 	}
 
 	function setoptions(pk, og, ht, gd) {
@@ -266,6 +252,15 @@ const AdminSignInForm = (props) => {
 		return obj;
 	}
 
+	function handleChange(evt) {
+		const value = evt.target.value;
+		console.log(evt.target.value);
+		console.log(evt.target.name);
+		setData({ ...data, [evt.target.name]: value });
+		console.log(new Date(data.fromdate).setHours(0, 0, 0, 0));
+		console.log(data.todate);
+	}
+
 	function handleChange8(selectedOption, name) {
 		// console.log(selectedOption[0].value);
 		// console.log(name);
@@ -297,7 +292,7 @@ const AdminSignInForm = (props) => {
 				}
 			}
 
-			console.log(data);
+			// console.log(data);
 			// console.log(data.pikod);
 			// console.log(data.ogda);
 			// console.log(data.hativa);
@@ -318,9 +313,9 @@ const AdminSignInForm = (props) => {
 		props.theme == "white-content"
 			? setReportDFillter(
 					report.filter((rp) =>
-						// unit == "pikod"
-						// 	? dataUnit.includes(rp.pikod)
-						unit == "ogda"
+						unit == "pikod"
+							? dataUnit.includes(rp.pikod)
+							: unit == "ogda"
 							? dataUnit.includes(rp.ogda)
 							: unit == "hativa"
 							? dataUnit.includes(rp.hativa)
@@ -329,9 +324,9 @@ const AdminSignInForm = (props) => {
 			  )
 			: setReportDFillter(
 					report.filter((rp) =>
-						// unit == "pikod"
-						// 	? dataUnit.includes(rp.pikodrep)
-						unit == "ogda"
+						unit == "pikod"
+							? dataUnit.includes(rp.pikodrep)
+							: unit == "ogda"
 							? dataUnit.includes(rp.ogdarep)
 							: unit == "hativa"
 							? dataUnit.includes(rp.hativarep)
@@ -351,10 +346,10 @@ const AdminSignInForm = (props) => {
 				reportDBFl(reportDB, data.ogda, "ogda");
 				// console.log(data.ogda);
 				break;
-			// case typeof data.pikod == "object":
-			// 	reportDBFl(reportDB, data.pikod, "pikod");
-			// 	// console.log(data.pikod);
-			// 	break;
+			case typeof data.pikod == "object":
+				reportDBFl(reportDB, data.pikod, "pikod");
+				// console.log(data.pikod);
+				break;
 
 			default:
 				setReportDFillter(reportDB);
@@ -362,6 +357,8 @@ const AdminSignInForm = (props) => {
 				break;
 		}
 	}
+
+	//* clock options settings ----------------------------------------------------------------
 
 	const options = {
 		//* on civil
@@ -401,6 +398,8 @@ const AdminSignInForm = (props) => {
 		'רק"ם',
 	];
 
+	//* clocks + clock supporting functions and calculates ----------------------------------------------------------------
+
 	function sumtypereport(arr1, arr2, arr3) {
 		let alldata = [];
 		for (let i = 0; i < arr1.length; i++) {
@@ -413,16 +412,12 @@ const AdminSignInForm = (props) => {
 		return alldata;
 	}
 
-	const reportEvent = reportDB.filter((report) =>
-		data.pikod.includes(report.pikod)
-	);
-
 	const dataevent = {
 		labels: labels,
 		datasets: [
 			{
 				label: "# of Votes",
-				data: sumtypereport(labels, reportEvent, eventTypeArray),
+				data: sumtypereport(labels, reportDB, eventTypeArray),
 				backgroundColor: [
 					"rgba(255, 99, 132, 1)",
 					"rgba(54, 162, 235, 1)",
@@ -616,7 +611,7 @@ const AdminSignInForm = (props) => {
 		const colors = [];
 		for (let i = 0; i < arr1.length; i++) {
 			colors.push(getcolor());
-			console.log(colors);
+			// console.log(colors);
 		}
 		return colors;
 	}
@@ -658,89 +653,6 @@ const AdminSignInForm = (props) => {
 	// const reportDBPikod = reportDB.filter((report) =>
 	// 	data.pikod.includes(report.pikod)
 	// );
-
-	// const dataeventOgda = {
-	// 	labels: labels,
-	// 	datasets: [
-	// 		{
-	// 			label: "# of Votes",
-	// 			data: sumtypereport(labels, reportDBFillter, eventTypeArray),
-	// 			backgroundColor: [
-	// 				"rgba(255, 99, 132, 1)",
-	// 				"rgba(54, 162, 235, 1)",
-	// 				"rgba(255, 206, 86, 1)",
-	// 				"rgba(75, 192, 192, 1)",
-	// 				"rgba(153, 102, 255, 1)",
-	// 				"rgba(255, 159, 64, 1)",
-	// 				"rgba(157, 241, 223, 1)",
-	// 				"rgba(130, 0, 0, 1)",
-	// 				"rgba(78, 108, 80, 1)",
-	// 				"rgba(207, 77, 206, 1)",
-	// 				"rgba(61, 23, 102, 1)",
-	// 				"rgba(0, 255, 246, 1)",
-	// 				"rgba(255, 173, 188, 1)",
-	// 			],
-	// 			borderColor: [
-	// 				"rgba(255, 99, 132, 1)",
-	// 				"rgba(54, 162, 235, 1)",
-	// 				"rgba(255, 206, 86, 1)",
-	// 				"rgba(75, 192, 192, 1)",
-	// 				"rgba(153, 102, 255, 1)",
-	// 				"rgba(255, 159, 64, 1)",
-	// 				"rgba(157, 241, 223, 1)",
-	// 				"rgba(130, 0, 0, 1)",
-	// 				"rgba(78, 108, 80, 1)",
-	// 				"rgba(207, 77, 206, 1)",
-	// 				"rgba(61, 23, 102, 1)",
-	// 				"rgba(0, 255, 246, 1)",
-	// 				"rgba(255, 173, 188, 1)",
-	// 			],
-	// 			borderWidth: 1,
-	// 		},
-	// 	],
-	// };
-
-	// const datapikodFilttered = {
-	// 	labels: pikods.map((pikod, index) => pikod.name),
-	// 	datasets: [
-	// 		{
-	// 			label: "# of Votes",
-	// 			data: sumpikods(pikods, reportDBFillter),
-	// 			backgroundColor: [
-	// 				"rgba(255, 99, 132, 1)",
-	// 				"rgba(54, 162, 235, 1)",
-	// 				"rgba(255, 206, 86, 1)",
-	// 				"rgba(75, 192, 192, 1)",
-	// 				"rgba(153, 102, 255, 1)",
-	// 				"rgba(255, 159, 64, 1)",
-	// 				"rgba(157, 241, 223, 1)",
-	// 				"rgba(130, 0, 0, 1)",
-	// 				"rgba(78, 108, 80, 1)",
-	// 				"rgba(207, 77, 206, 1)",
-	// 				"rgba(61, 23, 102, 1)",
-	// 				"rgba(0, 255, 246, 1)",
-	// 				"rgba(255, 173, 188, 1)",
-	// 			],
-	// 			borderColor: [
-	// 				"rgba(255, 99, 132, 1)",
-	// 				"rgba(54, 162, 235, 1)",
-	// 				"rgba(255, 206, 86, 1)",
-	// 				"rgba(75, 192, 192, 1)",
-	// 				"rgba(153, 102, 255, 1)",
-	// 				"rgba(255, 159, 64, 1)",
-	// 				"rgba(157, 241, 223, 1)",
-	// 				"rgba(130, 0, 0, 1)",
-	// 				"rgba(78, 108, 80, 1)",
-	// 				"rgba(207, 77, 206, 1)",
-	// 				"rgba(61, 23, 102, 1)",
-	// 				"rgba(0, 255, 246, 1)",
-	// 				"rgba(255, 173, 188, 1)",
-	// 			],
-	// 			borderWidth: 1,
-	// 		},
-	// 	],
-	// };
-	// console.log(arryogda);
 
 	const dataogda = {
 		labels: arryogda.map((ogda) => ogda.name),
@@ -958,16 +870,11 @@ const AdminSignInForm = (props) => {
 		// console.log(props.theme);
 	}, [data, props.theme]);
 
-	const initWithUserData = () => {
-		setData({
-			...data,
-			pikod: user.pikod,
-		});
+	useEffect(() => {
 		loadReports();
 		loadPikods();
 		loadGdodim();
-		// loadOgdas(pikods);
-	};
+	}, []);
 
 	useEffect(() => {
 		data.fromdate && data.todate
@@ -976,17 +883,12 @@ const AdminSignInForm = (props) => {
 	}, [data.fromdate, data.todate]);
 
 	useEffect(() => {
-		initWithUserData();
-	}, []);
-
-	useEffect(() => {
 		setOgdas([]);
 		loadOgdas(data.pikod);
 	}, [data.pikod]);
 
 	useEffect(() => {
 		setHativas([]);
-
 		loadHativas(data.ogda);
 	}, [data.ogda]);
 
@@ -1018,16 +920,21 @@ const AdminSignInForm = (props) => {
 		arr = arr.map((num) => {
 			return +num;
 		});
-		console.log(arr);
+		// console.log(arr);
 		let sum = arr.reduce(function (a, b) {
 			return a + b;
 		}, 0);
 		return sum;
 	}
 
+	//* ----------- is rendered --------------------------------
+
 	return (
 		<Background>
-			<Container className="mt--8 pb-5">
+			<Container
+				className="mt--8 pb-5"
+				// style={{ marginRight: "10%" }}
+			>
 				<Row>
 					<div style={{ width: "100%", margin: "auto", textAlign: "right" }}>
 						<Button
@@ -1072,7 +979,6 @@ const AdminSignInForm = (props) => {
 												/>
 											</Col>
 										</Row>
-
 										<Row className="mt-3">
 											{props.theme == "white-content" ? (
 												<div
@@ -1093,8 +999,57 @@ const AdminSignInForm = (props) => {
 										</Row>
 
 										<Row style={{ paddingTop: "10px", marginBottom: "15px" }}>
+											{!data.ogda ? (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>פיקוד</h6>
+													<Select
+														closeMenuOnSelect={false}
+														components={animatedComponents}
+														isMulti
+														options={pikodsop}
+														// data={pikods}
+														onChange={handleChange8}
+														name={"pikod"}
+														val={data.pikod ? data.pikod : undefined}
+													/>
+												</Col>
+											) : (
+												<Col
+													style={{
+														justifyContent: "right",
+														alignContent: "right",
+														textAlign: "right",
+													}}
+												>
+													<h6>פיקוד</h6>
+													<Select
+														closeMenuOnSelect={false}
+														components={animatedComponents}
+														isMulti
+														options={pikodsop}
+														handleChange2={handleChange8}
+														name={"pikod"}
+														val={data.pikod ? data.pikod : undefined}
+														isDisabled={true}
+														// isDisabled={
+														// 	!data.ogda
+														// 		? true
+														// 		: data.ogda.length < 1
+														// 		? false
+														// 		: true
+														// }
+													/>
+												</Col>
+											)}
+
 											<>
-												{!data.hativa ? (
+												{data.pikod && !data.hativa ? (
 													<Col
 														style={{
 															justifyContent: "right",
@@ -1454,6 +1409,7 @@ const AdminSignInForm = (props) => {
 						</Col>
 					</Row>
 				)}
+
 				{props.theme == "white-content" ? (
 					<>
 						<Row>
@@ -1493,7 +1449,7 @@ const AdminSignInForm = (props) => {
 											</thead>
 											{data.fromdate && data.todate ? (
 												<>
-													{!data.ogda ? (
+													{data.length == 0 && !data.pikod ? (
 														<tbody>
 															{reportDB
 																.filter(
@@ -1591,7 +1547,7 @@ const AdminSignInForm = (props) => {
 																	) : null
 																)}
 														</tbody>
-													) : !data.ogda ? (
+													) : !data.pikod ? (
 														<tbody>
 															{reportDB
 																.filter(
@@ -1643,7 +1599,7 @@ const AdminSignInForm = (props) => {
 												</>
 											) : (
 												<>
-													{!data.ogda ? (
+													{data.length == 0 && !data.pikod ? (
 														<tbody>
 															{reportDB.slice(0, 5).map((report, index) => (
 																<tr>
@@ -1695,7 +1651,7 @@ const AdminSignInForm = (props) => {
 																	) : null
 																)}
 														</tbody>
-													) : !data.ogda ? (
+													) : !data.pikod ? (
 														<tbody>
 															{reportDB.slice(0, 5).map((report, index) => (
 																<tr>
@@ -1737,7 +1693,7 @@ const AdminSignInForm = (props) => {
 										</h3>
 									</CardHeader>
 									<CardBody>
-										{!data.ogda ? (
+										{data.length == 0 ? (
 											<Doughnut
 												data={dataevent}
 												options={options}
@@ -1761,7 +1717,7 @@ const AdminSignInForm = (props) => {
 											</h3>
 										</CardHeader>
 										<CardBody>
-											{!data.ogda ? (
+											{!data.pikod ? (
 												<Doughnut
 													data={datapikod}
 													options={options}
@@ -1876,7 +1832,7 @@ const AdminSignInForm = (props) => {
 													</th>
 												</tr>
 											</thead>
-											{data.length == 0 && !data.ogda ? (
+											{data.length == 0 && !data.pikod ? (
 												<tbody>
 													{reportDB.slice(0, 5).map((report, index) => (
 														<tr>
@@ -1926,7 +1882,7 @@ const AdminSignInForm = (props) => {
 														) : null
 													)}
 												</tbody>
-											) : !data.ogda ? (
+											) : !data.pikod ? (
 												<tbody>
 													{reportDB.slice(0, 5).map((report, index) => (
 														<tr>
@@ -1966,7 +1922,7 @@ const AdminSignInForm = (props) => {
 										</h3>
 									</CardHeader>
 									<CardBody>
-										{!data.ogda ? (
+										{data.length == 0 ? (
 											<Doughnut
 												data={dataevent}
 												options={options}
@@ -1990,7 +1946,7 @@ const AdminSignInForm = (props) => {
 											</h3>
 										</CardHeader>
 										<CardBody>
-											{!data.ogda ? (
+											{!data.pikod ? (
 												<Doughnut
 													data={datapikodrep}
 													options={options}

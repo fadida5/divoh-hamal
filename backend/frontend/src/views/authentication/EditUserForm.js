@@ -29,12 +29,24 @@ import { toast } from "react-toastify";
 import Select from "components/general/Select/AnimatedSelect";
 
 const EditUserForm = ({ match }) => {
+	const [pikods, setPikods] = useState([]);
+
+	const loadPikods = async () => {
+		await axios
+			.get("http://localhost:8000/api/pikod")
+			.then((response) => {
+				setPikods(response.data);
+			})
+			.catch((error) => {
+				console.log(error);
+			});
+	};
+
 	const [data, setData] = useState({
 		name: "",
 		lastname: "",
 		personalnumber: "",
 		role: "",
-		pikodid: "",
 		//
 		errortype: "",
 		error: false,
@@ -43,6 +55,16 @@ const EditUserForm = ({ match }) => {
 		redirectToReferrer: false,
 		//
 	});
+
+	function handleChange2(selectedOption, name) {
+		if (!(selectedOption.value == "בחר"))
+			setData({ ...data, [name]: selectedOption.value });
+		else {
+			let tempdata = { ...data };
+			delete tempdata[name];
+			setData(tempdata);
+		}
+	}
 
 	function handleChange(evt) {
 		const value = evt.target.value;
@@ -87,7 +109,7 @@ const EditUserForm = ({ match }) => {
 			name: data.name,
 			lastname: data.lastname,
 			role: data.role,
-			pikodid: data.pikodid,
+			pikod: data.pikod,
 			validated: data.validated,
 			personalnumber: data.personalnumber,
 		};
@@ -118,6 +140,7 @@ const EditUserForm = ({ match }) => {
 
 	useEffect(() => {
 		init();
+		loadPikods();
 	}, []);
 
 	return (
@@ -181,28 +204,29 @@ const EditUserForm = ({ match }) => {
 											<option value="0">משתמש רגיל</option>
 											<option value="1">משתמש חמ"ל</option>
 											<option value="2"> מנהל מערכת</option>
+											<option value="3"> משתמש חט"ל</option>
+
 										</Input>
 									</FormGroup>
-									{data.role != "0" ? (
+									{data.role == "1" || data.role == "3" ? (
 										<>
 											<div style={{ textAlign: "right", paddingTop: "10px" }}>
 												פיקוד
 											</div>
-											<FormGroup dir="rtl">
-												<Input
-													type="select"
-													name="pikodid"
-													value={data.pikodid}
-													onChange={handleChange}
-												>
-													<option value="">הרשאה</option>
-													<option value="0">פיקוד דרום </option>
-													<option value="1">זרוע היבשה</option>
-													<option value="2">פיקוד מרכז </option>
-													<option value="3">חיל הים </option>
-													<option value="4">פיקוד צפון </option>
-													<option value="5">חיל האוויר</option>
-												</Input>
+											<FormGroup
+												style={{
+													justifyContent: "right",
+													alignContent: "right",
+													textAlign: "right",
+												}}
+											>
+												<h6>פיקוד</h6>
+												<Select
+													data={pikods}
+													handleChange2={handleChange2}
+													name={"pikod"}
+													val={data.pikod ? data.pikod : undefined}
+												/>
 											</FormGroup>
 										</>
 									) : null}
